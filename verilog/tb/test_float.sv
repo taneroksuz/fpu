@@ -59,7 +59,7 @@ module test_float
 				enable <= 0;
 			end else begin
 				if ($feof(data_file)) begin
-					$display("TEST FINISHED");
+					$display("TEST SUCCEEDED");
 					$display("CLOCKS: %t",$time);
 					$finish;
 				end
@@ -136,7 +136,7 @@ module test_float
 				if (ready_calc) begin
 					flags_diff = flags_calc ^ flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
-						$display("WRONG RESULT");
+						$display("TEST FAILED");
 						$display("CLOCKS: %t",$time);
 						$display("data1: 0x%h \n",data1);
 						$display("data2: 0x%h \n",data2);

@@ -1,6 +1,13 @@
 #!/bin/bash
 
-INST_PATH=/usr/local
+INST_PATH=/opt/verilator
+
+if [ -d "$INST_PATH" ]
+then
+  sudo rm -rf $INST_PATH
+fi
+sudo mkdir $INST_PATH
+sudo chown -R $USER $INST_PATH/
 
 sudo apt-get install git make autoconf g++ flex bison libfl-dev
 
@@ -22,4 +29,4 @@ autoconf
 ./configure --prefix=$INST_PATH
 
 make -j$(nproc)
-sudo make install
+make install

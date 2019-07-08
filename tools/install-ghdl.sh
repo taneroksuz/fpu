@@ -1,6 +1,13 @@
 #!/bin/bash
 
-INST_PATH=/usr/local
+INST_PATH=/opt/ghdl
+
+if [ -d "$INST_PATH" ]
+then
+  sudo rm -rf $INST_PATH
+fi
+sudo mkdir $INST_PATH
+sudo chown -R $USER $INST_PATH/
 
 sudo apt-get -y install git build-essential zlib1g-dev gnat
 
@@ -15,4 +22,4 @@ cd ghdl
 ./configure --prefix=$INST_PATH
 
 make -j$(nproc)
-sudo make install
+make install

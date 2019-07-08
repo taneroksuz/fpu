@@ -15,8 +15,6 @@ package fp_wire is
 	)
 	return std_logic;
 
-	constant FP_DIV_BOOST : boolean := true;
-
 	type fp_operation_type is record
 		fmadd    : std_logic;
 		fmsub    : std_logic;

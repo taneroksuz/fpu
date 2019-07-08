@@ -10,7 +10,7 @@ use work.fp_wire.all;
 
 entity fp_fdiv is
 	generic(
-		FP_DIV_BOOST : boolean := FP_DIV_BOOST
+		PERFORMANCE : integer := 1
 	);
 	port(
 		reset     : in  std_logic;
@@ -67,7 +67,7 @@ architecture behavior of fp_fdiv is
 
 begin
 
-	FUNCTIONAL : if FP_DIV_BOOST = true generate
+	FUNCTIONAL : if PERFORMANCE = 1 generate
 
 		process(r, fp_fdiv_i, fp_mac_o)
 			variable v : fp_fdiv_functional_reg_type;
@@ -453,7 +453,7 @@ begin
 
 	end generate FUNCTIONAL;
 
-	FIXED : if FP_DIV_BOOST = false generate
+	FIXED : if PERFORMANCE = 0 generate
 
 		process(r_fix, fp_fdiv_i)
 			variable v : fp_fdiv_fixed_reg_type;

@@ -33,8 +33,3 @@ cd berkeley-testfloat-3/build/Linux-x86_64-GCC
 make -j$(nproc)
 
 mv -t $INST_PATH testfloat testfloat_gen testfloat_ver testsoftfloat timesoftfloat
-
-cd -
-
-rm -rf berkeley-softfloat-3
-rm -rf berkeley-testfloat-3

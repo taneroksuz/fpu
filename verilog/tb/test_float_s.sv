@@ -68,7 +68,7 @@ module test_float_s
 			end else begin
 				if (enable) begin
 					if ($feof(data_file)) begin
-						$display("TEST FINISHED");
+						$display("TEST SUCCEEDED");
 						$display("CLOCKS: %t",$time);
 						$finish;
 					end
@@ -145,7 +145,7 @@ module test_float_s
 					end
 					flags_diff = flags_calc ^ fp_res.flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
-						$display("WRONG RESULT");
+						$display("TEST FAILED");
 						$display("CLOCKS: %t",$time);
 						$display("data1: 0x%h \n",fp_res.data1);
 						$display("data2: 0x%h \n",fp_res.data2);

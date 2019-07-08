@@ -32,11 +32,11 @@ module test_lzc
 			counter <= max;
 		end else begin
 			if (a == msb) begin
-				$display("TEST FINISHED");
+				$display("TEST SUCCEEDED");
 				$finish;
 			end
 			if (counter != (~c)) begin
-				$display("WRONG RESULT");
+				$display("TEST FAILED");
 				$finish;
 			end
 			a <= a << 1;

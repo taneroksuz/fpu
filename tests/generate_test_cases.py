@@ -16,7 +16,7 @@ if __name__ == '__main__':
     operation = sys.argv[1]
     folder = sys.argv[2]
     testfloat = sys.argv[3]
-    
+
     list_operation = [ \
         ('f32_mulAdd',"0","0","0","001"), \
         ('f32_add',"0","0","0","002"), \
@@ -54,9 +54,9 @@ if __name__ == '__main__':
         ('f64_to_ui32',"1","0","1","200"), \
         ('f64_to_i64',"1","0","2","200"), \
         ('f64_to_ui64',"1","0","3","200")]
-    
+
     extend_32   = "00000000"
-    
+
     find = False
     for i in range(len(list_operation)):
         if operation == list_operation[i][0]:
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     if not find:
         sys.exit(1)
-    
+
     if int(get_operation[4],16) == 1:
         empty_word = ""
     elif int(get_operation[4],16) > 1 and int(get_operation[4],16) < 32:
@@ -76,10 +76,10 @@ if __name__ == '__main__':
     else:
         empty_word = "00000000000000000000000000000000"
 
-    command = 'chmod +x {0}/testfloat_gen'.format(testfloat)
+    command = 'chmod +x {0}'.format(testfloat)
     subprocess.call(command,shell=True)
 
-    command = '{0}/testfloat_gen {1} > {2}{1}.hex'.format(testfloat,operation,folder)
+    command = '{0} {1} > {2}{1}.hex'.format(testfloat,operation,folder)
     subprocess.call(command,shell=True)
 
     filename = folder + operation+".hex"
