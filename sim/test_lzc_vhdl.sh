@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ -d "$1/sim/work" ]; then
-	rm -rf $1/sim/work
+if [ -d "sim/work" ]; then
+	rm -rf sim/work
 fi
 
-mkdir $1/sim/work
+mkdir sim/work
 
-cd $1/sim/work
+cd sim/work
 
 ghdl -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_wire.vhd
 ghdl -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_lib.vhd

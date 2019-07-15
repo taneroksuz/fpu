@@ -1,20 +1,20 @@
 #!/bin/bash
 
-if [ -d "$1/sim/work" ]; then
-	rm -rf $1/sim/work
+if [ -d "sim/work" ]; then
+	rm -rf sim/work
 fi
 
-mkdir $1/sim/work
+mkdir sim/work
 
-if [ ! -z "$2" ]
+if [ ! -z "$1" ]
 then
-	if [ ! "$2" = 'all' ]
+	if [ ! "$1" = 'all' ]
 	then
-		cp $1/tests/test_cases/$2 $1/sim/work/fpu.dat
+		cp tests/test_cases/$1.dat sim/work/fpu.dat
 	fi
 fi
 
-cd $1/sim/work
+cd sim/work
 
 ghdl -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_wire.vhd
 
@@ -48,7 +48,7 @@ ghdl -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_s.vhd
 ghdl -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_p.vhd
 
 start=`date +%s`
-if [ "$2" = 'all' ]
+if [ "$1" = 'all' ]
 then
 	for filename in ../../tests/test_cases/*.dat; do
 		cp $filename fpu.dat
@@ -67,12 +67,12 @@ then
 		fi
 	done
 else
-	echo "$2"
-	if [ `echo $2 | grep -c "div\|sqrt" ` -gt 0 ]
+	echo "$1"
+	if [ `echo $1 | grep -c "div\|sqrt" ` -gt 0 ]
 	then
 		ghdl -e --std=08 --ieee=synopsys test_float_s
 		ghdl -r --std=08 --ieee=synopsys test_float_s --ieee-asserts=disable-at-0 --wave=output.ghw
-	elif [ `echo $2 | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
+	elif [ `echo $1 | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
 	then
 		ghdl -e --std=08 --ieee=synopsys test_float_p
 		ghdl -r --std=08 --ieee=synopsys test_float_p --ieee-asserts=disable-at-0 --wave=output.ghw

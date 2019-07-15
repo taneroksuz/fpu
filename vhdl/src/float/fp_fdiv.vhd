@@ -10,7 +10,7 @@ use work.fp_wire.all;
 
 entity fp_fdiv is
 	generic(
-		PERFORMANCE : integer := 1
+		PERFORMANCE : integer := 0
 	);
 	port(
 		reset     : in  std_logic;
@@ -473,7 +473,9 @@ begin
 					end if;
 					v.ready := '0';
 				when F1 =>
-					if v.istate = 0 then
+					if (v.fmt = "00") and (v.istate = 29) then
+						v.state := F2;
+					elsif v.istate = 0 then
 						v.state := F2;
 					else
 						v.istate := v.istate - 1;

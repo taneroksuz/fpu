@@ -9,7 +9,7 @@ module fp_fdiv
 	input fp_mac_out_type fp_mac_o,
 	output fp_mac_in_type fp_mac_i
 );
-	parameter PERFORMANCE = 1;
+	parameter PERFORMANCE = 0;
 
 	fp_fdiv_reg_functional_type r;
 	fp_fdiv_reg_functional_type rin;
@@ -446,7 +446,9 @@ module fp_fdiv
 					end
 					v_fix.ready = 0;
 				end else if (r_fix.state == 1) begin
-					if (v_fix.istate == 0) begin
+					if (v_fix.fmt == 0 & v_fix.istate == 29) begin
+						v_fix.state = 2;
+					end else if (v_fix.istate == 0) begin
 						v_fix.state = 2;
 					end else begin
 						v_fix.istate = v_fix.istate - 1;

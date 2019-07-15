@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ -d "$1/sim/work" ]; then
-	rm -rf $1/sim/work
+if [ -d "sim/work" ]; then
+	rm -rf sim/work
 fi
 
-mkdir $1/sim/work
+mkdir sim/work
 
-cd $1/sim/work
+cd sim/work
 
 verilator -cc -I../../verilog/src/lzc ../../verilog/src/lzc/lzc_4.sv
 verilator -cc -I../../verilog/src/lzc ../../verilog/src/lzc/lzc_8.sv
