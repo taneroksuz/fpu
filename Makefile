@@ -8,7 +8,7 @@ PYTHON2 ?= python2
 TEST ?= all
 
 generate:
-	tests/generate_test_cases.sh ${TESTFLOAT} ${PYTHON}
+	tests/generate_test_cases.sh tests ${TESTFLOAT} ${PYTHON}
 
 fpu_verilog:
 	sim/test_fpu_verilog.sh ${VERILATOR} ${TEST}

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-ghdl=$1
-test=$2
+ghdl=${1}
 
 if [ -d "sim/work" ]; then
 	rm -rf sim/work
@@ -9,11 +8,11 @@ fi
 
 mkdir sim/work
 
-if [ ! -z "${test}" ]
+if [ ! -z "$2" ]
 then
-	if [ ! "${test}" = 'all' ]
+	if [ ! "$2" = 'all' ]
 	then
-		cp tests/test_cases/${test}.dat sim/work/fpu.dat
+		cp tests/test_cases/$2.dat sim/work/fpu.dat
 	fi
 fi
 
@@ -51,7 +50,7 @@ ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_s.vhd
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_p.vhd
 
 start=`date +%s`
-if [ "${test}" = 'all' ]
+if [ "$2" = 'all' ]
 then
 	for filename in ../../tests/test_cases/*.dat; do
 		cp $filename fpu.dat
@@ -70,12 +69,12 @@ then
 		fi
 	done
 else
-	echo "${test}"
-	if [ `echo ${test} | grep -c "div\|sqrt" ` -gt 0 ]
+	echo "$2"
+	if [ `echo $2 | grep -c "div\|sqrt" ` -gt 0 ]
 	then
 		${ghdl} -e --std=08 --ieee=synopsys test_float_s
 		${ghdl} -r --std=08 --ieee=synopsys test_float_s --ieee-asserts=disable-at-0 --wave=output.ghw
-	elif [ `echo ${test} | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
+	elif [ `echo $2 | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
 	then
 		${ghdl} -e --std=08 --ieee=synopsys test_float_p
 		${ghdl} -r --std=08 --ieee=synopsys test_float_p --ieee-asserts=disable-at-0 --wave=output.ghw

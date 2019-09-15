@@ -38,18 +38,18 @@ module fp_cvt
 		end
 
 		v_f2f.sign_rnd = v_f2f.data[64];
-		v_f2f.exponent_rnd = v_f2f.exponent_cvt - v_f2f.exponent_bias;
+		v_f2f.exponent_rnd = {2'h0,v_f2f.exponent_cvt} - {3'h0,v_f2f.exponent_bias};
 
 		v_f2f.counter_cvt = 0;
 		if ($signed(v_f2f.exponent_rnd) <= 0) begin
 			v_f2f.counter_cvt = 63;
 			if ($signed(v_f2f.exponent_rnd) > -63) begin
-				v_f2f.counter_cvt = 1 - v_f2f.exponent_rnd;
+				v_f2f.counter_cvt = 14'h1 - v_f2f.exponent_rnd;
 			end
 			v_f2f.exponent_rnd = 0;
 		end
 
-		v_f2f.mantissa_cvt = v_f2f.mantissa_cvt >> v_f2f.counter_cvt;
+		v_f2f.mantissa_cvt = v_f2f.mantissa_cvt >> v_f2f.counter_cvt[5:0];
 
 		v_f2f.mantissa_rnd = {29'h0,v_f2f.mantissa_cvt[79:55]};
 		v_f2f.grs = {v_f2f.mantissa_cvt[54:53],|v_f2f.mantissa_cvt[52:0]};
@@ -104,7 +104,7 @@ module fp_cvt
 
 		v_f2i.oor = 0;
 
-		if ($signed(v_f2i.exponent_cvt) > $signed(v_f2i.exponent_bias)) begin
+		if ($signed(v_f2i.exponent_cvt) > $signed({5'h0,v_f2i.exponent_bias})) begin
 			v_f2i.oor = 1;
 		end else if ($signed(v_f2i.exponent_cvt) > 0) begin
 			v_f2i.mantissa_cvt = v_f2i.mantissa_cvt << v_f2i.exponent_cvt;
@@ -134,7 +134,7 @@ module fp_cvt
 			end
 		end
 
-		v_f2i.mantissa_uint = v_f2i.mantissa_uint + v_f2i.rnded;
+		v_f2i.mantissa_uint = v_f2i.mantissa_uint + {64'h0,v_f2i.rnded};
 
 		v_f2i.or_1 = v_f2i.mantissa_uint[64];
 		v_f2i.or_2 = v_f2i.mantissa_uint[63];
@@ -251,7 +251,7 @@ module fp_cvt
 		v_i2f.mantissa_uint = v_i2f.mantissa_uint << v_i2f.counter_uint;
 
 		v_i2f.sign_rnd = v_i2f.sign_uint;
-		v_i2f.exponent_rnd = v_i2f.exponent_uint + v_i2f.exponent_bias - v_i2f.counter_uint;
+		v_i2f.exponent_rnd = {8'h0,v_i2f.exponent_uint} + {4'h0,v_i2f.exponent_bias} - {8'h0,v_i2f.counter_uint};
 
 		v_i2f.mantissa_rnd = {30'h0,v_i2f.mantissa_uint[63:40]};
 		v_i2f.grs = {v_i2f.mantissa_uint[39:38],|v_i2f.mantissa_uint[37:0]};

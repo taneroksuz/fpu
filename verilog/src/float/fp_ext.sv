@@ -56,10 +56,10 @@ module fp_ext
 				result[63:52] = 12'hFFF;
 				result[51:29] = data[22:0];
 			end else if (|data[30:23]) begin
-				result[63:52] = data[30:23] + 1920;
+				result[63:52] = {4'h0,data[30:23]} + 12'h780;
 				result[51:29] = data[22:0];
 			end else if (counter < 24) begin
-				result[63:52] = 1921 - counter;
+				result[63:52] = 12'h781 - {6'h0,counter};
 				result[51:29] = (data[22:0] << counter);
 			end
 			result[28:0] = 0;
@@ -69,10 +69,10 @@ module fp_ext
 				result[63:52] = 12'hFFF;
 				result[51:0] = data[51:0];
 			end else if (|data[62:52]) begin
-				result[63:52] = data[62:52] + 1024;
+				result[63:52] = {1'h0,data[62:52]} + 12'h400;
 				result[51:0] = data[51:0];
 			end else if (counter < 53) begin
-				result[63:52] = 1025 - counter;
+				result[63:52] = 12'h401 - {6'h0,counter};
 				result[51:0] = (data[51:0] << counter);
 			end
 		end

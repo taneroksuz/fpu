@@ -168,14 +168,14 @@ module fp_fma
 		if (v_2.exponent_neg) begin
 			v_2.counter_dif = 56;
 			if ($signed(v_2.exponent_dif) > -56) begin
-				v_2.counter_dif = -v_2.exponent_dif;
+				v_2.counter_dif = -v_2.exponent_dif[6:0];
 			end
 			v_2.mantissa_l = v_2.mantissa_add;
 			v_2.mantissa_r = v_2.mantissa_mul;
 		end else begin
 			v_2.counter_dif = 108;
 			if ($signed(v_2.exponent_dif) < 108) begin
-				v_2.counter_dif = v_2.exponent_dif;
+				v_2.counter_dif = v_2.exponent_dif[6:0];
 			end
 			v_2.mantissa_l  = v_2.mantissa_mul;
 			v_2.mantissa_r  = v_2.mantissa_add;
@@ -242,7 +242,7 @@ module fp_fma
 			v_3.mantissa_mul = ~v_3.mantissa_mul;
 		end
 
-		v_3.mantissa_mac = v_3.mantissa_add + v_3.mantissa_mul + v_3.sign_add + v_3.sign_mul;
+		v_3.mantissa_mac = v_3.mantissa_add + v_3.mantissa_mul + {163'h0,v_3.sign_add} + {163'h0,v_3.sign_mul};
 		v_3.sign_mac     = v_3.mantissa_mac[163];
 
 		v_3.zero = ~|v_3.mantissa_mac;
@@ -293,18 +293,18 @@ module fp_fma
 		v_4.mantissa_mac = v_4.mantissa_mac << v_4.counter_mac;
 
 		v_4.sign_rnd = v_4.sign_mac ^ v_4.neg;
-		v_4.exponent_rnd = v_4.exponent_mac - v_4.bias - v_4.counter_mac;
+		v_4.exponent_rnd = v_4.exponent_mac - {3'h0,v_4.bias} - {6'h0,v_4.counter_mac};
 
 		v_4.counter_sub = 0;
 		if ($signed(v_4.exponent_rnd) <= 0) begin
 			v_4.counter_sub  = 63;
 			if ($signed(v_4.exponent_rnd) > -63) begin
-				v_4.counter_sub = 1 - v_4.exponent_rnd;
+				v_4.counter_sub = 14'h1 - v_4.exponent_rnd;
 			end
 			v_4.exponent_rnd = 0;
 		end
 
-		v_4.mantissa_mac = v_4.mantissa_mac >> v_4.counter_sub;
+		v_4.mantissa_mac = v_4.mantissa_mac >> v_4.counter_sub[5:0];
 
 		v_4.mantissa_rnd = {30'h0,v_4.mantissa_mac[162:139]};
 		v_4.grs = {v_4.mantissa_mac[138:137],|v_4.mantissa_mac[136:0]};

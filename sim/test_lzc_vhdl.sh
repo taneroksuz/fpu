@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ghdl=$1
+ghdl=${1}
 
 if [ -d "sim/work" ]; then
 	rm -rf sim/work

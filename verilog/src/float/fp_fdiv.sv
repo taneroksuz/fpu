@@ -9,7 +9,7 @@ module fp_fdiv
 	input fp_mac_out_type fp_mac_o,
 	output fp_mac_in_type fp_mac_i
 );
-	parameter PERFORMANCE = 0;
+	parameter PERFORMANCE = 1;
 
 	fp_fdiv_reg_functional_type r;
 	fp_fdiv_reg_functional_type rin;
@@ -373,18 +373,18 @@ module fp_fdiv
 					end
 
 					v.sign_rnd = v.sign_fdiv;
-					v.exponent_rnd = v.exponent_fdiv + v.exponent_bias - v.counter_fdiv;
+					v.exponent_rnd = v.exponent_fdiv + {3'h0,v.exponent_bias} - {12'h0,v.counter_fdiv};
 
 					v.counter_rnd = 0;
 					if ($signed(v.exponent_rnd) <= 0) begin
 						v.counter_rnd = 54;
 						if ($signed(v.exponent_rnd) > -54) begin
-							v.counter_rnd = 1 - v.exponent_rnd;
+							v.counter_rnd = 14'h1 - v.exponent_rnd;
 						end
 						v.exponent_rnd = 0;
 					end
 
-					v.mantissa_fdiv = v.mantissa_fdiv >> v.counter_rnd;
+					v.mantissa_fdiv = v.mantissa_fdiv >> v.counter_rnd[5:0];
 
 					v.mantissa_rnd = {30'h0,v.mantissa_fdiv[113:90]};
 					v.grs = {v.mantissa_fdiv[89:88],|v.mantissa_fdiv[87:0]};
@@ -519,11 +519,11 @@ module fp_fdiv
 
 					v_fix.q = 0;
 
-					v_fix.e = {4'h1,v_fix.b[51:0],1'h0};
+					v_fix.m = {4'h1,v_fix.b[51:0],1'h0};
 					v_fix.r = {5'h1,v_fix.a[51:0]};
 					v_fix.op = 0;
 					if (fp_fdiv_i.op.fsqrt) begin
-						v_fix.e = 0;
+						v_fix.m = 0;
 						if (v_fix.a[52] == 0) begin
 							v_fix.r = {v_fix.r[55:0],1'h0};
 						end
@@ -533,14 +533,14 @@ module fp_fdiv
 				end else if (r_fix.state == 1) begin
 
 					if (v_fix.op == 1) begin
-						v_fix.e = {v_fix.q,1'h0};
-						v_fix.e[r_fix.istate] = 1;
+						v_fix.m = {1'h0,v_fix.q,1'h0};
+						v_fix.m[r_fix.istate] = 1;
 					end
 					v_fix.r = {v_fix.r[55:0],1'h0};
-					v_fix.a = $signed(v_fix.r) - $signed(v_fix.e);
-					if (v_fix.a[56] == 0) begin
+					v_fix.e = $signed(v_fix.r) - $signed(v_fix.m);
+					if (v_fix.e[56] == 0) begin
 						v_fix.q[r_fix.istate] = 1;
-						v_fix.r = v_fix.a;
+						v_fix.r = v_fix.e;
 					end
 
 				end else if (r_fix.state == 2) begin
@@ -561,18 +561,18 @@ module fp_fdiv
 						v_fix.exponent_bias = 1023;
 					end
 
-					v_fix.exponent_rnd = v_fix.exponent_fdiv + v_fix.exponent_bias - v_fix.counter_fdiv;
+					v_fix.exponent_rnd = v_fix.exponent_fdiv + {3'h0,v_fix.exponent_bias} - {12'h0,v_fix.counter_fdiv};
 
 					v_fix.counter_rnd = 0;
 					if ($signed(v_fix.exponent_rnd) <= 0) begin
 						v_fix.counter_rnd = 54;
 						if ($signed(v_fix.exponent_rnd) > -54) begin
-							v_fix.counter_rnd = 1 - v_fix.exponent_rnd;
+							v_fix.counter_rnd = 14'h1 - v_fix.exponent_rnd;
 						end
 						v_fix.exponent_rnd = 0;
 					end
 
-					v_fix.mantissa_fdiv = v_fix.mantissa_fdiv >> v_fix.counter_rnd;
+					v_fix.mantissa_fdiv = v_fix.mantissa_fdiv >> v_fix.counter_rnd[5:0];
 
 					v_fix.mantissa_rnd = {30'h0,v_fix.mantissa_fdiv[164:141]};
 					v_fix.grs = {v_fix.mantissa_fdiv[140:139],|(v_fix.mantissa_fdiv[138:0])};

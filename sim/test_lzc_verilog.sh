@@ -1,6 +1,6 @@
 #!/bin/bash
 
-verilator=$1
+verilator=${1}
 
 if [ -d "sim/work" ]; then
 	rm -rf sim/work

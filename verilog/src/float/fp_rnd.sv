@@ -68,7 +68,7 @@ module fp_rnd
 			flags[1] = flags[0];
 		end
 
-		mant = mant + rnded;
+		mant = mant + {53'h0,rnded};
 
 		rnded = 0;
 		if (fmt == 0) begin
@@ -95,7 +95,7 @@ module fp_rnd
 			end
 		end
 
-		expo = expo + rnded;
+		expo = expo + {13'h0,rnded};
 		mant = mant >> rnded;
 
 		if (snan) begin
