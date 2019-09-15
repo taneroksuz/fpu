@@ -3,7 +3,7 @@ default: none
 GHDL ?= /opt/ghdl/bin/ghdl
 VERILATOR ?= /opt/verilator/bin/verilator
 TESTFLOAT ?= /opt/testfloat/testfloat_gen
-PYTHON2 ?= python2
+PYTHON ?= /usr/bin/python2
 
 TEST ?= all
 
