@@ -17,7 +17,6 @@ fi
 
 git clone http://git.veripool.org/git/verilator
 
-unsetenv VERILATOR_ROOT
 unset VERILATOR_ROOT
 
 cd verilator
