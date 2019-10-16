@@ -22,5 +22,4 @@ fpu_vhdl:
 lzc_vhdl:
 	sim/test_lzc_vhdl.sh ${GHDL}
 
-all:
-	generate lzc_vhdl lzc_verilog fpu_vhdl fpu_verilog
+all: generate lzc_vhdl lzc_verilog fpu_vhdl fpu_verilog
