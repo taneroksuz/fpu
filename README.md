@@ -18,14 +18,14 @@ This unit uses canonical **nan** (not a number) form, if it generates any **nan*
 
 |performance| division | square root |
 |:---------:|:--------:|:-----------:|
-| 0         | 58       | 57          |
+| 0         | 29       | 28          |
 | 1         | 14       | 17          |
 
 ### Double Precision ###
 
 |performance| division | square root |
 |:---------:|:--------:|:-----------:|
-| 0         | 29       | 28          |
+| 0         | 58       | 57          |
 | 1         | 14       | 17          |
 
 The installation scripts need **root** permission in order to install packages and tools for simulation and testcase generation.
