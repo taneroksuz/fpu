@@ -9,6 +9,9 @@ module fp_fdiv
 	input fp_mac_out_type fp_mac_o,
 	output fp_mac_in_type fp_mac_i
 );
+	timeunit 1ns;
+	timeprecision 1ps;
+	
 	parameter PERFORMANCE = 1;
 
 	fp_fdiv_reg_functional_type r;

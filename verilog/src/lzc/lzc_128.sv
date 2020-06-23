@@ -4,6 +4,8 @@ module lzc_128
 	output 	[6:0] 	c,
 	output 			v
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [5:0] z0;
 	logic [5:0] z1;

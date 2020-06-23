@@ -29,6 +29,8 @@ module fp_exe
 	input fp_rnd_out_type fp_rnd_o,
 	output fp_rnd_in_type fp_rnd_i
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [63:0] data1;
 	logic [63:0] data2;

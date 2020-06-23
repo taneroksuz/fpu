@@ -4,6 +4,8 @@ module lzc_32
 	output [4:0] c,
 	output v
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [3:0] z0;
 	logic [3:0] z1;

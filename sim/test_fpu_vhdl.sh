@@ -18,6 +18,7 @@ fi
 
 cd sim/work
 
+start=`date +%s`
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_wire.vhd
 
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/float/fp_cons.vhd
@@ -49,7 +50,6 @@ ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float.vhd
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_s.vhd
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_float_p.vhd
 
-start=`date +%s`
 if [ "$2" = 'all' ]
 then
 	for filename in ../../tests/test_cases/*.dat; do

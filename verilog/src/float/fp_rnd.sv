@@ -5,6 +5,8 @@ module fp_rnd
 	input fp_rnd_in_type fp_rnd_i,
 	output fp_rnd_out_type fp_rnd_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic sig;
 	logic [13:0] expo;

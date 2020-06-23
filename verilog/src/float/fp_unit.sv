@@ -8,6 +8,8 @@ module fp_unit
 	input fp_unit_in_type fp_unit_i,
 	output fp_unit_out_type fp_unit_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	lzc_64_in_type lzc1_64_i;
 	lzc_64_out_type lzc1_64_o;

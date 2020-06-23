@@ -4,6 +4,8 @@ module lzc_256
 	output [7:0] c,
 	output v
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [6:0] z0;
 	logic [6:0] z1;

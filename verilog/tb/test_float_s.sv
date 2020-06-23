@@ -1,6 +1,3 @@
-timeunit 1ns;
-timeprecision 1ps;
-
 import fp_wire::*;
 
 module test_float_s
@@ -8,6 +5,8 @@ module test_float_s
 	input reset,
 	input clock
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	integer data_file;
 	integer scan_file;
@@ -69,7 +68,6 @@ module test_float_s
 				if (enable) begin
 					if ($feof(data_file)) begin
 						$display("TEST SUCCEEDED");
-						$display("CLOCKS: %t",$time);
 						$finish;
 					end
 					scan_file <= $fscanf(data_file,"%h\n", dataread);

@@ -5,6 +5,8 @@ module fp_sgnj
 	input fp_sgnj_in_type fp_sgnj_i,
 	output fp_sgnj_out_type fp_sgnj_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [63:0] data1;
 	logic [63:0] data2;

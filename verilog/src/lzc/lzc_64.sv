@@ -4,6 +4,8 @@ module lzc_64
 	output [5:0] c,
 	output v
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [4:0] z0;
 	logic [4:0] z1;

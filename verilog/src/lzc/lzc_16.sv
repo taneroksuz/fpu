@@ -4,6 +4,8 @@ module lzc_16
 	output [3:0] c,
 	output v
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [2:0] z0;
 	logic [2:0] z1;

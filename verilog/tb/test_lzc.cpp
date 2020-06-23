@@ -1,36 +1,87 @@
-#include "Vtest_lzc.h"
-#include "verilated.h"
-#include "verilated_vcd_c.h"
+#include <verilated.h>
+#include <verilated_vcd_sc.h>
 
-int main(int argc, char **argv, char **env)
+#include "Vtest_lzc.h"
+
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+
+using namespace std;
+
+int sc_main(int argc, char* argv[])
 {
-  int i;
   Verilated::commandArgs(argc, argv);
-  
-  Vtest_lzc* top = new Vtest_lzc;
-  
-  Verilated::traceEverOn(true);
-  VerilatedVcdC* vcd = new VerilatedVcdC;
-  top->trace (vcd, 99);
-  vcd->open ("test_lzc.vcd");
-  
-  top->clock = 0;
-  top->reset = 0;
- 
-  i = 0;
-  while (1)
+
+  long long unsigned time;
+  string filename;
+  char *p;
+  const char *dumpfile;
+
+  if (argc>1)
   {
-    vcd->dump (i);
-    top->reset = (i > 10);
-    top->clock = !top->clock;
-    top->eval ();
-    if (Verilated::gotFinish())
-    {
-      exit(0);
-    }
-    i++;
+    time = strtol(argv[1], &p, 10);
   }
+  if (argc>2)
+  {
+    filename = string(argv[2]);
+    filename = filename + ".vcd";
+    dumpfile = filename.c_str();
+  }
+
+  sc_clock clock ("clock", 2,SC_NS, 1, 1,SC_NS, false);
+  sc_signal<bool> reset;
+
+  Vtest_lzc* top = new Vtest_lzc("test_lzc");
+
+  top->clock (clock);
+  top->reset (reset);
+
+#if VM_TRACE
+  Verilated::traceEverOn(true);
+#endif
+
+#if VM_TRACE
+  VerilatedVcdSc* dump = new VerilatedVcdSc;
+  top->trace(dump, 99);
+  dump->open(dumpfile);
+#endif
   
-  vcd->close();
-  exit(0);
+  while (!Verilated::gotFinish())
+  {
+#if VM_TRACE
+    if (dump) dump->flush();
+#endif
+    if (VL_TIME_Q() > 0 && VL_TIME_Q() < 10)
+    {
+      reset = !1;
+    }
+    else if (VL_TIME_Q() > 0)
+    {
+      reset = !0;
+    }
+    if (VL_TIME_Q() > time)
+    {
+      break;
+    }
+    sc_start(1,SC_NS);
+  }
+
+  cout << "End of simulation is " << sc_time_stamp() << endl;
+
+  top->final();
+
+#if VM_TRACE
+  if (dump)
+  {
+    dump->close();
+    dump = NULL;
+  }
+#endif
+
+  delete top;
+  top = NULL;
+
+  return 0;
 }

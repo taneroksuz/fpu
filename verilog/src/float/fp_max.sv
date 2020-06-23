@@ -5,6 +5,8 @@ module fp_max
 	input fp_max_in_type fp_max_i,
 	output fp_max_out_type fp_max_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [63:0] data1;
 	logic [63:0] data2;

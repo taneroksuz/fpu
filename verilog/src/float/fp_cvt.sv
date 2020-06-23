@@ -11,6 +11,8 @@ module fp_cvt
 	input lzc_64_out_type lzc_o,
 	output lzc_64_in_type lzc_i
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	fp_cvt_f2f_var_type v_f2f;
 	fp_cvt_f2i_var_type v_f2i;

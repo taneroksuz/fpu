@@ -1,4 +1,6 @@
 module fp_cons();
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	parameter funct_fadd = 5'b00000;
 	parameter funct_fsub = 5'b00001;

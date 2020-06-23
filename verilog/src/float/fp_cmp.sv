@@ -5,6 +5,8 @@ module fp_cmp
 	input fp_cmp_in_type fp_cmp_i,
 	output fp_cmp_out_type fp_cmp_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [64:0] data1;
 	logic [64:0] data2;

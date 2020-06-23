@@ -10,6 +10,8 @@ module fp_fma
 	input lzc_256_out_type lzc_o,
 	output lzc_256_in_type lzc_i
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	fp_fma_reg_type_1 r_1;
 	fp_fma_reg_type_2 r_2;

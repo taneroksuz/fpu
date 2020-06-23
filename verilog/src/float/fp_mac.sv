@@ -7,6 +7,8 @@ module fp_mac
 	input fp_mac_in_type fp_mac_i,
 	output fp_mac_out_type fp_mac_o
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	logic [109:0] add;
 	logic [111:0] mul;

@@ -1,11 +1,10 @@
-timeunit 1ps;
-timeprecision 1ps;
-
 module test_lzc
 (
 	input reset,
 	input clock
 );
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	parameter xlen = 256;
 	parameter xlog = 8;

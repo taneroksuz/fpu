@@ -1,4 +1,6 @@
 package lzc_wire;
+	timeunit 1ns;
+	timeprecision 1ps;
 
 	typedef struct packed{
 		logic [63:0] a;

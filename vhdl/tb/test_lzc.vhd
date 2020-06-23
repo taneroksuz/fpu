@@ -29,8 +29,8 @@ architecture behavior of test_lzc is
 
 begin
 
-	reset <= '1' after 10 ps;
-	clock <= not clock after 1 ps;
+	reset <= '1' after 1 ns;
+	clock <= not clock after 1 ns;
 
 	process(reset, clock)
 	begin
