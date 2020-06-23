@@ -28,7 +28,7 @@ ${VERILATOR} -sc -I../../verilog/src/lzc ../../verilog/tb/test_lzc.sv --exe ../.
 
 make -s -j -C obj_dir/ -f Vtest_lzc.mk Vtest_lzc
 
-obj_dir/Vtest_lzc 1000000 2> /dev/null
+obj_dir/Vtest_lzc 2> /dev/null
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.

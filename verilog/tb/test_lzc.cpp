@@ -14,18 +14,13 @@ int sc_main(int argc, char* argv[])
 {
   Verilated::commandArgs(argc, argv);
 
-  long long unsigned time;
   string filename;
   char *p;
   const char *dumpfile;
 
   if (argc>1)
   {
-    time = strtol(argv[1], &p, 10);
-  }
-  if (argc>2)
-  {
-    filename = string(argv[2]);
+    filename = string(argv[1]);
     filename = filename + ".vcd";
     dumpfile = filename.c_str();
   }
@@ -60,10 +55,6 @@ int sc_main(int argc, char* argv[])
     else if (VL_TIME_Q() > 0)
     {
       reset = !0;
-    }
-    if (VL_TIME_Q() > time)
-    {
-      break;
     }
     sc_start(1,SC_NS);
   }
