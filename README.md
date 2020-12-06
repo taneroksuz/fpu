@@ -1,4 +1,4 @@
-# WAISENKIND FPU #
+# RISCV FPU #
 
 This floating point unit is conform to IEEE 754-2008 standards. Supported operations are **compare**, **min-max**, **conversions**, **addition**, **subtruction**, **multiplication**, **fused multiply add**, **square root** and **division** in single and double precisions. Except **square root** and **division** all operations are pipelined.
 
