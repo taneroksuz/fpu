@@ -37,6 +37,9 @@ module fp_max
 		nan = 64'h7ff8000000000000;
 		comp = 0;
 
+		result = 0;
+		flags = 0;
+
 		if (fmt == 0) begin
 			nan = 64'h000000007fc00000;
 		end
