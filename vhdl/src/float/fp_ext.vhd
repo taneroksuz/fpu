@@ -3,6 +3,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_misc.all;
 
 use work.lzc_wire.all;
 use work.fp_cons.all;
@@ -37,28 +38,28 @@ begin
 
 	begin
 		data := fp_ext_i.data;
-		fmt  := fp_ext_i.fmt;
+		fmt := fp_ext_i.fmt;
 
 		mantissa := (others => '1');
-		counter  := 0;
+		counter := 0;
 
 		result := (others => '0');
-		class  := (others => '0');
+		class := (others => '0');
 
 		mantissa_zero := '0';
 		exponent_zero := '0';
 		exponent_ones := '0';
 
 		if fmt = "00" then
-			mantissa      := '0' & data(22 downto 0) & x"FFFFFFFFFF";
-			exponent_zero := nor(data(30 downto 23));
-			exponent_ones := and(data(30 downto 23));
-			mantissa_zero := nor(data(22 downto 0));
+			mantissa := '0' & data(22 downto 0) & X"FFFFFFFFFF";
+			exponent_zero := nor_reduce(data(30 downto 23));
+			exponent_ones := and_reduce(data(30 downto 23));
+			mantissa_zero := nor_reduce(data(22 downto 0));
 		elsif fmt = "01" then
-			mantissa      := '0' & data(51 downto 0) & "111" & x"FF";
-			exponent_zero := nor(data(62 downto 52));
-			exponent_ones := and(data(62 downto 52));
-			mantissa_zero := nor(data(51 downto 0));
+			mantissa := '0' & data(51 downto 0) & "111" & X"FF";
+			exponent_zero := nor_reduce(data(62 downto 52));
+			exponent_ones := and_reduce(data(62 downto 52));
+			mantissa_zero := nor_reduce(data(51 downto 0));
 		end if;
 
 		lzc_i.a         <= mantissa;
@@ -66,42 +67,42 @@ begin
 
 		if fmt = "00" then
 			result(64) := data(31);
-			if and(data(30 downto 23)) then
+			if and_reduce(data(30 downto 23)) = '1' then
 				result(63 downto 52) := (others => '1');
 				result(51 downto 29) := data(22 downto 0);
-			elsif or(data(30 downto 23)) then
+			elsif or_reduce(data(30 downto 23)) = '1' then
 				result(63 downto 52) := std_logic_vector(resize(unsigned(data(30 downto 23)), 12) + 1920);
 				result(51 downto 29) := data(22 downto 0);
 			elsif counter < 24 then
 				result(63 downto 52) := std_logic_vector(to_unsigned(1921 - counter, 12));
-				result(51 downto 29) := data(22 downto 0) sll counter;
+				result(51 downto 29) := std_logic_vector(shift_left(unsigned(data(22 downto 0)),counter));
 			end if;
 			result(28 downto 0) := (others => '0');
 		elsif fmt = "01" then
 			result(64) := data(63);
-			if and(data(62 downto 52)) then
+			if and_reduce(data(62 downto 52)) = '1' then
 				result(63 downto 52) := (others => '1');
 				result(51 downto 0) := data(51 downto 0);
-			elsif or(data(62 downto 52)) then
+			elsif or_reduce(data(62 downto 52)) = '1' then
 				result(63 downto 52) := std_logic_vector(resize(unsigned(data(62 downto 52)), 12) + 1024);
 				result(51 downto 0) := data(51 downto 0);
 			elsif counter < 53 then
 				result(63 downto 52) := std_logic_vector(to_unsigned(1025 - counter, 12));
-				result(51 downto 0) := data(51 downto 0) sll counter;
+				result(51 downto 0) := std_logic_vector(shift_left(unsigned(data(51 downto 0)),counter));
 			end if;
 		end if;
 
-		if result(64) then
-			if exponent_ones then
-				if mantissa_zero then
+		if result(64) = '1' then
+			if exponent_ones = '1' then
+				if mantissa_zero = '1' then
 					class(0) := '1';
-				elsif not result(51) then
+				elsif result(51) = '0' then
 					class(8) := '1';
 				else
 					class(9) := '1';
 				end if;
-			elsif exponent_zero then
-				if mantissa_zero then
+			elsif exponent_zero = '1' then
+				if mantissa_zero = '1' then
 					class(3) := '1';
 				else
 					class(2) := '1';
@@ -110,16 +111,16 @@ begin
 				class(1) := '1';
 			end if;
 		else
-			if exponent_ones then
-				if mantissa_zero then
+			if exponent_ones = '1' then
+				if mantissa_zero = '1' then
 					class(7) := '1';
-				elsif not result(51) then
+				elsif result(51) = '0' then
 					class(8) := '1';
 				else
 					class(9) := '1';
 				end if;
-			elsif exponent_zero then
-				if mantissa_zero then
+			elsif exponent_zero = '1' then
+				if mantissa_zero = '1' then
 					class(4) := '1';
 				else
 					class(5) := '1';

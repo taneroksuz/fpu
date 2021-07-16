@@ -36,23 +36,23 @@ begin
 		variable flags  : std_logic_vector(4 downto 0);
 
 	begin
-		data1  := fp_max_i.data1;
-		data2  := fp_max_i.data2;
-		ext1   := fp_max_i.ext1;
-		ext2   := fp_max_i.ext2;
-		fmt    := fp_max_i.fmt;
-		rm     := fp_max_i.rm;
+		data1 := fp_max_i.data1;
+		data2 := fp_max_i.data2;
+		ext1 := fp_max_i.ext1;
+		ext2 := fp_max_i.ext2;
+		fmt := fp_max_i.fmt;
+		rm := fp_max_i.rm;
 		class1 := fp_max_i.class1;
 		class2 := fp_max_i.class2;
 
-		nan  := x"7FF8000000000000";
+		nan := X"7FF8000000000000";
 		comp := '0';
 
 		result := (others => '0');
-		flags  := (others => '0');
+		flags := (others => '0');
 
 		if fmt = "00" then
-			nan := x"000000007FC00000";
+			nan := X"000000007FC00000";
 		end if;
 
 		if rm = "000" or rm = "001" then
@@ -61,36 +61,36 @@ begin
 
 		if rm = "000" then
 
-			if class1(8) and class2(8) then
+			if (class1(8) and class2(8)) = '1' then
 				result := nan;
-				flags(4)        := '1';
-			elsif class1(8) then
+				flags(4) := '1';
+			elsif class1(8) = '1' then
 				result := data2;
-				flags(4)        := '1';
-			elsif class2(8) then
+				flags(4) := '1';
+			elsif class2(8) = '1' then
 				result := data1;
-				flags(4)        := '1';
-			elsif class1(9) and class2(9) then
+				flags(4) := '1';
+			elsif (class1(9) and class2(9)) = '1' then
 				result := nan;
-			elsif class1(9) then
+			elsif class1(9) = '1' then
 				result := data2;
-			elsif class2(9) then
+			elsif class2(9) = '1' then
 				result := data1;
-			elsif (ext1(64) xor ext2(64)) then
-				if ext1(64) then
+			elsif (ext1(64) xor ext2(64)) = '1' then
+				if ext1(64) = '1' then
 					result := data1;
 				else
 					result := data2;
 				end if;
 			else
-				if ext1(64) then
-					if comp then
+				if ext1(64) = '1' then
+					if comp = '1' then
 						result := data1;
 					else
 						result := data2;
 					end if;
 				else
-					if comp then
+					if comp = '1' then
 						result := data2;
 					else
 						result := data1;
@@ -100,36 +100,36 @@ begin
 
 		elsif rm = "001" then
 
-			if class1(8) and class2(8) then
+			if (class1(8) and class2(8)) = '1' then
 				result := nan;
-				flags(4)        := '1';
-			elsif class1(8) then
+				flags(4) := '1';
+			elsif class1(8) = '1' then
 				result := data2;
-				flags(4)        := '1';
-			elsif class2(8) then
+				flags(4) := '1';
+			elsif class2(8) = '1' then
 				result := data1;
-				flags(4)        := '1';
-			elsif class1(9) and class2(9) then
+				flags(4) := '1';
+			elsif (class1(9) and class2(9)) = '1' then
 				result := nan;
-			elsif class1(9) then
+			elsif class1(9) = '1' then
 				result := data2;
-			elsif class2(9) then
+			elsif class2(9) = '1' then
 				result := data1;
-			elsif (ext1(64) xor ext2(64)) then
-				if ext1(64) then
+			elsif (ext1(64) xor ext2(64)) = '1' then
+				if ext1(64) = '1' then
 					result := data2;
 				else
 					result := data1;
 				end if;
 			else
-				if ext1(64) then
-					if comp then
+				if ext1(64) = '1' then
+					if comp = '1' then
 						result := data2;
 					else
 						result := data1;
 					end if;
 				else
-					if comp then
+					if comp = '1' then
 						result := data1;
 					else
 						result := data2;

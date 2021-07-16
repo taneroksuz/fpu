@@ -22,10 +22,10 @@ architecture behavior of fp_mac is
 
 begin
 
-	add <= fp_mac_i.a & 54X"0";
+	add <= fp_mac_i.a & "00" & X"0000000000000";
 	mul <= fp_mac_i.b * fp_mac_i.c;
 	mac <= mul(109 downto 0) when fp_mac_i.op = '0' else -mul(109 downto 0);
 	res <= add + mac;
-	fp_mac_o.d     <= res;
+	fp_mac_o.d <= res;
 
 end behavior;

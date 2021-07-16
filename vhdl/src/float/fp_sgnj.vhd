@@ -30,8 +30,8 @@ begin
 	begin
 		data1 := fp_sgnj_i.data1;
 		data2 := fp_sgnj_i.data2;
-		fmt   := fp_sgnj_i.fmt;
-		rm    := fp_sgnj_i.rm;
+		fmt := fp_sgnj_i.fmt;
+		rm := fp_sgnj_i.rm;
 
 		result := (others => '0');
 

@@ -11,7 +11,7 @@ module fp_fdiv
 );
 	timeunit 1ns;
 	timeprecision 1ps;
-	
+
 	parameter PERFORMANCE = 1;
 
 	fp_fdiv_reg_functional_type r;
@@ -247,6 +247,11 @@ module fp_fdiv
 							v.q0 = v.q1;
 							v.r1 = v.r0;
 						end
+					end else begin
+						fp_mac_i.a = 0;
+						fp_mac_i.b = 0;
+						fp_mac_i.c = 0;
+						fp_mac_i.op = 0;
 					end
 				end else if (r.state == 2) begin
 					if (r.istate == 0) begin
@@ -341,6 +346,11 @@ module fp_fdiv
 							v.q0 = v.q1;
 							v.r1 = v.r0;
 						end
+					end else begin
+						fp_mac_i.a = 0;
+						fp_mac_i.b = 0;
+						fp_mac_i.c = 0;
+						fp_mac_i.op = 0;
 					end
 				end else if (r.state == 3) begin
 					fp_mac_i.a = 0;

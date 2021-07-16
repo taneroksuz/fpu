@@ -33,9 +33,9 @@ begin
 		variable flags  : std_logic_vector(4 downto 0);
 
 	begin
-		data1  := fp_cmp_i.data1;
-		data2  := fp_cmp_i.data2;
-		rm     := fp_cmp_i.rm;
+		data1 := fp_cmp_i.data1;
+		data2 := fp_cmp_i.data2;
+		rm := fp_cmp_i.rm;
 		class1 := fp_cmp_i.class1;
 		class2 := fp_cmp_i.class2;
 
@@ -43,7 +43,7 @@ begin
 		cmp_le := '0';
 
 		result := (others => '0');
-		flags  := (others => '0');
+		flags := (others => '0');
 
 		if rm = "000" or rm = "001" or rm = "010" then
 			cmp_lt := to_std_logic(unsigned(data1(63 downto 0)) < unsigned(data2(63 downto 0)));
@@ -53,11 +53,11 @@ begin
 		--FEQ
 		if rm = "010" then
 
-			if class1(8) or class2(8) then
+			if (class1(8) or class2(8)) = '1' then
 				flags(4) := '1';
-			elsif class1(9) or class2(9) then
+			elsif (class1(9) or class2(9)) = '1' then
 				flags(4) := '0';
-			elsif (class1(3) or class1(4)) and (class2(3) or class2(4)) then
+			elsif ((class1(3) or class1(4)) and (class2(3) or class2(4))) = '1' then
 				result(0) := '1';
 			elsif data1 = data2 then
 				result(0) := '1';
@@ -66,14 +66,14 @@ begin
 		--FLT
 		elsif rm = "001" then
 
-			if class1(8) or class2(8) or class1(9) or class2(9) then
+			if (class1(8) or class2(8) or class1(9) or class2(9)) = '1' then
 				flags(4) := '1';
-			elsif (class1(3) or class1(4)) and (class2(3) or class2(4)) then
+			elsif ((class1(3) or class1(4)) and (class2(3) or class2(4))) = '1' then
 				result(0) := '0';
-			elsif (data1(64) xor data2(64)) then
+			elsif (data1(64) xor data2(64)) = '1' then
 				result(0) := data1(64);
 			else
-				if data1(64) then
+				if data1(64) = '1' then
 					result(0) := not cmp_le;
 				else
 					result(0) := cmp_lt;
@@ -83,14 +83,14 @@ begin
 		--FLE
 		elsif rm = "000" then
 
-			if class1(8) or class2(8) or class1(9) or class2(9) then
+			if (class1(8) or class2(8) or class1(9) or class2(9)) = '1' then
 				flags(4) := '1';
-			elsif (class1(3) or class1(4)) and (class2(3) or class2(4)) then
+			elsif ((class1(3) or class1(4)) and (class2(3) or class2(4))) = '1' then
 				result(0) := '1';
-			elsif (data1(64) xor data2(64)) then
+			elsif (data1(64) xor data2(64)) = '1' then
 				result(0) := data1(64);
 			else
-				if data1(64) then
+				if data1(64) = '1' then
 					result(0) := not cmp_lt;
 				else
 					result(0) := cmp_le;

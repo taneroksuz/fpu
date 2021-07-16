@@ -73,17 +73,17 @@ begin
 		data1 := fp_exe_i.data1;
 		data2 := fp_exe_i.data2;
 		data3 := fp_exe_i.data3;
-		op    := fp_exe_i.op;
-		fmt   := fp_exe_i.fmt;
-		rm    := fp_exe_i.rm;
+		op := fp_exe_i.op;
+		fmt := fp_exe_i.fmt;
+		rm := fp_exe_i.rm;
 
 		result := (others => '0');
-		flags  := (others => '0');
-		ready  := fp_exe_i.enable;
+		flags := (others => '0');
+		ready := fp_exe_i.enable;
 
 		fp_rnd := init_fp_rnd_in;
 
-		if op.fcvt_f2f then
+		if op.fcvt_f2f = '1' then
 			fmt_ext := fp_exe_i.op.fcvt_op;
 		else
 			fmt_ext := fp_exe_i.fmt;
@@ -171,12 +171,12 @@ begin
 
 		if fp_fma_o.ready = '1' then
 			result := fp_rnd_o.result;
-			flags  := fp_rnd_o.flags;
-			ready  := '1';
+			flags := fp_rnd_o.flags;
+			ready := '1';
 		elsif fp_fdiv_o.ready = '1' then
 			result := fp_rnd_o.result;
-			flags  := fp_rnd_o.flags;
-			ready  := '1';
+			flags := fp_rnd_o.flags;
+			ready := '1';
 		elsif op.fmadd = '1' then
 			ready := '0';
 		elsif op.fmsub = '1' then
@@ -197,31 +197,31 @@ begin
 			ready := '0';
 		elsif op.fsgnj = '1' then
 			result := fp_sgnj_o.result;
-			flags  := "00000";
+			flags := "00000";
 		elsif op.fmax = '1' then
 			result := fp_max_o.result;
-			flags  := fp_max_o.flags;
+			flags := fp_max_o.flags;
 		elsif op.fcmp = '1' then
 			result := fp_cmp_o.result;
-			flags  := fp_cmp_o.flags;
+			flags := fp_cmp_o.flags;
 		elsif op.fclass = '1' then
-			result := "00" & x"0000000000000" & class1;
-			flags  := "00000";
+			result := "00" & X"0000000000000" & class1;
+			flags := "00000";
 		elsif op.fmv_f2i = '1' then
 			result := data1;
-			flags  := "00000";
+			flags := "00000";
 		elsif op.fmv_i2f = '1' then
 			result := data1;
-			flags  := "00000";
+			flags := "00000";
 		elsif op.fcvt_f2f = '1' then
 			result := fp_rnd_o.result;
-			flags  := fp_rnd_o.flags;
+			flags := fp_rnd_o.flags;
 		elsif op.fcvt_i2f = '1' then
 			result := fp_rnd_o.result;
-			flags  := fp_rnd_o.flags;
+			flags := fp_rnd_o.flags;
 		elsif op.fcvt_f2i = '1' then
 			result := fp_cvt_f2i_o.result;
-			flags  := fp_cvt_f2i_o.flags;
+			flags := fp_cvt_f2i_o.flags;
 		end if;
 
 		fp_exe_o.result <= result;

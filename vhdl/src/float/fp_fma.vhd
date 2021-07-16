@@ -3,6 +3,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_misc.all;
 
 use work.lzc_wire.all;
 use work.fp_cons.all;
@@ -60,59 +61,59 @@ begin
 		variable ready      : std_logic;
 
 	begin
-		a       := fp_fma_i.data1;
-		b       := fp_fma_i.data2;
-		c       := fp_fma_i.data3;
+		a := fp_fma_i.data1;
+		b := fp_fma_i.data2;
+		c := fp_fma_i.data3;
 		class_a := fp_fma_i.class1;
 		class_b := fp_fma_i.class2;
 		class_c := fp_fma_i.class3;
-		fmt     := fp_fma_i.fmt;
-		rm      := fp_fma_i.rm;
-		snan    := '0';
-		qnan    := '0';
-		dbz     := '0';
-		inf     := '0';
-		zero    := '0';
-		neg     := fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd;
-		ready   := fp_fma_i.op.fmadd or fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fadd or fp_fma_i.op.fsub or fp_fma_i.op.fmul;
+		fmt := fp_fma_i.fmt;
+		rm := fp_fma_i.rm;
+		snan := '0';
+		qnan := '0';
+		dbz := '0';
+		inf := '0';
+		zero := '0';
+		neg := fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd;
+		ready := fp_fma_i.op.fmadd or fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fadd or fp_fma_i.op.fsub or fp_fma_i.op.fmul;
 
-		if fp_fma_i.op.fadd or fp_fma_i.op.fsub then
-			c       := b;
+		if (fp_fma_i.op.fadd or fp_fma_i.op.fsub) = '1' then
+			c := b;
 			class_c := class_b;
-			b       := (62 downto 52 => '1', others => '0'); -- +1.0
+			b := (62 downto 52 => '1', others => '0'); -- +1.0
 			class_b := (6 => '1', others => '0');
 		end if;
 
-		if fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fsub then
+		if (fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fsub) = '1' then
 			c(64) := not c(64);
 		end if;
 
-		if fp_fma_i.op.fmul then
-			c       := (64 => a(64) xor b(64), others => '0');
+		if fp_fma_i.op.fmul = '1' then
+			c := (64 => a(64) xor b(64), others => '0');
 			class_c := (others => '0');
 		end if;
 
-		sign_a     := a(64);
+		sign_a := a(64);
 		exponent_a := a(63 downto 52);
-		mantissa_a := or(exponent_a) & a(51 downto 0);
+		mantissa_a := or_reduce(exponent_a) & a(51 downto 0);
 
-		sign_b     := b(64);
+		sign_b := b(64);
 		exponent_b := b(63 downto 52);
-		mantissa_b := or(exponent_b) & b(51 downto 0);
+		mantissa_b := or_reduce(exponent_b) & b(51 downto 0);
 
-		sign_c     := c(64);
+		sign_c := c(64);
 		exponent_c := c(63 downto 52);
-		mantissa_c := or(exponent_c) & c(51 downto 0);
+		mantissa_c := or_reduce(exponent_c) & c(51 downto 0);
 
-		if class_a(8) or class_b(8) or class_c(8) then
+		if (class_a(8) or class_b(8) or class_c(8)) = '1' then
 			snan := '1';
-		elsif ((class_a(3) or class_a(4)) and (class_b(0) or class_b(7))) or ((class_b(3) or class_b(4)) and (class_a(0) or class_a(7))) then
+		elsif (((class_a(3) or class_a(4)) and (class_b(0) or class_b(7))) or ((class_b(3) or class_b(4)) and (class_a(0) or class_a(7)))) = '1' then
 			snan := '1';
-		elsif (class_a(9) or class_b(9) or class_c(9)) then
+		elsif (class_a(9) or class_b(9) or class_c(9)) = '1' then
 			qnan := '1';
-		elsif (((class_a(0) or class_a(7)) or (class_b(0) or class_b(7))) and ((class_c(0) or class_c(7)) and to_std_logic((a(64) xor b(64)) /= c(64)))) then
+		elsif (((class_a(0) or class_a(7)) or (class_b(0) or class_b(7))) and ((class_c(0) or class_c(7)) and to_std_logic((a(64) xor b(64)) /= c(64)))) = '1' then
 			snan := '1';
-		elsif (class_a(0) or class_a(7)) or (class_b(0) or class_b(7)) or (class_c(0) or class_c(7)) then
+		elsif ((class_a(0) or class_a(7)) or (class_b(0) or class_b(7)) or (class_c(0) or class_c(7))) = '1' then
 			inf := '1';
 		end if;
 
@@ -174,24 +175,24 @@ begin
 		variable exponent_neg : std_logic;
 
 	begin
-		fmt        := r_1.fmt;
-		rm         := r_1.rm;
-		snan       := r_1.snan;
-		qnan       := r_1.qnan;
-		dbz        := r_1.dbz;
-		inf        := r_1.inf;
-		zero       := r_1.zero;
-		neg        := r_1.neg;
-		sign_a     := r_1.sign_a;
+		fmt := r_1.fmt;
+		rm := r_1.rm;
+		snan := r_1.snan;
+		qnan := r_1.qnan;
+		dbz := r_1.dbz;
+		inf := r_1.inf;
+		zero := r_1.zero;
+		neg := r_1.neg;
+		sign_a := r_1.sign_a;
 		exponent_a := r_1.exponent_a;
 		mantissa_a := r_1.mantissa_a;
-		sign_b     := r_1.sign_b;
+		sign_b := r_1.sign_b;
 		exponent_b := r_1.exponent_b;
 		mantissa_b := r_1.mantissa_b;
-		sign_c     := r_1.sign_c;
+		sign_c := r_1.sign_c;
 		exponent_c := r_1.exponent_c;
 		mantissa_c := r_1.mantissa_c;
-		ready      := r_1.ready;
+		ready := r_1.ready;
 
 		sign_add := sign_c;
 		sign_mul := sign_a xor sign_b;
@@ -199,40 +200,40 @@ begin
 		exponent_add := signed("00" & exponent_c);
 		exponent_mul := signed("00" & exponent_a) + signed("00" & exponent_b) - 2047;
 
-		if and(exponent_c) then
-			exponent_add := 14X"0FFF";
+		if and_reduce(exponent_c) = '1' then
+			exponent_add := "00" & X"FFF";
 		end if;
-		if and(exponent_a) or and(exponent_b) then
-			exponent_mul := 14X"0FFF";
+		if (and_reduce(exponent_a) or and_reduce(exponent_b)) = '1' then
+			exponent_mul := "00" & X"FFF";
 		end if;
 
-		mantissa_add := 3X"0" & mantissa_c & 108X"0";
-		mantissa_mul := 2X"0" & std_logic_vector(unsigned(mantissa_a) * unsigned(mantissa_b)) & 56X"0";
+		mantissa_add := "000" & mantissa_c & X"000000000000000000000000000";
+		mantissa_mul := "00" & std_logic_vector(unsigned(mantissa_a) * unsigned(mantissa_b)) & X"00000000000000";
 
 		exponent_dif := exponent_mul - exponent_add;
-		counter_dif  := 0;
+		counter_dif := 0;
 
 		exponent_neg := exponent_dif(13);
 
-		if exponent_neg then
+		if exponent_neg = '1' then
 			counter_dif := 56;
 			if exponent_dif > -56 then
 				counter_dif := -to_integer(exponent_dif);
 			end if;
-			mantissa_l  := mantissa_add;
-			mantissa_r  := mantissa_mul;
+			mantissa_l := mantissa_add;
+			mantissa_r := mantissa_mul;
 		else
 			counter_dif := 108;
 			if exponent_dif < 108 then
 				counter_dif := to_integer(exponent_dif);
 			end if;
-			mantissa_l  := mantissa_mul;
-			mantissa_r  := mantissa_add;
+			mantissa_l := mantissa_mul;
+			mantissa_r := mantissa_add;
 		end if;
 
-		mantissa_r := mantissa_r srl counter_dif;
+		mantissa_r := std_logic_vector(shift_right(unsigned(mantissa_r),counter_dif));
 
-		if exponent_neg then
+		if exponent_neg = '1' then
 			mantissa_add := mantissa_l;
 			mantissa_mul := mantissa_r;
 		else
@@ -269,9 +270,11 @@ begin
 		variable zero         : std_logic;
 		variable neg          : std_logic;
 		variable sign_mul     : std_logic;
+		variable not_mul      : integer range 0 to 1;
 		variable exponent_mul : signed(13 downto 0);
 		variable mantissa_mul : std_logic_vector(163 downto 0);
 		variable sign_add     : std_logic;
+		variable not_add      : integer range 0 to 1;
 		variable exponent_add : signed(13 downto 0);
 		variable mantissa_add : std_logic_vector(163 downto 0);
 		variable exponent_neg : std_logic;
@@ -284,44 +287,50 @@ begin
 		variable sign_acc : std_logic;
 
 	begin
-		fmt          := r_2.fmt;
-		rm           := r_2.rm;
-		snan         := r_2.snan;
-		qnan         := r_2.qnan;
-		dbz          := r_2.dbz;
-		inf          := r_2.inf;
-		zero         := r_2.zero;
-		neg          := r_2.neg;
-		sign_mul     := r_2.sign_mul;
+		fmt := r_2.fmt;
+		rm := r_2.rm;
+		snan := r_2.snan;
+		qnan := r_2.qnan;
+		dbz := r_2.dbz;
+		inf := r_2.inf;
+		zero := r_2.zero;
+		neg := r_2.neg;
+		sign_mul := r_2.sign_mul;
 		exponent_mul := r_2.exponent_mul;
 		mantissa_mul := r_2.mantissa_mul;
-		sign_add     := r_2.sign_add;
+		sign_add := r_2.sign_add;
 		exponent_add := r_2.exponent_add;
 		mantissa_add := r_2.mantissa_add;
 		exponent_neg := r_2.exponent_neg;
-		ready        := r_2.ready;
+		ready := r_2.ready;
 
-		if exponent_neg then
+		if exponent_neg = '1' then
 			exponent_mac := exponent_add;
 		else
 			exponent_mac := exponent_mul;
 		end if;
 
-		if sign_add then
+		if sign_add = '1' then
 			mantissa_add := not mantissa_add;
+			not_add := 1;
+		else
+			not_add := 0;
 		end if;
-		if sign_mul then
+		if sign_mul = '1' then
 			mantissa_mul := not mantissa_mul;
+			not_mul := 1;
+		else
+			not_mul := 0;
 		end if;
 
-		mantissa_mac := std_logic_vector(signed(mantissa_add) + signed(mantissa_mul) + sign_add + sign_mul);
-		sign_mac     := mantissa_mac(163);
+		mantissa_mac := std_logic_vector(signed(mantissa_add) + signed(mantissa_mul) + not_add + not_mul);
+		sign_mac := mantissa_mac(163);
 
-		zero := nor(mantissa_mac);
+		zero := nor_reduce(mantissa_mac);
 
-		if zero then
+		if zero = '1' then
 			sign_mac := sign_add and sign_mul;
-		elsif sign_mac then
+		elsif sign_mac = '1' then
 			mantissa_mac := std_logic_vector(-signed(mantissa_mac));
 		end if;
 
@@ -354,6 +363,8 @@ begin
 		variable mantissa_mac : std_logic_vector(163 downto 0);
 		variable ready        : std_logic;
 
+		variable mantissa_lzc : std_logic_vector(255 downto 0);
+
 		variable counter_mac : integer range 0 to 255;
 		variable counter_sub : integer range 0 to 63;
 
@@ -365,47 +376,49 @@ begin
 		variable grs          : std_logic_vector(2 downto 0);
 
 	begin
-		fmt          := r_3.fmt;
-		rm           := r_3.rm;
-		snan         := r_3.snan;
-		qnan         := r_3.qnan;
-		dbz          := r_3.dbz;
-		inf          := r_3.inf;
-		zero         := r_3.zero;
-		neg          := r_3.neg;
-		sign_mac     := r_3.sign_mac;
+		fmt := r_3.fmt;
+		rm := r_3.rm;
+		snan := r_3.snan;
+		qnan := r_3.qnan;
+		dbz := r_3.dbz;
+		inf := r_3.inf;
+		zero := r_3.zero;
+		neg := r_3.neg;
+		sign_mac := r_3.sign_mac;
 		exponent_mac := r_3.exponent_mac;
 		mantissa_mac := r_3.mantissa_mac;
-		ready        := r_3.ready;
+		ready := r_3.ready;
 
 		bias := 1918;
 		if fmt = "01" then
 			bias := 1022;
 		end if;
 
-		lzc_i.a              <= (mantissa_mac(162 downto 0), others => '1');
-		counter_mac  := to_integer(unsigned(not (lzc_o.c)));
-		mantissa_mac := mantissa_mac sll counter_mac;
+		mantissa_lzc := mantissa_mac(162 downto 0) & "1" & X"FFFFFFFFFFFFFFFFFFFFFFF";
 
-		sign_rnd     := sign_mac xor neg;
+		lzc_i.a <= mantissa_lzc;
+		counter_mac := to_integer(unsigned(not (lzc_o.c)));
+		mantissa_mac := std_logic_vector(shift_left(unsigned(mantissa_mac),counter_mac));
+
+		sign_rnd := sign_mac xor neg;
 		exponent_rnd := to_integer(exponent_mac) - bias - counter_mac;
 
 		counter_sub := 0;
 		if exponent_rnd <= 0 then
-			counter_sub  := 63;
+			counter_sub := 63;
 			if exponent_rnd > -63 then
 				counter_sub := 1 - exponent_rnd;
 			end if;
 			exponent_rnd := 0;
 		end if;
 
-		mantissa_mac := mantissa_mac srl counter_sub;
+		mantissa_mac := std_logic_vector(shift_right(unsigned(mantissa_mac),counter_sub));
 
-		mantissa_rnd := 30X"0" & mantissa_mac(162 downto 139);
-		grs          := mantissa_mac(138 downto 137) & or(mantissa_mac(136 downto 0));
+		mantissa_rnd := "00" & X"0000000" & mantissa_mac(162 downto 139);
+		grs := mantissa_mac(138 downto 137) & or_reduce(mantissa_mac(136 downto 0));
 		if fmt = "01" then
-			mantissa_rnd := 1X"0" & mantissa_mac(162 downto 110);
-			grs          := mantissa_mac(109 downto 108) & or(mantissa_mac(107 downto 0));
+			mantissa_rnd := "0" & mantissa_mac(162 downto 110);
+			grs := mantissa_mac(109 downto 108) & or_reduce(mantissa_mac(107 downto 0));
 		end if;
 
 		rin_4.sign_rnd <= sign_rnd;
@@ -428,7 +441,7 @@ begin
 		fp_fma_o.fp_rnd.sig <= r_4.sign_rnd;
 		fp_fma_o.fp_rnd.expo <= r_4.exponent_rnd;
 		fp_fma_o.fp_rnd.mant <= r_4.mantissa_rnd;
-		fp_fma_o.fp_rnd.rema <= 2X"0";
+		fp_fma_o.fp_rnd.rema <= "00";
 		fp_fma_o.fp_rnd.fmt <= r_4.fmt;
 		fp_fma_o.fp_rnd.rm <= r_4.rm;
 		fp_fma_o.fp_rnd.grs <= r_4.grs;

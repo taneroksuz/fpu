@@ -103,11 +103,11 @@ begin
 
 		case r.state is
 			when TEST0 =>
-				v.state := TEST1;
 				if reset = '0' then
 					fpu_i.fp_exe_i.enable <= '0';
 				else
 					fpu_i.fp_exe_i.enable <= '1';
+					v.state := TEST1;
 				end if;
 			when TEST1 =>
 				if fpu_o.fp_exe_o.ready = '1' then
