@@ -11,7 +11,7 @@ use work.fp_wire.all;
 
 entity fp_fdiv is
 	generic(
-		PERFORMANCE : integer := 0
+		PERFORMANCE : integer := 1
 	);
 	port(
 		reset     : in  std_logic;
