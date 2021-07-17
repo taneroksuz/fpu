@@ -86,13 +86,13 @@ module fp_fdiv
 					if (v.istate == 10) begin
 						v.state = 3;
 					end
-					v.istate = v.istate + 1;
+					v.istate = v.istate + 6'd1;
 					v.ready = 0;
 				end else if (r.state == 2) begin
 					if (v.istate == 13) begin
 						v.state = 3;
 					end
-					v.istate = v.istate + 1;
+					v.istate = v.istate + 6'd1;
 					v.ready = 0;
 				end else if (r.state == 3) begin
 					v.state = 4;
@@ -154,7 +154,7 @@ module fp_fdiv
 
 					v.sign_fdiv = v.a[64] ^ v.b[64];
 					v.exponent_fdiv = {2'h0,v.a[63:52]} - {2'h0,v.b[63:52]};
-					v.y = {1'h0,!|v.b[51:45],reciprocal_lut[$unsigned(v.b[51:45])],46'h0};
+					v.y = {1'h0,~|v.b[51:45],reciprocal_lut[$unsigned(v.b[51:45])],46'h0};
 					v.op = 0;
 
 					if (fp_fdiv_i.op.fsqrt) begin
@@ -162,8 +162,8 @@ module fp_fdiv
 						if (!v.a[52]) begin
 							v.qa = v.qa >> 1;
 						end
-						v.index = $unsigned(v.qa[54:48]) - 32;
-						v.exponent_fdiv = ({2'h0,v.a[63:52]} - 2045) >> 1;
+						v.index = $unsigned(v.qa[54:48]) - 7'd32;
+						v.exponent_fdiv = ($signed({2'h0,v.a[63:52]}) + $signed(-14'd2045)) >>> 1;
 						v.y = {1'h0,reciprocal_root_lut[v.index],47'h0};
 						v.op = 1;
 					end
@@ -464,7 +464,7 @@ module fp_fdiv
 					end else if (v_fix.istate == 0) begin
 						v_fix.state = 2;
 					end else begin
-						v_fix.istate = v_fix.istate - 1;
+						v_fix.istate = v_fix.istate - 6'd1;
 					end
 					v_fix.ready = 0;
 				end else if (r_fix.state == 2) begin
@@ -527,7 +527,7 @@ module fp_fdiv
 
 					v_fix.exponent_fdiv = {2'h0,v_fix.a[63:52]} - {2'h0,v_fix.b[63:52]};
 					if (fp_fdiv_i.op.fsqrt) begin
-						v_fix.exponent_fdiv = ({2'h0,v_fix.a[63:52]} - 2045) >> 1;
+						v_fix.exponent_fdiv = ($signed({2'h0,v_fix.a[63:52]}) + $signed(-14'd2045)) >>> 1;
 					end
 
 					v_fix.q = 0;

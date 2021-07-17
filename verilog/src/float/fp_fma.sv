@@ -146,7 +146,7 @@ module fp_fma
 		v_2.sign_mul = v_2.sign_a ^ v_2.sign_b;
 
 		v_2.exponent_add = $signed({2'h0,v_2.exponent_c});
-		v_2.exponent_mul = $signed({2'h0,v_2.exponent_a}) + $signed({2'h0,v_2.exponent_b}) - 2047;
+		v_2.exponent_mul = $signed({2'h0,v_2.exponent_a}) + $signed({2'h0,v_2.exponent_b}) - 14'd2047;
 
 		if (&v_2.exponent_c) begin
 			v_2.exponent_add = 14'h0FFF;

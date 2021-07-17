@@ -1,3 +1,4 @@
+import lzc_wire::*;
 import fp_wire::*;
 
 module fp_cvt
@@ -101,7 +102,7 @@ module fp_cvt
 		end
 
 		v_f2i.sign_cvt = v_f2i.data[64];
-		v_f2i.exponent_cvt = v_f2i.data[63:52] - 2044;
+		v_f2i.exponent_cvt = v_f2i.data[63:52] - 13'd2044;
 		v_f2i.mantissa_cvt = {68'h1,v_f2i.data[51:0]};
 
 		v_f2i.oor = 0;
@@ -245,7 +246,7 @@ module fp_cvt
 			v_i2f.exponent_uint = 63;
 		end
 
-		v_i2f.zero = !|v_i2f.mantissa_uint;
+		v_i2f.zero = ~|v_i2f.mantissa_uint;
 
 		lzc_i.a = v_i2f.mantissa_uint;
 		v_i2f.counter_uint = ~lzc_o.c;

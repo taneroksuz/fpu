@@ -33,8 +33,8 @@ module fp_cmp
 		flags = 0;
 
 		if ((rm == 0) || (rm == 1) || (rm == 2)) begin
-			comp_lt = (data1[63:0] < data2[63:0]) ? 1 : 0;
-			comp_le = (data1[63:0] <= data2[63:0]) ? 1 : 0;
+			comp_lt = (data1[63:0] < data2[63:0]) ? 1'b1 : 1'b0;
+			comp_le = (data1[63:0] <= data2[63:0]) ? 1'b1 : 1'b0;
 		end
 
 		if (rm == 2) begin //feq

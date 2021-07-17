@@ -24,7 +24,7 @@ package fp_wire;
 		logic [1:0] fcvt_op;
 	} fp_operation_type;
 
-	fp_operation_type init_fp_operation = '{
+	parameter fp_operation_type init_fp_operation = '{
 		fmadd : 0,
 		fmsub : 0,
 		fnmadd : 0,
@@ -135,7 +135,7 @@ package fp_wire;
 		logic zero;
 	} fp_rnd_in_type;
 
-	fp_rnd_in_type init_fp_rnd_in = '{
+	parameter fp_rnd_in_type init_fp_rnd_in = '{
 		sig : 0,
 		expo : 0,
 		mant : 0,
@@ -193,7 +193,7 @@ package fp_wire;
 		logic ready;
 	} fp_fma_reg_type_1;
 
-	fp_fma_reg_type_1 init_fp_fma_reg_1 = '{
+	parameter fp_fma_reg_type_1 init_fp_fma_reg_1 = '{
 		fmt : 0,
 		rm : 0,
 		snan : 0,
@@ -260,7 +260,7 @@ package fp_wire;
 		logic ready;
 	} fp_fma_reg_type_2;
 
-	fp_fma_reg_type_2 init_fp_fma_reg_2 = '{
+	parameter fp_fma_reg_type_2 init_fp_fma_reg_2 = '{
 		fmt : 0,
 		rm : 0,
 		snan : 0,
@@ -326,7 +326,7 @@ package fp_wire;
 		logic ready;
 	}fp_fma_reg_type_3;
 
-	fp_fma_reg_type_3 init_fp_fma_reg_3 = '{
+	parameter fp_fma_reg_type_3 init_fp_fma_reg_3 = '{
 		fmt : 0,
 		rm : 0,
 		snan : 0,
@@ -378,7 +378,7 @@ package fp_wire;
 		logic ready;
 	} fp_fma_reg_type_4;
 
-	fp_fma_reg_type_4 init_fp_fma_reg_4 = '{
+	parameter fp_fma_reg_type_4 init_fp_fma_reg_4 = '{
 		sign_rnd : 0,
 		exponent_rnd : 0,
 		mantissa_rnd : 0,
@@ -491,7 +491,7 @@ package fp_wire;
 		logic ready;
 	} fp_fdiv_reg_functional_type;
 
-	fp_fdiv_reg_functional_type init_fp_fdiv_reg_functional = '{
+	parameter fp_fdiv_reg_functional_type init_fp_fdiv_reg_functional = '{
 		state : 0,
 		istate : 0,
 		fmt : 0,
@@ -580,7 +580,7 @@ package fp_wire;
 		logic ready;
 	} fp_fdiv_reg_fixed_type;
 
-	fp_fdiv_reg_fixed_type init_fp_fdiv_reg_fixed = '{
+	parameter fp_fdiv_reg_fixed_type init_fp_fdiv_reg_fixed = '{
 		state : 0,
 		istate : 0,
 		fmt : 0,
