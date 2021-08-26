@@ -14,6 +14,7 @@ ${ghdl} --synth -fsynopsys \
               ../../vhdl/src/lzc/lzc_wire.vhd \
               ../../vhdl/src/float/fp_cons.vhd \
               ../../vhdl/src/float/fp_wire.vhd \
+              ../../vhdl/src/float/fp_func.vhd \
               ../../vhdl/src/lzc/lzc_lib.vhd \
               ../../vhdl/src/lzc/lzc_4.vhd \
               ../../vhdl/src/lzc/lzc_8.vhd \

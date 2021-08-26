@@ -23,6 +23,7 @@ ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_wire.vhd
 
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/float/fp_cons.vhd
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/float/fp_wire.vhd
+${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/float/fp_func.vhd
 
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_lib.vhd
 ${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_4.vhd
