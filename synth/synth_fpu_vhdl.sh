@@ -36,3 +36,9 @@ ${ghdl} --synth -fsynopsys \
               ../../vhdl/src/float/fp_exe.vhd \
               ../../vhdl/src/float/fp_unit.vhd \
               -e fp_unit > fp_unit.vhd
+
+cp ../../vhdl/src/lzc/lzc_wire.vhd .
+cp ../../vhdl/src/lzc/lzc_lib.vhd .
+cp ../../vhdl/src/float/fp_cons.vhd .
+cp ../../vhdl/src/float/fp_wire.vhd .
+cp ../../vhdl/src/float/fp_lib.vhd .
