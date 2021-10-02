@@ -1,4 +1,4 @@
-# RISCV FPU #
+# RISCV FPU Single and Double Precision #
 
 This floating point unit is conform to IEEE 754-2008 standards. Supported operations are **compare**, **min-max**, **conversions**, **addition**, **subtruction**, **multiplication**, **fused multiply add**, **square root** and **division** in single and double precisions. Except **square root** and **division** all operations are pipelined.
 
@@ -8,7 +8,7 @@ This unit uses canonical **nan** (not a number) form, if it generates any **nan*
 
 ## LATENCY ##
 
-### Single and Double Precision
+### Single and Double Precision ###
 
 | comp | max | conv | add | sub | mul | fma |
 |:----:|:---:|:----:|:---:|:---:|:---:|:---:|
@@ -29,3 +29,5 @@ This unit uses canonical **nan** (not a number) form, if it generates any **nan*
 | 1         | 14       | 17          |
 
 The installation scripts need **root** permission in order to install packages and tools for simulation and testcase generation.
+
+[Link for floating point unit with only single precision format.](https://github.com/taneroksuz/riscv-sfpu.git)
