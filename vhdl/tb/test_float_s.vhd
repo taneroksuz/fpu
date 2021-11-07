@@ -11,6 +11,10 @@ use work.fp_cons.all;
 use work.fp_wire.all;
 use work.all;
 
+library std;
+use std.textio.all;
+use std.env.all;
+
 entity test_float_s is
 end entity test_float_s;
 
@@ -78,6 +82,14 @@ architecture behavior of test_float_s is
 	signal fpu_i : fp_unit_in_type;
 	signal fpu_o : fp_unit_out_type;
 
+	procedure print(
+		msg : in string) is
+		variable buf : line;
+	begin
+		write(buf, msg);
+		writeline(output, buf);
+	end procedure print;
+
 begin
 
 	reset <= '1' after 1 ns;
@@ -124,12 +136,20 @@ begin
 			when TEST0 =>
 
 				if endfile(infile) then
-					report "TEST SUCCEEDED";
-					std.env.finish;
+					print("TEST SUCCEEDED");
+					finish;
 				end if;
 
-				readline(infile, inline);
-				hread(inline, dataread);
+				if reset = '0' then
+					dataread := (others => '0');
+				end if;
+
+				if rising_edge(clock) then
+					if reset = '1' then
+						readline(infile, inline);
+						hread(inline, dataread);
+					end if;
+				end if;
 
 				v.data1 := dataread(287 downto 224);
 				v.data2 := dataread(223 downto 160);
@@ -178,16 +198,16 @@ begin
 			when others =>
 
 				if (or v.result_diff = '1') or (or v.flags_diff = '1') then
-					report "TEST FAILED" severity warning;
-					report "A                 = 0x" & to_hstring(v.data1);
-					report "B                 = 0x" & to_hstring(v.data2);
-					report "RESULT DIFFERENCE = 0x" & to_hstring(v.result_diff);
-					report "RESULT REFERENCE  = 0x" & to_hstring(v.result_orig);
-					report "RESULT CALCULATED = 0x" & to_hstring(v.result_calc);
-					report "FLAGS DIFFERENCE  = 0x" & to_hstring(v.flags_diff);
-					report "FLAGS REFERENCE   = 0x" & to_hstring(v.flags_orig);
-					report "FLAGS CALCULATED  = 0x" & to_hstring(v.flags_calc);
-					std.env.finish;
+					print("TEST FAILED");
+					print("A                 = 0x" & to_hstring(v.data1));
+					print("B                 = 0x" & to_hstring(v.data2));
+					print("RESULT DIFFERENCE = 0x" & to_hstring(v.result_diff));
+					print("RESULT REFERENCE  = 0x" & to_hstring(v.result_orig));
+					print("RESULT CALCULATED = 0x" & to_hstring(v.result_calc));
+					print("FLAGS DIFFERENCE  = 0x" & to_hstring(v.flags_diff));
+					print("FLAGS REFERENCE   = 0x" & to_hstring(v.flags_orig));
+					print("FLAGS CALCULATED  = 0x" & to_hstring(v.flags_calc));
+					finish;
 				end if;
 
 				v.op := init_fp_operation;

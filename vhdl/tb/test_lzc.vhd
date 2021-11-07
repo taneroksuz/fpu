@@ -6,6 +6,10 @@ use ieee.numeric_std.all;
 
 use work.lzc_lib.all;
 
+library std;
+use std.textio.all;
+use std.env.all;
+
 entity test_lzc is
 	generic(
 		XLEN : natural := 256;
@@ -27,6 +31,14 @@ architecture behavior of test_lzc is
 	constant msb : std_logic_vector(XLEN - 1 downto 0) := "1" & (XLEN - 2 downto 0 => '0');
 	constant lsb : std_logic_vector(XLEN - 1 downto 0) := (XLEN - 1 downto 1 => '0') & "1";
 
+	procedure print(
+		msg : in string) is
+		variable buf : line;
+	begin
+		write(buf, msg);
+		writeline(output, buf);
+	end procedure print;
+
 begin
 
 	reset <= '1' after 1 ns;
@@ -42,12 +54,13 @@ begin
 		elsif rising_edge(clock) then
 
 			if (a = msb) then
-				report "TEST SUCCEEDED";
-				std.env.finish;
+				print("TEST SUCCEEDED");
+				finish;
 			end if;
 
 			if (counter /= to_integer(unsigned(not z))) then
-				report "TEST FAILED" severity warning;
+				print("TEST FAILED");
+				finish;
 			end if;
 
 			a       <= std_logic_vector(shift_left(unsigned(a), 1));

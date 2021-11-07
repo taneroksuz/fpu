@@ -11,6 +11,10 @@ use work.fp_cons.all;
 use work.fp_wire.all;
 use work.all;
 
+library std;
+use std.textio.all;
+use std.env.all;
+
 entity test_float_p is
 end entity test_float_p;
 
@@ -83,6 +87,14 @@ architecture behavior of test_float_p is
 	signal fpu_i : fp_unit_in_type;
 	signal fpu_o : fp_unit_out_type;
 
+	procedure print(
+		msg : in string) is
+		variable buf : line;
+	begin
+		write(buf, msg);
+		writeline(output, buf);
+	end procedure print;
+
 begin
 
 	reset <= '1' after 1 ns;
@@ -123,8 +135,8 @@ begin
 				initial := init_fpu_test_reg;
 
 				if endfile(infile) then
-					report "TEST SUCCEEDED";
-					std.env.finish;
+					print("TEST SUCCEEDED");
+					finish;
 				end if;
 
 				readline(infile, inline);
@@ -192,17 +204,17 @@ begin
 			end if;
 
 			if (or final.result_diff = '1') or (or final.flags_diff = '1') then
-				report "TEST FAILED" severity warning;
-				report "A                 = 0x" & to_hstring(final.data1);
-				report "B                 = 0x" & to_hstring(final.data2);
-				report "C                 = 0x" & to_hstring(final.data3);
-				report "RESULT DIFFERENCE = 0x" & to_hstring(final.result_diff);
-				report "RESULT REFERENCE  = 0x" & to_hstring(final.result_orig);
-				report "RESULT CALCULATED = 0x" & to_hstring(final.result_calc);
-				report "FLAGS DIFFERENCE  = 0x" & to_hstring(final.flags_diff);
-				report "FLAGS REFERENCE   = 0x" & to_hstring(final.flags_orig);
-				report "FLAGS CALCULATED  = 0x" & to_hstring(final.flags_calc);
-				std.env.finish;
+				print("TEST FAILED");
+				print("A                 = 0x" & to_hstring(final.data1));
+				print("B                 = 0x" & to_hstring(final.data2));
+				print("C                 = 0x" & to_hstring(final.data3));
+				print("RESULT DIFFERENCE = 0x" & to_hstring(final.result_diff));
+				print("RESULT REFERENCE  = 0x" & to_hstring(final.result_orig));
+				print("RESULT CALCULATED = 0x" & to_hstring(final.result_calc));
+				print("FLAGS DIFFERENCE  = 0x" & to_hstring(final.flags_diff));
+				print("FLAGS REFERENCE   = 0x" & to_hstring(final.flags_orig));
+				print("FLAGS CALCULATED  = 0x" & to_hstring(final.flags_calc));
+				finish;
 			end if;
 
 		end if;
