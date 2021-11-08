@@ -50,6 +50,7 @@ architecture behavior of test_float_s is
 		flags_orig  : std_logic_vector(4 downto 0);
 		flags_calc  : std_logic_vector(4 downto 0);
 		flags_diff  : std_logic_vector(4 downto 0);
+		terminate   : std_logic;
 	end record;
 
 	constant init_fpu_test_reg : fpu_test_reg_type := (
@@ -70,7 +71,8 @@ architecture behavior of test_float_s is
 		result_diff => (others => '0'),
 		flags_orig  => (others => '0'),
 		flags_calc  => (others => '0'),
-		flags_diff  => (others => '0')
+		flags_diff  => (others => '0'),
+		terminate   => '0'
 	);
 
 	signal reset : std_logic := '0';
@@ -106,7 +108,6 @@ begin
 	process(all)
 		file infile       : text open read_mode is "fpu.dat";
 		variable inline   : line;
-		variable dataread : std_logic_vector(287 downto 0);
 
 		variable v : fpu_test_reg_type;
 
@@ -136,30 +137,27 @@ begin
 			when TEST0 =>
 
 				if endfile(infile) then
+					v.terminate := '1';
+					v.dataread := (others => '0');
+				else
+					readline(infile, inline);
+					hread(inline, v.dataread);
+				end if;
+
+				if (v.terminate = '1') then
 					print("TEST SUCCEEDED");
 					finish;
 				end if;
 
-				if reset = '0' then
-					dataread := (others => '0');
-				end if;
-
-				if rising_edge(clock) then
-					if reset = '1' then
-						readline(infile, inline);
-						hread(inline, dataread);
-					end if;
-				end if;
-
-				v.data1 := dataread(287 downto 224);
-				v.data2 := dataread(223 downto 160);
-				v.data3 := dataread(159 downto 96);
-				v.result := dataread(95 downto 32);
-				v.flags := dataread(28 downto 24);
-				v.fmt := dataread(21 downto 20);
-				v.rm := dataread(18 downto 16);
-				v.conv := dataread(13 downto 12);
-				v.opcode := dataread(9 downto 0);
+				v.data1 := v.dataread(287 downto 224);
+				v.data2 := v.dataread(223 downto 160);
+				v.data3 := v.dataread(159 downto 96);
+				v.result := v.dataread(95 downto 32);
+				v.flags := v.dataread(28 downto 24);
+				v.fmt := v.dataread(21 downto 20);
+				v.rm := v.dataread(18 downto 16);
+				v.conv := v.dataread(13 downto 12);
+				v.opcode := v.dataread(9 downto 0);
 
 				if reset = '0' then
 					v.op := init_fp_operation;
@@ -184,9 +182,9 @@ begin
 				v.result_orig := v.result;
 				v.flags_orig := v.flags;
 
-				if (v.op.fcvt_f2i = '0') and (v.result_calc = x"000000007FC00000") then
+				if (v.op.fcvt_f2i = '0' and v.op.fcmp = '0') and (v.result_calc = x"000000007FC00000") then
 					v.result_diff := x"00000000" & "0" & (v.result_orig(30 downto 22) xor v.result_calc(30 downto 22)) & "00" & x"00000";
-				elsif (v.op.fcvt_f2i = '0') and (v.result_calc = x"7FF8000000000000") then
+				elsif (v.op.fcvt_f2i = '0' and v.op.fcmp = '0') and (v.result_calc = x"7FF8000000000000") then
 					v.result_diff := "0" & (v.result_orig(62 downto 51) xor v.result_calc(62 downto 51)) & "000" & x"000000000000";
 				else
 					v.result_diff := v.result_orig xor v.result_calc;

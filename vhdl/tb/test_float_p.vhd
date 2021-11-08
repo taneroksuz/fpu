@@ -51,6 +51,7 @@ architecture behavior of test_float_p is
 		flags_calc  : std_logic_vector(4 downto 0);
 		flags_diff  : std_logic_vector(4 downto 0);
 		enable      : std_logic;
+		terminate   : std_logic;
 	end record;
 
 	constant init_fpu_test_reg : fpu_test_reg_type := (
@@ -72,7 +73,8 @@ architecture behavior of test_float_p is
 		flags_orig  => (others => '0'),
 		flags_calc  => (others => '0'),
 		flags_diff  => (others => '0'),
-		enable      => '0'
+		enable      => '0',
+		terminate   => '0'
 	);
 
 	signal reset : std_logic := '0';
@@ -135,12 +137,12 @@ begin
 				initial := init_fpu_test_reg;
 
 				if endfile(infile) then
-					print("TEST SUCCEEDED");
-					finish;
+					initial.terminate := '1';
+					initial.dataread := (others => '0');
+				else
+					readline(infile, inline);
+					hread(inline, initial.dataread);
 				end if;
-
-				readline(infile, inline);
-				hread(inline, initial.dataread);
 
 				initial.data1 := initial.dataread(287 downto 224);
 				initial.data2 := initial.dataread(223 downto 160);
@@ -192,9 +194,9 @@ begin
 				final.result_calc := fpu_o.fp_exe_o.result;
 				final.flags_calc := fpu_o.fp_exe_o.flags;
 
-				if (final.op.fcvt_f2i = '0') and (final.result_calc = x"000000007FC00000") then
+				if (final.op.fcvt_f2i = '0' and final.op.fcmp = '0') and (final.result_calc = x"000000007FC00000") then
 					final.result_diff := x"00000000" & "0" & (final.result_orig(30 downto 22) xor final.result_calc(30 downto 22)) & "00" & x"00000";
-				elsif (final.op.fcvt_f2i = '0') and (final.result_calc = x"7FF8000000000000") then
+				elsif (final.op.fcvt_f2i = '0' and final.op.fcmp = '0') and (final.result_calc = x"7FF8000000000000") then
 					final.result_diff := "0" & (final.result_orig(62 downto 51) xor final.result_calc(62 downto 51)) & "000" & x"000000000000";
 				else
 					final.result_diff := final.result_orig xor final.result_calc;
@@ -214,6 +216,9 @@ begin
 				print("FLAGS DIFFERENCE  = 0x" & to_hstring(final.flags_diff));
 				print("FLAGS REFERENCE   = 0x" & to_hstring(final.flags_orig));
 				print("FLAGS CALCULATED  = 0x" & to_hstring(final.flags_calc));
+				finish;
+			elsif (final.terminate = '1') then
+				print("TEST SUCCEEDED");
 				finish;
 			end if;
 

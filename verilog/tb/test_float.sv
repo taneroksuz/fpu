@@ -27,6 +27,7 @@ module test_float
 	logic [1:0] op;
 	logic [9:0] opcode;
 	logic enable;
+	logic stop;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
@@ -56,12 +57,14 @@ module test_float
 				op <= 0;
 				opcode <= 0;
 				enable <= 0;
+				stop <= 0;
 			end else begin
 				if ($feof(data_file)) begin
-					$display("TEST SUCCEEDED");
-					$finish;
+					stop <= 1;
+					dataread <= 0;
+				end else begin
+					scan_file <= $fscanf(data_file,"%h\n", dataread);
 				end
-				scan_file <= $fscanf(data_file,"%h\n", dataread);
 				data1 <= dataread[287:224];
 				data2 <= dataread[223:160];
 				data3 <= dataread[159:96];
@@ -118,20 +121,20 @@ module test_float
 			if (~reset) begin
 
 			end else begin
-				if (fmt == 0) begin
-					if (opcode[9] == 0 & result_calc[31:0] == 32'h7FC00000) begin
-						result_diff = {32'h0,1'h0,result_calc[30:22] ^ result[30:22],22'h0};
-					end else begin
-						result_diff = result_calc ^ result;
-					end
-				end else begin
-					if (opcode[9] == 0 & result_calc[63:0] == 64'h7FF8000000000000) begin
-						result_diff = {1'h0,result_calc[62:51] ^ result[62:51],51'h0};
-					end else begin
-						result_diff = result_calc ^ result;
-					end
-				end
 				if (ready_calc) begin
+					if (fmt == 0) begin
+						if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
+							result_diff = {32'h0,1'h0,result_calc[30:22] ^ result[30:22],22'h0};
+						end else begin
+							result_diff = result_calc ^ result;
+						end
+					end else begin
+						if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
+							result_diff = {1'h0,result_calc[62:51] ^ result[62:51],51'h0};
+						end else begin
+							result_diff = result_calc ^ result;
+						end
+					end
 					flags_diff = flags_calc ^ flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
 						$display("TEST FAILED");
@@ -144,6 +147,10 @@ module test_float
 						$display("result: expected -> 0x%h calculated -> 0x%h difference -> 0x%h \n",result,result_calc,result_diff);
 						$display("flags: expected -> %b calculated -> %b difference -> %b \n",flags,flags_calc,flags_diff);
 						$display("wrong result");
+						$finish;
+					end
+					if (stop) begin
+						$display("TEST SUCCEEDED");
 						$finish;
 					end
 				end

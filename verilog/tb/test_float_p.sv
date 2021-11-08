@@ -17,6 +17,7 @@ module test_float_p
 	logic [4:0] flags_calc;
 	logic ready_calc;
 	logic enable;
+	logic stop;
 
 	typedef struct packed{
 		logic [63:0] data1;
@@ -72,12 +73,14 @@ module test_float_p
 				fp_res_4 <= init_fp_res;
 				fp_res_5 <= init_fp_res;
 				enable <= 0;
+				stop <= 0;
 			end else begin
 				if ($feof(data_file)) begin
-					$display("TEST SUCCEEDED");
-					$finish;
+					stop <= 1;
+					dataread <= 0;
+				end else begin
+					scan_file <= $fscanf(data_file,"%h\n", dataread);
 				end
-				scan_file <= $fscanf(data_file,"%h\n", dataread);
 				fp_res_1.data1 <= dataread[287:224];
 				fp_res_1.data2 <= dataread[223:160];
 				fp_res_1.data3 <= dataread[159:96];
@@ -140,13 +143,13 @@ module test_float_p
 			end else begin
 				if (ready_calc) begin
 					if (fp_res_5.fmt == 0) begin
-						if (fp_res_5.opcode[9] == 0 & result_calc[31:0] == 32'h7FC00000) begin
+						if ((fp_res_5.opcode[9] == 0 && fp_res_5.opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
 							result_diff = {32'h0,1'h0,result_calc[30:22] ^ fp_res_5.result[30:22],22'h0};
 						end else begin
 							result_diff = result_calc ^ fp_res_5.result;
 						end
 					end else begin
-						if (fp_res_5.opcode[9] == 0 & result_calc[63:0] == 64'h7FF8000000000000) begin
+						if ((fp_res_5.opcode[9] == 0 && fp_res_5.opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
 							result_diff = {1'h0,result_calc[62:51] ^ fp_res_5.result[62:51],51'h0};
 						end else begin
 							result_diff = result_calc ^ fp_res_5.result;
@@ -164,6 +167,10 @@ module test_float_p
 						$display("result: expected -> 0x%h calculated -> 0x%h difference -> 0x%h \n",fp_res_5.result,result_calc,result_diff);
 						$display("flags: expected -> %b calculated -> %b difference -> %b \n",fp_res_5.flags,flags_calc,flags_diff);
 						$display("wrong result");
+						$finish;
+					end
+					if (stop) begin
+						$display("TEST SUCCEEDED");
 						$finish;
 					end
 				end
