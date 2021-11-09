@@ -138,15 +138,15 @@ module test_float
 					flags_diff = flags_calc ^ flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
 						$display("TEST FAILED");
-						$display("CLOCKS: %t",$time);
-						$display("data1: 0x%h \n",data1);
-						$display("data2: 0x%h \n",data2);
-						$display("data3: 0x%h \n",data3);
-						$display("rm: %b \n",rm);
-						$display("opcode: %b \n",opcode);
-						$display("result: expected -> 0x%h calculated -> 0x%h difference -> 0x%h \n",result,result_calc,result_diff);
-						$display("flags: expected -> %b calculated -> %b difference -> %b \n",flags,flags_calc,flags_diff);
-						$display("wrong result");
+						$display("A                 = 0x%H",data1);
+						$display("B                 = 0x%H",data2);
+						$display("C                 = 0x%H",data3);
+						$display("RESULT DIFFERENCE = 0x%H",result_diff);
+						$display("RESULT REFERENCE  = 0x%H",result);
+						$display("RESULT CALCULATED = 0x%H",result_calc);
+						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
+						$display("FLAGS REFERENCE   = 0x%H",flags);
+						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
 						$finish;
 					end
 					if (stop) begin

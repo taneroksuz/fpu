@@ -161,15 +161,15 @@ module test_float_p
 					flags_diff = flags_calc ^ fp_res_5.flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
 						$display("TEST FAILED");
-						$display("CLOCKS: %t",$time);
-						$display("data1: 0x%h \n",fp_res_5.data1);
-						$display("data2: 0x%h \n",fp_res_5.data2);
-						$display("data3: 0x%h \n",fp_res_5.data3);
-						$display("rm: %b \n",fp_res_5.rm);
-						$display("opcode: %b \n",fp_res_5.opcode);
-						$display("result: expected -> 0x%h calculated -> 0x%h difference -> 0x%h \n",fp_res_5.result,result_calc,result_diff);
-						$display("flags: expected -> %b calculated -> %b difference -> %b \n",fp_res_5.flags,flags_calc,flags_diff);
-						$display("wrong result");
+						$display("A                 = 0x%H",fp_res_5.data1);
+						$display("B                 = 0x%H",fp_res_5.data2);
+						$display("C                 = 0x%H",fp_res_5.data3);
+						$display("RESULT DIFFERENCE = 0x%H",result_diff);
+						$display("RESULT REFERENCE  = 0x%H",fp_res_5.result);
+						$display("RESULT CALCULATED = 0x%H",result_calc);
+						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
+						$display("FLAGS REFERENCE   = 0x%H",fp_res_5.flags);
+						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
 						$finish;
 					end
 					if (fp_res_5.stop) begin
