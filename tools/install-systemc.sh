@@ -9,6 +9,8 @@ fi
 sudo mkdir $INST_PATH
 sudo chown -R $USER $INST_PATH/
 
+sudo apt-get -y install wget build-essential make
+
 if [ -d "systemc-2.3.3" ]; then
   rm -rf systemc-2.3.3
 fi

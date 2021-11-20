@@ -9,7 +9,7 @@ fi
 sudo mkdir $INST_PATH
 sudo chown -R $USER $INST_PATH/
 
-sudo apt-get -y install build-essential
+sudo apt-get -y install git build-essential make
 
 if [ -d "berkeley-softfloat-3" ]
 then

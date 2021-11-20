@@ -9,6 +9,8 @@ fi
 sudo mkdir $INST_PATH
 sudo chown -R $USER $INST_PATH/
 
+sudo apt-get -y install git curl build-essential make
+
 curl -sSL https://get.haskellstack.org/ | sh
 
 if [ -d "sv2v" ]; then

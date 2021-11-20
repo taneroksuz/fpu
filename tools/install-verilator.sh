@@ -9,7 +9,7 @@ fi
 sudo mkdir $INST_PATH
 sudo chown -R $USER $INST_PATH/
 
-sudo apt-get install git make autoconf g++ flex bison libfl-dev
+sudo apt-get -y install git build-essential make autoconf g++ flex bison libfl-dev
 
 if [ -d "verilator" ]; then
   rm -rf verilator
