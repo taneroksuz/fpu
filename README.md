@@ -28,6 +28,44 @@ This unit uses canonical **nan** (not a number) form, if it generates any **nan*
 | 0         | 58       | 57          |
 | 1         | 14       | 17          |
 
-The installation scripts need **root** permission in order to install packages and tools for simulation and testcase generation.
+## TOOLS ##
+
+The installation scripts of necessary tools are located in directory **tools**. These scripts need **root** permission in order to install packages and tools for simulation and testcase generation. Please run these scripts in directory **tools** locally.
+
+## GENERATE ##
+
+To generate test cases you could use following command:
+
+```console
+make generate
+```
+
+## SIMULATION ##
+
+To simulate the design together with generated test cases you could run following command:
+
+```console
+make simulation
+```
+
+This command require three options **LANGUAGE**, **DESIGN** and **TEST**. The possible settings of these options can be found in the makefile.
+
+An example execution of this command looks like as follows:
+
+```console
+make simulation LANGUAGE=verilog DESIGN=fpu TEST=all
+```
+
+## SYNTHESIS ##
+
+To generate synthesizable code of the design you could execute following command:
+
+```console
+make synthesis
+```
+
+This command creates **vhdl** and **verilog** codes in directory **synth**.
+
+## SINGLE PRECISION ##
 
 [Link for floating point unit with only single precision format.](https://github.com/taneroksuz/riscv-sfpu.git)
