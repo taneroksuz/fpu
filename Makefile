@@ -1,4 +1,4 @@
-default: none
+default: all
 
 GHDL ?= /opt/ghdl/bin/ghdl
 VERILATOR ?= /opt/verilator/bin/verilator
