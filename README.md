@@ -6,6 +6,16 @@ This unit uses canonical **nan** (not a number) form, if it generates any **nan*
 
 **Square root** and **division** calculations are using same subunit but different path (algorithm). This subunit has a generic variable **_performance_**. For functional iterations which are fast please use **1** and fixed point iterations which are slow use **0**. This unit has also own multiplier.
 
+## DESIGN ##
+
+This floating point unit uses only one path for both single and double precisions by scaling up both of them to the pseudo extended precision. The main benefit of this implementation is that the design needs few resources because we do not implement extension in pipeline to handle subnormal numbers. It means that all floating numbers are normalized thanks to pseudo extended precision. The main disadvantage of this unit is that it is not suitable for single instruction multiple data (simd) architecture.
+
+|        | sign | exponent | mantissa |
+|:------:|:----:|:--------:|:--------:|
+| single | 1    | 8        | 23       |
+| double | 1    | 11       | 52       |
+| pseudo | 1    | 12       | 52       |
+
 ## LATENCY ##
 
 ### Single and Double Precision ###
