@@ -39,6 +39,7 @@ int sc_main(int argc, char* argv[])
 
 #if VM_TRACE
   VerilatedVcdSc* dump = new VerilatedVcdSc;
+  sc_start(sc_core::SC_ZERO_TIME);
   top->trace(dump, 99);
   dump->open(dumpfile);
 #endif
