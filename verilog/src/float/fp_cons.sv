@@ -1,4 +1,4 @@
-module fp_cons();
+package fp_cons;
 	timeunit 1ns;
 	timeprecision 1ps;
 
@@ -34,4 +34,4 @@ module fp_cons();
 	parameter csr_frm = 12'h002;
 	parameter csr_fcsr = 12'h003;
 
-endmodule
+endpackage
