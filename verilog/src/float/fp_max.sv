@@ -49,8 +49,14 @@ module fp_max
 		end
 
 		if (rm == 0) begin
-			if ((class1[8] | class2[8]) == 1) begin
+			if ((class1[8] & class2[8]) == 1) begin
 				result = nan;
+				flags[4] = 1;
+			end else if (class1[8] == 1) begin
+				result = data2;
+				flags[4] = 1;
+			end else if (class2[8] == 1) begin
+				result = data1;
 				flags[4] = 1;
 			end else if ((class1[9] & class2[9]) == 1) begin
 				result = nan;
@@ -58,7 +64,7 @@ module fp_max
 				result = data2;
 			end else if (class2[9] == 1) begin
 				result = data1;
-			end else if ((extend1[4] ^ extend2[64]) == 1) begin
+			end else if ((extend1[64] ^ extend2[64]) == 1) begin
 				if (extend1[64] == 1) begin
 					result = data1;
 				end else begin
@@ -80,8 +86,14 @@ module fp_max
 				end
 			end
 		end else if (rm == 1) begin
-			if ((class1[8] | class2[8]) == 1) begin
+			if ((class1[8] & class2[8]) == 1) begin
 				result = nan;
+				flags[4] = 1;
+			end else if (class1[8] == 1) begin
+				result = data2;
+				flags[4] = 1;
+			end else if (class2[8] == 1) begin
+				result = data1;
 				flags[4] = 1;
 			end else if ((class1[9] & class2[9]) == 1) begin
 				result = nan;
@@ -89,11 +101,11 @@ module fp_max
 				result = data2;
 			end else if (class2[9] == 1) begin
 				result = data1;
-			end else if ((extend1[4] ^ extend2[64]) == 1) begin
+			end else if ((extend1[64] ^ extend2[64]) == 1) begin
 				if (extend1[64] == 1) begin
-					result = data1;
-				end else begin
 					result = data2;
+				end else begin
+					result = data1;
 				end
 			end else begin
 				if (extend1[64] == 1) begin
