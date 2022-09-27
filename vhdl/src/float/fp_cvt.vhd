@@ -172,6 +172,10 @@ begin
 		exponent_cvt := to_integer(unsigned(data(63 downto 52))) - 2044;
 		mantissa_cvt := X"00000000000000001" & data(51 downto 0);
 
+		if (class(3) or class(4)) = '1' then
+			mantissa_cvt(52) := '0';
+		end if;
+
 		oor := '0';
 
 		if exponent_cvt > exponent_bias then
@@ -248,6 +252,8 @@ begin
 		if sign_cvt = '1' then
 			mantissa_uint := std_logic_vector(-signed(mantissa_uint));
 		end if;
+
+		flags(0) := or_reduce(grs);
 
 		if op = "00" then
 			result := X"00000000" & mantissa_uint(31 downto 0);

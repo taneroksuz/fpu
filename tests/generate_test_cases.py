@@ -79,7 +79,7 @@ if __name__ == '__main__':
     command = 'chmod +x {0}'.format(testfloat)
     subprocess.call(command,shell=True)
 
-    command = '{0} {1} > {2}{1}.hex'.format(testfloat,operation,folder)
+    command = '{0} {1} -exact > {2}{1}.hex'.format(testfloat,operation,folder)
     subprocess.call(command,shell=True)
 
     filename = folder + operation+".hex"

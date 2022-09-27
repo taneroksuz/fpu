@@ -105,6 +105,10 @@ module fp_cvt
 		v_f2i.exponent_cvt = v_f2i.data[63:52] - 13'd2044;
 		v_f2i.mantissa_cvt = {68'h1,v_f2i.data[51:0]};
 
+		if ((v_f2i.classification[3] | v_f2i.classification[4]) == 1) begin
+			v_f2i.mantissa_cvt[52] = 0;
+		end
+
 		v_f2i.oor = 0;
 
 		if ($signed(v_f2i.exponent_cvt) > $signed({5'h0,v_f2i.exponent_bias})) begin
@@ -175,6 +179,8 @@ module fp_cvt
 		if (v_f2i.sign_cvt) begin
 			v_f2i.mantissa_uint = -v_f2i.mantissa_uint;
 		end
+
+		v_f2i.flags[0] = |v_f2i.grs;
 
 		if (v_f2i.op == 0) begin
 			v_f2i.result = {32'h0,v_f2i.mantissa_uint[31:0]};
