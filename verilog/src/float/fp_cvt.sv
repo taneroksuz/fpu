@@ -122,6 +122,8 @@ module fp_cvt
 		v_f2i.grs = {v_f2i.mantissa_cvt[54:53],|v_f2i.mantissa_cvt[52:0]};
 		v_f2i.odd = v_f2i.mantissa_uint[0] | |v_f2i.grs[1:0];
 
+		v_f2i.flags[0] = |v_f2i.grs;
+
 		v_f2i.rnded = 0;
 		if (v_f2i.rm == 0) begin //rne
 			if (v_f2i.grs[2] & v_f2i.odd) begin
@@ -179,8 +181,6 @@ module fp_cvt
 		if (v_f2i.sign_cvt) begin
 			v_f2i.mantissa_uint = -v_f2i.mantissa_uint;
 		end
-
-		v_f2i.flags[0] = |v_f2i.grs;
 
 		if (v_f2i.op == 0) begin
 			v_f2i.result = {32'h0,v_f2i.mantissa_uint[31:0]};
