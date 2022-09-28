@@ -78,7 +78,7 @@ begin
 					rnded := 1;
 				end if;
 			when "100" =>               --rmm--
-				if flags(0) = '1' then
+				if (grs(2) and flags(0)) = '1' then
 					rnded := 1;
 				end if;
 			when others =>

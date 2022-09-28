@@ -138,7 +138,7 @@ module fp_cvt
 				v_f2i.rnded = 1;
 			end
 		end else if (v_f2i.rm == 4) begin //rmm
-			if (v_f2i.flags[0]) begin
+			if (v_f2i.grs[2] & v_f2i.flags[0]) begin
 				v_f2i.rnded = 1;
 			end
 		end
