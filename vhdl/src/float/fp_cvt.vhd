@@ -189,6 +189,8 @@ begin
 		grs := mantissa_cvt(54 downto 53) & or_reduce(mantissa_cvt(52 downto 0));
 		odd := mantissa_uint(0) or or_reduce(grs(1 downto 0));
 
+		flags(0) := or_reduce(grs);
+
 		rnded := 0;
 
 		case rm is
@@ -252,8 +254,6 @@ begin
 		if sign_cvt = '1' then
 			mantissa_uint := std_logic_vector(-signed(mantissa_uint));
 		end if;
-
-		flags(0) := or_reduce(grs);
 
 		if op = "00" then
 			result := X"00000000" & mantissa_uint(31 downto 0);
