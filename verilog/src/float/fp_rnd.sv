@@ -61,7 +61,7 @@ module fp_rnd
 				rnded = 1;
 			end
 		end else if (rm == 4) begin              //rmm
-			if (flags[0]) begin
+			if (grs[2] & flags[0]) begin
 				rnded = 1;
 			end
 		end
