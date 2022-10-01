@@ -84,7 +84,7 @@ begin
 			class_b := (6 => '1', others => '0');
 		end if;
 
-		if (fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fsub) = '1' then
+		if (fp_fma_i.op.fmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fsub) = '1' then
 			c(64) := not c(64);
 		end if;
 
@@ -195,7 +195,7 @@ begin
 		ready := r_1.ready;
 
 		sign_add := sign_c;
-		sign_mul := sign_a xor sign_b;
+		sign_mul := (sign_a xor sign_b) xor neg;
 
 		exponent_add := signed("00" & exponent_c);
 		exponent_mul := signed("00" & exponent_a) + signed("00" & exponent_b) - 2047;
@@ -400,7 +400,7 @@ begin
 		counter_mac := to_integer(unsigned(not (lzc_o.c)));
 		mantissa_mac := std_logic_vector(shift_left(unsigned(mantissa_mac),counter_mac));
 
-		sign_rnd := sign_mac xor neg;
+		sign_rnd := sign_mac;
 		exponent_rnd := to_integer(exponent_mac) - bias - counter_mac;
 
 		counter_sub := 0;
