@@ -10,12 +10,13 @@ from os.path import basename
 if __name__ == '__main__':
 
     if len(sys.argv) < 4:
-        print('Expected usage: {0} <type> <folder> <testfloat path>'.format(sys.argv[0]))
+        print('Expected usage: {0} <type> <rounding> <folder> <testfloat path>'.format(sys.argv[0]))
         sys.exit(1)
 
     operation = sys.argv[1]
-    folder = sys.argv[2]
-    testfloat = sys.argv[3]
+    rounding = sys.argv[2]
+    folder = sys.argv[3]
+    testfloat = sys.argv[4]
 
     list_operation = [ \
         ('f32_mulAdd',"0","0","0","001"), \
@@ -55,6 +56,12 @@ if __name__ == '__main__':
         ('f64_to_i64',"1","0","2","200"), \
         ('f64_to_ui64',"1","0","3","200")]
 
+    list_rouding = [("rne","-rnear_even","0"), \
+                    ("rtz","-rminMag","1"), \
+                    ("rdn","-rmin","2"), \
+                    ("rup","-rmax","3"), \
+                    ("rmm","-rnear_maxMag","4")]
+
     extend_32   = "00000000"
 
     find = False
@@ -66,6 +73,18 @@ if __name__ == '__main__':
 
     if not find:
         sys.exit(1)
+    
+    round = ""
+    rm = ""
+    if (int(get_operation[4],16) >= 1 and int(get_operation[4],16) <= 32) or \
+        (int(get_operation[4],16) >= 256 and int(get_operation[4],16) <= 512):
+        round = list_rouding[0][1]
+        rm = list_rouding[0][2]
+        for i in range(len(list_rouding)):
+            if rounding in list_rouding[i][0]:
+                round = list_rouding[i][1]
+                rm = list_rouding[i][2]
+                break
 
     if int(get_operation[4],16) == 1:
         empty_word = ""
@@ -79,8 +98,13 @@ if __name__ == '__main__':
     command = 'chmod +x {0}'.format(testfloat)
     subprocess.call(command,shell=True)
 
-    command = '{0} {1} -exact > {2}{1}.hex'.format(testfloat,operation,folder)
+    command = '{0} {1} {2} -exact > {3}{1}.hex'.format(testfloat,operation,round,folder)
     subprocess.call(command,shell=True)
+
+    if rm != "":
+        get_list = list(get_operation)
+        get_list[2] = rm
+        get_operation = tuple(get_list)
 
     filename = folder + operation+".hex"
     h = open(filename,"r")

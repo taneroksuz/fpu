@@ -153,7 +153,7 @@ module test_float_s
 						$display("RESULT REFERENCE  = 0x%H",fp_res.result);
 						$display("RESULT CALCULATED = 0x%H",result_calc);
 						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
-						$display("FLAGS REFERENCE   = 0x%H",fp_res.result);
+						$display("FLAGS REFERENCE   = 0x%H",fp_res.flags);
 						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
 						$finish;
 					end
