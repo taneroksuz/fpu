@@ -67,7 +67,7 @@ module fp_fma
 			v_1.class_b = 10'h040;
 		end
 
-		if (fp_fma_i.op.fmsub | fp_fma_i.op.fnmsub | fp_fma_i.op.fsub) begin
+		if (fp_fma_i.op.fmsub | fp_fma_i.op.fnmadd | fp_fma_i.op.fsub) begin
 			v_1.c[64] = ~v_1.c[64];
 		end
 
@@ -143,7 +143,7 @@ module fp_fma
 		v_2.ready      = r_1.ready;
 
 		v_2.sign_add = v_2.sign_c;
-		v_2.sign_mul = v_2.sign_a ^ v_2.sign_b;
+		v_2.sign_mul = (v_2.sign_a ^ v_2.sign_b) ^ v_2.neg;
 
 		v_2.exponent_add = $signed({2'h0,v_2.exponent_c});
 		v_2.exponent_mul = $signed({2'h0,v_2.exponent_a}) + $signed({2'h0,v_2.exponent_b}) - 14'd2047;
@@ -294,7 +294,7 @@ module fp_fma
 		v_4.counter_mac  = ~lzc_o.c;
 		v_4.mantissa_mac = v_4.mantissa_mac << v_4.counter_mac;
 
-		v_4.sign_rnd = v_4.sign_mac ^ v_4.neg;
+		v_4.sign_rnd = v_4.sign_mac;
 		v_4.exponent_rnd = v_4.exponent_mac - {3'h0,v_4.bias} - {6'h0,v_4.counter_mac};
 
 		v_4.counter_sub = 0;
