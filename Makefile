@@ -18,8 +18,10 @@ TEST ?= all # f32_mulAdd, f32_add, f32_sub, f32_mul, f32_div, f32_sqrt,
 						# f32_to_ui32, f32_to_i64, f32_to_ui64, f64_to_i32, f64_to_ui32,
 						# f64_to_i64, f64_to_ui64
 
+ROUND ?= rne # rne, rtz, rdn, rup, rmm
+
 generate:
-	tests/generate_test_cases.sh tests ${TESTFLOAT} ${PYTHON}
+	tests/generate_test_cases.sh tests ${ROUND} ${TESTFLOAT} ${PYTHON}
 
 simulation:
 	@if [ ${LANGUAGE} = "verilog" ] && [ ${DESIGN} = "fpu" ]; \
