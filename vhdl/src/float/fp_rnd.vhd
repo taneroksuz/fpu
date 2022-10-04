@@ -36,7 +36,8 @@ begin
 
 		variable odd : std_logic;
 
-		variable rnded : natural range 0 to 1;
+		variable rnddn : natural range 0 to 1;
+		variable rndup : natural range 0 to 1;
 
 		variable result : std_logic_vector(63 downto 0);
 		variable flags  : std_logic_vector(4 downto 0);
@@ -61,25 +62,26 @@ begin
 		odd := mant(0) or or_reduce(grs(1 downto 0)) or to_std_logic(rema = "01");
 		flags(0) := to_std_logic(rema /= "00") or or_reduce(grs);
 
-		rnded := 0;
+		rndup := 0;
+		rnddn := 0;
 		case rm is
 			when "000" =>               --rne--
 				if (grs(2) and odd) = '1' then
-					rnded := 1;
+					rndup := 1;
 				end if;
 			when "001" =>               --rtz--
-				null;
+				rnddn := 1;
 			when "010" =>               --rdn--
 				if (sig and flags(0)) = '1' then
-					rnded := 1;
+					rndup := 1;
 				end if;
 			when "011" =>               --rup--
 				if (not sig and flags(0)) = '1' then
-					rnded := 1;
+					rndup := 1;
 				end if;
 			when "100" =>               --rmm--
 				if (grs(2) and flags(0)) = '1' then
-					rnded := 1;
+					rndup := 1;
 				end if;
 			when others =>
 				null;
@@ -89,12 +91,28 @@ begin
 			flags(1) := flags(0);
 		end if;
 
-		mant := std_logic_vector(unsigned(mant) + rnded);
+		mant := std_logic_vector(unsigned(mant) + rndup);
 
-		rnded := 0;
+		if rnddn = 1 then
+			if fmt = "00" then
+				if expo >= 255 then
+					expo := 254;
+					mant := "000" & X"0000000" & "111" & X"FFFFF";
+					flags := "00101";
+				end if;
+			elsif fmt = "01" then
+				if expo >= 2047 then
+					expo := 2046;
+					mant := "00" & X"FFFFFFFFFFFFF";
+					flags := "00101";
+				end if;
+			end if;
+		end if;
+
+		rndup := 0;
 		if fmt = "00" then
 			if mant(24) = '1' then
-				rnded := 1;
+				rndup := 1;
 			elsif mant(23) = '1' then
 				if expo = 0 then
 					expo := 1;
@@ -105,7 +123,7 @@ begin
 			end if;
 		elsif fmt = "01" then
 			if mant(53) = '1' then
-				rnded := 1;
+				rndup := 1;
 			elsif mant(52) = '1' then
 				if expo = 0 then
 					expo := 1;
@@ -116,8 +134,8 @@ begin
 			end if;
 		end if;
 
-		expo := expo + rnded;
-		mant := std_logic_vector(shift_right(unsigned(mant),rnded));
+		expo := expo + rndup;
+		mant := std_logic_vector(shift_right(unsigned(mant),rndup));
 
 		if snan = '1' then
 			flags := "10000";
