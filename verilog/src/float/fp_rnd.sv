@@ -22,7 +22,8 @@ module fp_rnd
 	logic zero;
 
 	logic odd;
-	logic rnded;
+	logic rndup;
+	logic rnddn;
 	logic [63:0] result;
 	logic [4:0] flags;
 
@@ -47,22 +48,29 @@ module fp_rnd
 		odd = mant[0] | |grs[1:0] | (rema == 1);
 		flags[0] = (rema != 0) | |grs;
 
-		rnded = 0;
+		rndup = 0;
+		rnddn = 0;
 		if (rm == 0) begin                       //rne
 			if (grs[2] & odd) begin
-				rnded = 1;
+				rndup = 1;
 			end
+		end else if (rm == 1) begin              //rtz
+			rnddn = 1;
 		end else if (rm == 2) begin              //rdn
 			if (sig & flags[0]) begin
-				rnded = 1;
+				rndup = 1;
+			end else if (~sig) begin
+				rnddn = 1;
 			end
 		end else if (rm == 3) begin              //rup
 			if (~sig & flags[0]) begin
-				rnded = 1;
+				rndup = 1;
+			end else if (sig) begin
+				rnddn = 1;
 			end
 		end else if (rm == 4) begin              //rmm
 			if (grs[2] & flags[0]) begin
-				rnded = 1;
+				rndup = 1;
 			end
 		end
 
@@ -70,12 +78,28 @@ module fp_rnd
 			flags[1] = flags[0];
 		end
 
-		mant = mant + {53'h0,rnded};
+		mant = mant + {53'h0,rndup};
 
-		rnded = 0;
+		if (rnddn == 1) begin
+			if (fmt == 0) begin
+				if (expo >= 255) begin
+					expo = 254;
+					mant = {31'b0,{23{1'b1}}};
+					flags = 5'b00101;
+				end
+			end else if (fmt == 1) begin
+				if (expo >= 2047) begin
+					expo = 2046;
+					mant = {2'b0,{52{1'b1}}};
+					flags = 5'b00101;
+				end
+			end
+		end
+
+		rndup = 0;
 		if (fmt == 0) begin
 			if (mant[24]) begin
-				rnded = 1;
+				rndup = 1;
 			end else if (mant[23]) begin
 				if (expo == 0) begin
 					expo = 1;
@@ -86,7 +110,7 @@ module fp_rnd
 			end
 		end else if (fmt == 1) begin
 			if (mant[53]) begin
-				rnded = 1;
+				rndup = 1;
 			end else if (mant[52]) begin
 				if (expo == 0) begin
 					expo = 1;
@@ -97,8 +121,8 @@ module fp_rnd
 			end
 		end
 
-		expo = expo + {13'h0,rnded};
-		mant = mant >> rnded;
+		expo = expo + {13'h0,rndup};
+		mant = mant >> rndup;
 
 		if (snan) begin
 			flags = 5'b10000;
