@@ -145,7 +145,7 @@ begin
 				end if;
 
 				if (v.terminate = '1') then
-					print("TEST SUCCEEDED");
+					print(character'val(27) & "[1;32m" & "TEST SUCCEEDED" & character'val(27) & "[0m");
 					finish;
 				end if;
 
@@ -196,7 +196,7 @@ begin
 			when others =>
 
 				if (or v.result_diff = '1') or (or v.flags_diff = '1') then
-					print("TEST FAILED");
+					print(character'val(27) & "[1;31m" & "TEST FAILED");
 					print("A                 = 0x" & to_hstring(v.data1));
 					print("B                 = 0x" & to_hstring(v.data2));
 					print("RESULT DIFFERENCE = 0x" & to_hstring(v.result_diff));
@@ -204,7 +204,7 @@ begin
 					print("RESULT CALCULATED = 0x" & to_hstring(v.result_calc));
 					print("FLAGS DIFFERENCE  = 0x" & to_hstring(v.flags_diff));
 					print("FLAGS REFERENCE   = 0x" & to_hstring(v.flags_orig));
-					print("FLAGS CALCULATED  = 0x" & to_hstring(v.flags_calc));
+					print("FLAGS CALCULATED  = 0x" & to_hstring(v.flags_calc) & character'val(27) & "[0m");
 					finish;
 				end if;
 

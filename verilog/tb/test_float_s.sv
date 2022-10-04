@@ -145,6 +145,7 @@ module test_float_s
 					end
 					flags_diff = flags_calc ^ fp_res.flags;
 					if ((result_diff != 0) || (flags_diff != 0)) begin
+						$write("%c[1;31m",8'h1B);
 						$display("TEST FAILED");
 						$display("A                 = 0x%H",fp_res.data1);
 						$display("B                 = 0x%H",fp_res.data2);
@@ -155,10 +156,13 @@ module test_float_s
 						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
 						$display("FLAGS REFERENCE   = 0x%H",fp_res.flags);
 						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
+						$write("%c[0m",8'h1B);
 						$finish;
 					end
 					if (stop) begin
+						$write("%c[1;32m",8'h1B);
 						$display("TEST SUCCEEDED");
+						$write("%c[0m",8'h1B);
 						$finish;
 					end
 					enable = 1;
