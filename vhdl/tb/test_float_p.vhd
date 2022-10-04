@@ -206,7 +206,7 @@ begin
 			end if;
 
 			if (or final.result_diff = '1') or (or final.flags_diff = '1') then
-				print("TEST FAILED");
+				print(character'val(27) & "[1;31m" & "TEST FAILED");
 				print("A                 = 0x" & to_hstring(final.data1));
 				print("B                 = 0x" & to_hstring(final.data2));
 				print("C                 = 0x" & to_hstring(final.data3));
@@ -215,10 +215,10 @@ begin
 				print("RESULT CALCULATED = 0x" & to_hstring(final.result_calc));
 				print("FLAGS DIFFERENCE  = 0x" & to_hstring(final.flags_diff));
 				print("FLAGS REFERENCE   = 0x" & to_hstring(final.flags_orig));
-				print("FLAGS CALCULATED  = 0x" & to_hstring(final.flags_calc));
+				print("FLAGS CALCULATED  = 0x" & to_hstring(final.flags_calc) & character'val(27) & "[0m");
 				finish;
 			elsif (final.terminate = '1') then
-				print("TEST SUCCEEDED");
+				print(character'val(27) & "[1;32m" & "TEST SUCCEEDED" & character'val(27) & "[0m");
 				finish;
 			end if;
 

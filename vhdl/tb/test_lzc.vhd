@@ -54,12 +54,12 @@ begin
 		elsif rising_edge(clock) then
 
 			if (a = msb) then
-				print("TEST SUCCEEDED");
+				print(character'val(27) & "[1;32m" & "TEST SUCCEEDED" & character'val(27) & "[0m");
 				finish;
 			end if;
 
 			if (counter /= to_integer(unsigned(not z))) then
-				print("TEST FAILED");
+				print(character'val(27) & "[1;31m" & "TEST FAILED" & character'val(27) & "[0m");
 				finish;
 			end if;
 

@@ -31,11 +31,15 @@ module test_lzc
 			counter <= max;
 		end else begin
 			if (a == msb) begin
+				$write("%c[1;32m",8'h1B);
 				$display("TEST SUCCEEDED");
+				$write("%c[0m",8'h1B);
 				$finish;
 			end
 			if (counter != (~c)) begin
+				$write("%c[1;31m",8'h1B);
 				$display("TEST FAILED");
+				$write("%c[0m",8'h1B);
 				$finish;
 			end
 			a <= a << 1;
