@@ -115,30 +115,62 @@ begin
 					flags := "00101";
 				end if;
 			end if;
+		elsif rndup = 1 then
+			if fmt = "00" then
+				if expo = 0 then
+					if mant(23) = '1' then
+						expo := 1;
+						case grs is
+							when "000" => flags(1) := '1';
+							when "001" => flags(1) := '1';
+							when "010" => flags(1) := '1';
+							when "011" => flags(1) := '1';
+							when "100" => flags(1) := '1';
+							when "101" => 
+								if rm = "010" or rm = "011" then
+									flags(1) := '0';
+								else
+									flags(1) := '1';
+								end if;
+							when "110" => flags(1) := '0';
+							when "111" => flags(1) := '0';
+							when others => null;
+						end case;
+					end if;
+				end if;
+			elsif fmt = "01" then
+				if expo = 0 then
+					if mant(52) = '1' then
+						expo := 1;
+						case grs is
+							when "000" => flags(1) := '1';
+							when "001" => flags(1) := '1';
+							when "010" => flags(1) := '1';
+							when "011" => flags(1) := '1';
+							when "100" => flags(1) := '1';
+							when "101" => 
+								if rm = "010" or rm = "011" then
+									flags(1) := '0';
+								else
+									flags(1) := '1';
+								end if;
+							when "110" => flags(1) := '0';
+							when "111" => flags(1) := '0';
+							when others => null;
+						end case;
+					end if;
+				end if;
+			end if;
 		end if;
 
 		rndup := 0;
 		if fmt = "00" then
 			if mant(24) = '1' then
 				rndup := 1;
-			elsif mant(23) = '1' then
-				if expo = 0 then
-					expo := 1;
-					if expo = 1 then
-						flags(1) := not grs(1);
-					end if;
-				end if;
 			end if;
 		elsif fmt = "01" then
 			if mant(53) = '1' then
 				rndup := 1;
-			elsif mant(52) = '1' then
-				if expo = 0 then
-					expo := 1;
-					if expo = 1 then
-						flags(1) := not grs(1);
-					end if;
-				end if;
 			end if;
 		end if;
 
