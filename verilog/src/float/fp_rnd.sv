@@ -98,30 +98,52 @@ module fp_rnd
 					flags = 5'b00101;
 				end
 			end
+		end else if (rndup == 1) begin
+			if (fmt == 0) begin
+				if (expo == 0) begin
+					if (mant[23]) begin
+						expo = 1;
+						case (grs)
+							0 : flags[1] = 1;
+							1 : flags[1] = 1;
+							2 : flags[1] = 1;
+							3 : flags[1] = 1;
+							4 : flags[1] = 1;
+							5 : flags[1] = (rm == 2 || rm == 3) ? 0 : 1;
+							6 : flags[1] = 0;
+							7 : flags[1] = 0;
+							default :;
+						endcase
+					end
+				end
+			end else if (fmt == 1) begin
+				if (expo == 0) begin
+					if (mant[52]) begin
+						expo = 1;
+						case (grs)
+							0 : flags[1] = 1;
+							1 : flags[1] = 1;
+							2 : flags[1] = 1;
+							3 : flags[1] = 1;
+							4 : flags[1] = 1;
+							5 : flags[1] = (rm == 2 || rm == 3) ? 0 : 1;
+							6 : flags[1] = 0;
+							7 : flags[1] = 0;
+							default :;
+						endcase
+					end
+				end
+			end
 		end
 
 		rndup = 0;
 		if (fmt == 0) begin
 			if (mant[24]) begin
 				rndup = 1;
-			end else if (mant[23]) begin
-				if (expo == 0) begin
-					expo = 1;
-					if (expo == 1) begin
-						flags[1] = ~grs[1];
-					end
-				end
 			end
 		end else if (fmt == 1) begin
 			if (mant[53]) begin
 				rndup = 1;
-			end else if (mant[52]) begin
-				if (expo == 0) begin
-					expo = 1;
-					if (expo == 1) begin
-						flags[1] = ~grs[1];
-					end
-				end
 			end
 		end
 
