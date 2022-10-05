@@ -255,6 +255,8 @@ module fp_fma
 			v_3.mantissa_mac = -v_3.mantissa_mac;
 		end
 
+		v_3.diff = v_3.sign_add ^ v_3.sign_mul;
+
 		rin_3.fmt = v_3.fmt;
 		rin_3.rm = v_3.rm;
 		rin_3.snan = v_3.snan;
@@ -262,6 +264,7 @@ module fp_fma
 		rin_3.dbz = v_3.dbz;
 		rin_3.inf = v_3.inf;
 		rin_3.zero = v_3.zero;
+		rin_3.diff = v_3.diff;
 		rin_3.neg = v_3.neg;
 		rin_3.sign_mac = v_3.sign_mac;
 		rin_3.exponent_mac = v_3.exponent_mac;
@@ -279,6 +282,7 @@ module fp_fma
 		v_4.dbz          = r_3.dbz;
 		v_4.inf          = r_3.inf;
 		v_4.zero         = r_3.zero;
+		v_4.diff         = r_3.diff;
 		v_4.neg          = r_3.neg;
 		v_4.sign_mac     = r_3.sign_mac;
 		v_4.exponent_mac = r_3.exponent_mac;
@@ -326,6 +330,7 @@ module fp_fma
 		rin_4.dbz = v_4.dbz;
 		rin_4.inf = v_4.inf;
 		rin_4.zero = v_4.zero;
+		rin_4.diff = v_4.diff;
 		rin_4.ready = v_4.ready;
 
 	end
@@ -344,6 +349,7 @@ module fp_fma
 		fp_fma_o.fp_rnd.dbz = r_4.dbz;
 		fp_fma_o.fp_rnd.inf = r_4.inf;
 		fp_fma_o.fp_rnd.zero = r_4.zero;
+		fp_fma_o.fp_rnd.diff = r_4.diff;
 		fp_fma_o.ready = r_4.ready;
 
 	end

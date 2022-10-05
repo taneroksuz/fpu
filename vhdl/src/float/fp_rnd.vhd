@@ -33,6 +33,7 @@ begin
 		variable dbz  : std_logic;
 		variable inf  : std_logic;
 		variable zero : std_logic;
+		variable diff : std_logic;
 
 		variable odd : std_logic;
 
@@ -55,6 +56,7 @@ begin
 		dbz := fp_rnd_i.dbz;
 		inf := fp_rnd_i.inf;
 		zero := fp_rnd_i.zero;
+		diff := fp_rnd_i.diff;
 
 		result := X"0000000000000000";
 		flags := "00000";
@@ -74,10 +76,16 @@ begin
 			when "010" =>               --rdn--
 				if (sig and flags(0)) = '1' then
 					rndup := 1;
+				elsif (not sig and diff and zero) = '1' then
+					sig := not sig;
+				elsif (not sig) = '1' then
+					rnddn := 1;
 				end if;
 			when "011" =>               --rup--
 				if (not sig and flags(0)) = '1' then
 					rndup := 1;
+				elsif (sig) = '1' then
+					rnddn := 1;
 				end if;
 			when "100" =>               --rmm--
 				if (grs(2) and flags(0)) = '1' then

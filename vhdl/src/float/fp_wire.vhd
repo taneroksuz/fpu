@@ -188,6 +188,7 @@ package fp_wire is
 		dbz  : std_logic;
 		inf  : std_logic;
 		zero : std_logic;
+		diff : std_logic;
 	end record;
 
 	constant init_fp_rnd_in : fp_rnd_in_type := (
@@ -202,7 +203,8 @@ package fp_wire is
 		qnan => '0',
 		dbz  => '0',
 		inf  => '0',
-		zero => '0'
+		zero => '0',
+		diff => '0'
 	);
 
 	type fp_rnd_out_type is record
@@ -315,6 +317,7 @@ package fp_wire is
 		dbz          : std_logic;
 		inf          : std_logic;
 		zero         : std_logic;
+		diff         : std_logic;
 		neg          : std_logic;
 		sign_mac     : std_logic;
 		exponent_mac : signed(13 downto 0);
@@ -330,6 +333,7 @@ package fp_wire is
 		dbz          => '0',
 		inf          => '0',
 		zero         => '0',
+		diff         => '0',
 		neg          => '0',
 		sign_mac     => '0',
 		exponent_mac => (others => '0'),
@@ -349,6 +353,7 @@ package fp_wire is
 		dbz          : std_logic;
 		inf          : std_logic;
 		zero         : std_logic;
+		diff         : std_logic;
 		ready        : std_logic;
 	end record;
 
@@ -364,6 +369,7 @@ package fp_wire is
 		dbz          => '0',
 		inf          => '0',
 		zero         => '0',
+		diff         => '0',
 		ready        => '0'
 	);
 

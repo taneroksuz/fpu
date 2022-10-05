@@ -268,6 +268,7 @@ begin
 		variable dbz          : std_logic;
 		variable inf          : std_logic;
 		variable zero         : std_logic;
+		variable diff         : std_logic;
 		variable neg          : std_logic;
 		variable sign_mul     : std_logic;
 		variable not_mul      : integer range 0 to 1;
@@ -334,6 +335,8 @@ begin
 			mantissa_mac := std_logic_vector(-signed(mantissa_mac));
 		end if;
 
+		diff := sign_add xor sign_mul;
+
 		rin_3.fmt <= fmt;
 		rin_3.rm <= rm;
 		rin_3.snan <= snan;
@@ -341,6 +344,7 @@ begin
 		rin_3.dbz <= dbz;
 		rin_3.inf <= inf;
 		rin_3.zero <= zero;
+		rin_3.diff <= diff;
 		rin_3.neg <= neg;
 		rin_3.sign_mac <= sign_mac;
 		rin_3.exponent_mac <= exponent_mac;
@@ -357,6 +361,7 @@ begin
 		variable dbz          : std_logic;
 		variable inf          : std_logic;
 		variable zero         : std_logic;
+		variable diff         : std_logic;
 		variable neg          : std_logic;
 		variable sign_mac     : std_logic;
 		variable exponent_mac : signed(13 downto 0);
@@ -383,6 +388,7 @@ begin
 		dbz := r_3.dbz;
 		inf := r_3.inf;
 		zero := r_3.zero;
+		diff := r_3.diff;
 		neg := r_3.neg;
 		sign_mac := r_3.sign_mac;
 		exponent_mac := r_3.exponent_mac;
@@ -432,6 +438,7 @@ begin
 		rin_4.dbz <= dbz;
 		rin_4.inf <= inf;
 		rin_4.zero <= zero;
+		rin_4.diff <= diff;
 		rin_4.ready <= ready;
 
 	end process;
@@ -450,6 +457,7 @@ begin
 		fp_fma_o.fp_rnd.dbz <= r_4.dbz;
 		fp_fma_o.fp_rnd.inf <= r_4.inf;
 		fp_fma_o.fp_rnd.zero <= r_4.zero;
+		fp_fma_o.fp_rnd.diff <= r_4.diff;
 		fp_fma_o.ready <= r_4.ready;
 
 	end process;
