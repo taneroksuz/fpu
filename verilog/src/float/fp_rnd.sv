@@ -20,6 +20,7 @@ module fp_rnd
 	logic dbz;
 	logic inf;
 	logic zero;
+	logic diff;
 
 	logic odd;
 	logic rndup;
@@ -41,6 +42,7 @@ module fp_rnd
 		dbz  = fp_rnd_i.dbz;
 		inf  = fp_rnd_i.inf;
 		zero = fp_rnd_i.zero;
+		diff = fp_rnd_i.diff;
 
 		result = 0;
 		flags = 0;
@@ -59,6 +61,8 @@ module fp_rnd
 		end else if (rm == 2) begin              //rdn
 			if (sig & flags[0]) begin
 				rndup = 1;
+			end else if (~sig & zero & diff) begin
+				sig = ~sig;
 			end else if (~sig) begin
 				rnddn = 1;
 			end
