@@ -40,6 +40,8 @@ begin
 		variable rnddn : natural range 0 to 1;
 		variable rndup : natural range 0 to 1;
 
+		variable uflow : std_logic;
+
 		variable result : std_logic_vector(63 downto 0);
 		variable flags  : std_logic_vector(4 downto 0);
 
@@ -101,6 +103,7 @@ begin
 
 		mant := std_logic_vector(unsigned(mant) + rndup);
 
+		uflow := '0';
 		if rnddn = 1 then
 			if fmt = "00" then
 				if expo >= 255 then
@@ -120,47 +123,36 @@ begin
 				if expo = 0 then
 					if mant(23) = '1' then
 						expo := 1;
-						case grs is
-							when "000" => flags(1) := '1';
-							when "001" => flags(1) := '1';
-							when "010" => flags(1) := '1';
-							when "011" => flags(1) := '1';
-							when "100" => flags(1) := '1';
-							when "101" => 
-								if rm = "010" or rm = "011" then
-									flags(1) := '0';
-								else
-									flags(1) := '1';
-								end if;
-							when "110" => flags(1) := '0';
-							when "111" => flags(1) := '0';
-							when others => null;
-						end case;
+						uflow := '1';
 					end if;
 				end if;
 			elsif fmt = "01" then
 				if expo = 0 then
 					if mant(52) = '1' then
 						expo := 1;
-						case grs is
-							when "000" => flags(1) := '1';
-							when "001" => flags(1) := '1';
-							when "010" => flags(1) := '1';
-							when "011" => flags(1) := '1';
-							when "100" => flags(1) := '1';
-							when "101" => 
-								if rm = "010" or rm = "011" then
-									flags(1) := '0';
-								else
-									flags(1) := '1';
-								end if;
-							when "110" => flags(1) := '0';
-							when "111" => flags(1) := '0';
-							when others => null;
-						end case;
+						uflow := '1';
 					end if;
 				end if;
 			end if;
+		end if;
+
+		if uflow = '1' then
+			case grs is
+				when "000" => flags(1) := '1';
+				when "001" => flags(1) := '1';
+				when "010" => flags(1) := '1';
+				when "011" => flags(1) := '1';
+				when "100" => flags(1) := '1';
+				when "101" => 
+					if rm = "010" or rm = "011" then
+						flags(1) := '0';
+					else
+						flags(1) := '1';
+					end if;
+				when "110" => flags(1) := '0';
+				when "111" => flags(1) := '0';
+				when others => null;
+			end case;
 		end if;
 
 		rndup := 0;

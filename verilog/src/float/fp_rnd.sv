@@ -25,6 +25,7 @@ module fp_rnd
 	logic odd;
 	logic rndup;
 	logic rnddn;
+	logic uflow;
 	logic [63:0] result;
 	logic [4:0] flags;
 
@@ -84,6 +85,7 @@ module fp_rnd
 
 		mant = mant + {53'h0,rndup};
 
+		uflow = 0;
 		if (rnddn == 1) begin
 			if (fmt == 0) begin
 				if (expo >= 255) begin
@@ -103,37 +105,31 @@ module fp_rnd
 				if (expo == 0) begin
 					if (mant[23]) begin
 						expo = 1;
-						case (grs)
-							0 : flags[1] = 1;
-							1 : flags[1] = 1;
-							2 : flags[1] = 1;
-							3 : flags[1] = 1;
-							4 : flags[1] = 1;
-							5 : flags[1] = (rm == 2 || rm == 3) ? 0 : 1;
-							6 : flags[1] = 0;
-							7 : flags[1] = 0;
-							default :;
-						endcase
+						uflow = 1;
 					end
 				end
 			end else if (fmt == 1) begin
 				if (expo == 0) begin
 					if (mant[52]) begin
 						expo = 1;
-						case (grs)
-							0 : flags[1] = 1;
-							1 : flags[1] = 1;
-							2 : flags[1] = 1;
-							3 : flags[1] = 1;
-							4 : flags[1] = 1;
-							5 : flags[1] = (rm == 2 || rm == 3) ? 0 : 1;
-							6 : flags[1] = 0;
-							7 : flags[1] = 0;
-							default :;
-						endcase
+						uflow = 1;
 					end
 				end
 			end
+		end
+
+		if (uflow == 1) begin
+			case (grs)
+				0 : flags[1] = 1;
+				1 : flags[1] = 1;
+				2 : flags[1] = 1;
+				3 : flags[1] = 1;
+				4 : flags[1] = 1;
+				5 : flags[1] = (rm == 2 || rm == 3) ? 0 : 1;
+				6 : flags[1] = 0;
+				7 : flags[1] = 0;
+				default :;
+			endcase
 		end
 
 		rndup = 0;
