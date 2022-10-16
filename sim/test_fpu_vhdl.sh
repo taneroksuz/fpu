@@ -35,6 +35,7 @@ ${xvhdl} ../../vhdl/src/lzc/lzc_16.vhd > /dev/null
 ${xvhdl} ../../vhdl/src/lzc/lzc_32.vhd > /dev/null
 ${xvhdl} ../../vhdl/src/lzc/lzc_64.vhd > /dev/null
 ${xvhdl} ../../vhdl/src/lzc/lzc_128.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_256.vhd > /dev/null
 
 ${xvhdl} ../../vhdl/src/float/fp_lib.vhd > /dev/null
 ${xvhdl} ../../vhdl/src/float/fp_ext.vhd > /dev/null
