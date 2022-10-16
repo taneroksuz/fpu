@@ -56,16 +56,6 @@ An example execution of this command looks like as follows:
 make simulation LANGUAGE=verilog DESIGN=fpu TEST=all
 ```
 
-## SYNTHESIS ##
-
-To generate synthesizable code of the design you could execute following command:
-
-```console
-make synthesis
-```
-
-This command creates **vhdl** and **verilog** codes in directory **synth**.
-
 ## SINGLE PRECISION ##
 
 [Link for floating point unit with only single precision format.](https://github.com/taneroksuz/riscv-sfpu.git)
