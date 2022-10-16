@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ghdl=${1}
 
