@@ -5,7 +5,6 @@ VERILATOR ?= /opt/verilator/bin/verilator
 SYSTEMC ?= /opt/systemc
 TESTFLOAT ?= /opt/testfloat/testfloat_gen
 PYTHON ?= /usr/bin/python3
-SV2V ?= /opt/sv2v/bin/sv2v
 
 LANGUAGE ?= verilog # verilog, vhdl
 DESIGN ?= fpu # fpu, lzc
@@ -38,8 +37,4 @@ simulation:
 		sim/test_lzc_vhdl.sh ${GHDL}; \
 	fi
 
-synthesis:
-	synth/synth_fpu_verilog.sh ${SV2V}
-	synth/synth_fpu_vhdl.sh ${GHDL}
-
-all: generate simulation synthesis
+all: generate simulation
