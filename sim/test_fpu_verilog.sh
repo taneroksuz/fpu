@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 VERILATOR=${1}
 SYSTEMC=${2}
