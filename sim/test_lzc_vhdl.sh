@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-ghdl=${1}
+xsim=${1}
+xvhdl=${2}
+xelab=${3}
 
 if [ -d "sim/work" ]; then
 	rm -rf sim/work
@@ -12,21 +14,21 @@ mkdir sim/work
 cd sim/work
 
 start=`date +%s`
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_wire.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_lib.vhd
+${xvhdl} ../../vhdl/src/lzc/lzc_wire.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_lib.vhd > /dev/null
 
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_4.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_8.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_16.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_32.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_64.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_128.vhd
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/src/lzc/lzc_256.vhd
+${xvhdl} ../../vhdl/src/lzc/lzc_4.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_8.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_16.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_32.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_64.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_128.vhd > /dev/null
+${xvhdl} ../../vhdl/src/lzc/lzc_256.vhd > /dev/null
 
-${ghdl} -a --std=08 --ieee=synopsys ../../vhdl/tb/test_lzc.vhd
+${xvhdl} ../../vhdl/tb/test_lzc.vhd > /dev/null
 
-${ghdl} -e --std=08 --ieee=synopsys test_lzc
-${ghdl} -r --std=08 --ieee=synopsys test_lzc
+${xelab} test_lzc > /dev/null
+${xsim} -runall test_lzc
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.

@@ -1,6 +1,8 @@
 default: all
 
-GHDL ?= /opt/ghdl/bin/ghdl
+XSIM ?= xsim
+XVHDL ?= xvhdl
+XELAB ?= xelab
 VERILATOR ?= /opt/verilator/bin/verilator
 SYSTEMC ?= /opt/systemc
 TESTFLOAT ?= /opt/testfloat/testfloat_gen
@@ -31,10 +33,10 @@ simulation:
 		sim/test_lzc_verilog.sh ${VERILATOR} ${SYSTEMC}; \
 	elif [ ${LANGUAGE} = "vhdl" ] && [ ${DESIGN} = "fpu" ]; \
 	then \
-		sim/test_fpu_vhdl.sh ${GHDL} ${TEST}; \
+		sim/test_fpu_vhdl.sh ${XSIM} ${XVHDL} ${XELAB} ${TEST}; \
 	elif [ ${LANGUAGE} = "vhdl" ] && [ ${DESIGN} = "lzc" ]; \
 	then \
-		sim/test_lzc_vhdl.sh ${GHDL}; \
+		sim/test_lzc_vhdl.sh ${XSIM} ${XVHDL} ${XELAB}; \
 	fi
 
 all: generate simulation
