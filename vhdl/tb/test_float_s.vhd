@@ -105,9 +105,9 @@ begin
 			fp_unit_o => fpu_o
 		);
 
-	process(all)
-		file infile       : text open read_mode is "fpu.dat";
-		variable inline   : line;
+	process(r,fpu_o)
+		file infile     : text open read_mode is "fpu.dat";
+		variable inline : line;
 
 		variable v : fpu_test_reg_type;
 
