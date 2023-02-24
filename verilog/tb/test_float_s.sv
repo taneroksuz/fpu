@@ -62,7 +62,7 @@ module test_float_s
 	generate
 
 		always_ff @(posedge clock) begin
-			if (!reset) begin
+			if (reset == 1) begin
 				fp_res <= init_fp_res;
 				stop <= 0;
 			end else begin
@@ -126,7 +126,7 @@ module test_float_s
 
 		always_ff @(posedge clock) begin
 
-			if (~reset) begin
+			if (reset == 1) begin
 				enable = 1;
 			end else begin
 				if (ready_calc) begin

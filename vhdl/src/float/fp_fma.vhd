@@ -466,7 +466,7 @@ begin
 	begin
 		if rising_edge(clock) then
 
-			if reset = '0' then
+			if reset = '1' then
 
 				r_1 <= init_fp_fma_reg_1;
 				r_2 <= init_fp_fma_reg_2;
