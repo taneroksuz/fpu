@@ -46,7 +46,7 @@ module test_float
 	generate
 
 		always_ff @(posedge clock) begin
-			if (!reset) begin
+			if (reset == 1) begin
 				data1 <= 0;
 				data2 <= 0;
 				data3 <= 0;
@@ -118,7 +118,7 @@ module test_float
 
 		always_ff @(posedge clock) begin
 
-			if (~reset) begin
+			if (reset == 1) begin
 
 			end else begin
 				if (ready_calc) begin

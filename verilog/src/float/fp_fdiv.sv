@@ -433,7 +433,7 @@ module fp_fdiv
 			end
 
 			always_ff @(posedge clock) begin
-				if (!reset) begin
+				if (reset == 1) begin
 					r <= init_fp_fdiv_reg_functional;
 				end else begin
 					r <= rin;
@@ -615,7 +615,7 @@ module fp_fdiv
 			end
 
 			always_ff @(posedge clock) begin
-				if (!reset) begin
+				if (reset == 1) begin
 					r_fix <= init_fp_fdiv_reg_fixed;
 				end else begin
 					r_fix <= rin_fix;

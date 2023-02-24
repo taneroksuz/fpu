@@ -48,13 +48,13 @@ int sc_main(int argc, char* argv[])
 #if VM_TRACE
     if (dump) dump->flush();
 #endif
-    if (VL_TIME_Q() > 0 && VL_TIME_Q() < 10)
+    if (VL_TIME_Q() >= 10000)
     {
-      reset = !1;
+      reset = 0;
     }
-    else if (VL_TIME_Q() > 0)
+    else
     {
-      reset = !0;
+      reset = 1;
     }
     sc_start(1,SC_NS);
   }

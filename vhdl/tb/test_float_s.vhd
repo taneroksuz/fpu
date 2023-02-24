@@ -75,7 +75,7 @@ architecture behavior of test_float_s is
 		terminate   => '0'
 	);
 
-	signal reset : std_logic := '0';
+	signal reset : std_logic := '1';
 	signal clock : std_logic := '0';
 
 	signal r   : fpu_test_reg_type;
@@ -94,7 +94,7 @@ architecture behavior of test_float_s is
 
 begin
 
-	reset <= '1' after 1 ns;
+	reset <= '0' after 10 ns;
 	clock <= not clock after 1 ns;
 
 	fp_unit_comp : fp_unit
@@ -116,7 +116,7 @@ begin
 
 		case r.state is
 			when TEST0 =>
-				if reset = '0' then
+				if reset = '1' then
 					fpu_i.fp_exe_i.enable <= '0';
 				else
 					fpu_i.fp_exe_i.enable <= '1';
@@ -159,7 +159,7 @@ begin
 				v.conv := v.dataread(13 downto 12);
 				v.opcode := v.dataread(9 downto 0);
 
-				if reset = '0' then
+				if reset = '1' then
 					v.op := init_fp_operation;
 				else
 					v.op.fmadd := v.opcode(0);
@@ -227,7 +227,7 @@ begin
 	begin
 		if rising_edge(clock) then
 
-			if reset = '0' then
+			if reset = '1' then
 
 				r <= init_fpu_test_reg;
 

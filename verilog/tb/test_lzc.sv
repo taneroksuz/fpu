@@ -26,7 +26,7 @@ module test_lzc
 	end
 
 	always_ff @(posedge clock) begin
-		if (!reset) begin
+		if (reset == 1) begin
 			a <= lsb;
 			counter <= max;
 		end else begin
