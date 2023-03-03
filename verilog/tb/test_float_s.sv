@@ -17,7 +17,7 @@ module test_float_s
 	logic [4:0] flags_calc;
 	logic ready_calc;
 	logic enable;
-	logic stop;
+	logic finish;
 
 	typedef struct packed{
 		logic [63:0] data1;
@@ -44,9 +44,19 @@ module test_float_s
 	};
 
 	fp_result fp_res;
+	fp_result fp_res_reg;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
+
+	localparam idle = 0;
+	localparam next = 1;
+	localparam busy = 2;
+	localparam comp = 3;
+	localparam stop = 4;
+
+	logic [2:0] state = idle;
+	logic [2:0] state_reg = idle;
 
 	logic [63:0] result_diff;
 	logic [4:0] flags_diff;
@@ -63,26 +73,64 @@ module test_float_s
 
 		always_ff @(posedge clock) begin
 			if (reset == 1) begin
-				fp_res <= init_fp_res;
-				stop <= 0;
+				enable <= 0;
+				finish <= 0;
+				dataread <= 0;
 			end else begin
-				if (enable) begin
+				if (state == next) begin
 					if ($feof(data_file)) begin
-						stop <= 1;
+						enable <= 1;
+						finish <= 1;
 						dataread <= 0;
 					end else begin
+						enable <= 1;
+						finish <= 0;
 						scan_file <= $fscanf(data_file,"%h\n", dataread);
 					end
-					fp_res.data1 <= dataread[287:224];
-					fp_res.data2 <= dataread[223:160];
-					fp_res.data3 <= dataread[159:96];
-					fp_res.result <= dataread[95:32];
-					fp_res.flags <= dataread[28:24];
-					fp_res.fmt <= dataread[21:20];
-					fp_res.rm <= dataread[18:16];
-					fp_res.op <= dataread[13:12];
-					fp_res.opcode <= dataread[9:0];
+				end else begin
+					enable <= 0;
+					finish <= 0;
+					dataread <= 0;
 				end
+			end
+		end
+
+		always_ff @(posedge clock) begin
+			if (reset == 1) begin
+				state_reg <= idle;
+				fp_res_reg <= init_fp_res;
+			end else begin
+				state_reg <= state;
+				fp_res_reg <= fp_res;
+			end
+		end
+
+		always_comb begin
+			state = state_reg;
+			fp_res = fp_res_reg;
+			if (state == idle) begin
+				state = next;
+			end else if (state == next) begin
+				fp_res.data1 = dataread[287:224];
+				fp_res.data2 = dataread[223:160];
+				fp_res.data3 = dataread[159:96];
+				fp_res.result = dataread[95:32];
+				fp_res.flags = dataread[28:24];
+				fp_res.fmt = dataread[21:20];
+				fp_res.rm = dataread[18:16];
+				fp_res.op = dataread[13:12];
+				fp_res.opcode = dataread[9:0];
+				if (finish == 1) begin
+					state = stop;
+				end else begin
+					state = busy;
+				end
+			end else if (state == busy) begin
+				if (ready_calc == 1) begin
+					state = comp;
+				end
+			end else if (state == comp) begin
+				state = next;
 			end
 		end
 
@@ -124,53 +172,51 @@ module test_float_s
 		assign flags_calc = fp_unit_o.fp_exe_o.flags;
 		assign ready_calc = fp_unit_o.fp_exe_o.ready;
 
-		always_ff @(posedge clock) begin
-
-			if (reset == 1) begin
-				enable = 1;
-			end else begin
-				if (ready_calc) begin
-					if (fp_res.fmt == 0) begin
-						if ((fp_res.opcode[9] == 0 && fp_res.opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
-							result_diff = {32'h0,1'h0,result_calc[30:22] ^ fp_res.result[30:22],22'h0};
-						end else begin
-							result_diff = result_calc ^ fp_res.result;
-						end
+		always_comb begin
+			if (ready_calc) begin
+				if (fp_res.fmt == 0) begin
+					if ((fp_res.opcode[9] == 0 && fp_res.opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
+						result_diff = {32'h0,1'h0,result_calc[30:22] ^ fp_res.result[30:22],22'h0};
 					end else begin
-						if ((fp_res.opcode[9] == 0 && fp_res.opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
-							result_diff = {1'h0,result_calc[62:51] ^ fp_res.result[62:51],51'h0};
-						end else begin
-							result_diff = result_calc ^ fp_res.result;
-						end
+						result_diff = result_calc ^ fp_res.result;
 					end
-					flags_diff = flags_calc ^ fp_res.flags;
-					if ((result_diff != 0) || (flags_diff != 0)) begin
-						$write("%c[1;31m",8'h1B);
-						$display("TEST FAILED");
-						$display("A                 = 0x%H",fp_res.data1);
-						$display("B                 = 0x%H",fp_res.data2);
-						$display("C                 = 0x%H",fp_res.data3);
-						$display("RESULT DIFFERENCE = 0x%H",result_diff);
-						$display("RESULT REFERENCE  = 0x%H",fp_res.result);
-						$display("RESULT CALCULATED = 0x%H",result_calc);
-						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
-						$display("FLAGS REFERENCE   = 0x%H",fp_res.flags);
-						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
-						$write("%c[0m",8'h1B);
-						$finish;
-					end
-					if (stop) begin
-						$write("%c[1;32m",8'h1B);
-						$display("TEST SUCCEEDED");
-						$write("%c[0m",8'h1B);
-						$finish;
-					end
-					enable = 1;
 				end else begin
-					enable = 0;
+					if ((fp_res.opcode[9] == 0 && fp_res.opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
+						result_diff = {1'h0,result_calc[62:51] ^ fp_res.result[62:51],51'h0};
+					end else begin
+						result_diff = result_calc ^ fp_res.result;
+					end
+				end
+				flags_diff = flags_calc ^ fp_res.flags;
+			end else begin
+				result_diff = 0;
+				flags_diff = 0;
+			end
+		end
+
+		always_ff @(posedge clock) begin
+			if (ready_calc) begin
+				if ((result_diff != 0) || (flags_diff != 0)) begin
+					$write("%c[1;31m",8'h1B);
+					$display("TEST FAILED");
+					$display("A                 = 0x%H",fp_res.data1);
+					$display("B                 = 0x%H",fp_res.data2);
+					$display("C                 = 0x%H",fp_res.data3);
+					$display("RESULT DIFFERENCE = 0x%H",result_diff);
+					$display("RESULT REFERENCE  = 0x%H",fp_res.result);
+					$display("RESULT CALCULATED = 0x%H",result_calc);
+					$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
+					$display("FLAGS REFERENCE   = 0x%H",fp_res.flags);
+					$display("FLAGS CALCULATED  = 0x%H",flags_calc);
+					$write("%c[0m",8'h1B);
+					$finish;
+				end else if (state == stop) begin
+					$write("%c[1;32m",8'h1B);
+					$display("TEST SUCCEEDED");
+					$write("%c[0m",8'h1B);
+					$finish;
 				end
 			end
-
 		end
 
 	endgenerate

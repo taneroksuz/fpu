@@ -57,13 +57,21 @@ module fp_exe
 
 	always_comb begin
 
-		data1 = fp_exe_i.data1;
-		data2 = fp_exe_i.data2;
-		data3 = fp_exe_i.data3;
-		op = fp_exe_i.op;
-		fmt = fp_exe_i.fmt;
-		rm = fp_exe_i.rm;
-		op = fp_exe_i.op;
+		if (fp_exe_i.enable) begin
+			data1 = fp_exe_i.data1;
+			data2 = fp_exe_i.data2;
+			data3 = fp_exe_i.data3;
+			op = fp_exe_i.op;
+			fmt = fp_exe_i.fmt;
+			rm = fp_exe_i.rm;
+		end else begin
+			data1 = 0;
+			data2 = 0;
+			data3 = 0;
+			op = 0;
+			fmt = 0;
+			rm = 0;
+		end
 
 		result = 0;
 		flags = 0;
