@@ -16,6 +16,8 @@ module test_float
 	logic [63:0] result_calc;
 	logic [4:0] flags_calc;
 	logic ready_calc;
+	logic enable;
+	logic finish;
 
 	logic [63:0] data1;
 	logic [63:0] data2;
@@ -26,8 +28,6 @@ module test_float
 	logic [2:0] rm;
 	logic [1:0] op;
 	logic [9:0] opcode;
-	logic enable;
-	logic stop;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
@@ -47,35 +47,32 @@ module test_float
 
 		always_ff @(posedge clock) begin
 			if (reset == 1) begin
-				data1 <= 0;
-				data2 <= 0;
-				data3 <= 0;
-				result <= 0;
-				flags <= 0;
-				fmt <= 0;
-				rm <= 0;
-				op <= 0;
-				opcode <= 0;
 				enable <= 0;
-				stop <= 0;
+				finish <= 0;
+				dataread <= 0;
 			end else begin
 				if ($feof(data_file)) begin
-					stop <= 1;
+					enable <= 1;
+					finish <= 1;
 					dataread <= 0;
 				end else begin
+					enable <= 1;
+					finish <= 0;
 					scan_file <= $fscanf(data_file,"%h\n", dataread);
 				end
-				data1 <= dataread[287:224];
-				data2 <= dataread[223:160];
-				data3 <= dataread[159:96];
-				result <= dataread[95:32];
-				flags <= dataread[28:24];
-				fmt <= dataread[21:20];
-				rm <= dataread[18:16];
-				op <= dataread[13:12];
-				opcode <= dataread[9:0];
-				enable <= 1;
 			end
+		end
+
+		always_comb begin
+			data1 = dataread[287:224];
+			data2 = dataread[223:160];
+			data3 = dataread[159:96];
+			result = dataread[95:32];
+			flags = dataread[28:24];
+			fmt = dataread[21:20];
+			rm = dataread[18:16];
+			op = dataread[13:12];
+			opcode = dataread[9:0];
 		end
 
 		assign fp_unit_i.fp_exe_i.data1 = data1;
@@ -116,50 +113,51 @@ module test_float
 		assign flags_calc = fp_unit_o.fp_exe_o.flags;
 		assign ready_calc = fp_unit_o.fp_exe_o.ready;
 
-		always_ff @(posedge clock) begin
-
-			if (reset == 1) begin
-
-			end else begin
-				if (ready_calc) begin
-					if (fmt == 0) begin
-						if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
-							result_diff = {32'h0,1'h0,result_calc[30:22] ^ result[30:22],22'h0};
-						end else begin
-							result_diff = result_calc ^ result;
-						end
+		always_comb begin
+			if (ready_calc) begin
+				if (fmt == 0) begin
+					if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
+						result_diff = {32'h0,1'h0,result_calc[30:22] ^ result[30:22],22'h0};
 					end else begin
-						if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
-							result_diff = {1'h0,result_calc[62:51] ^ result[62:51],51'h0};
-						end else begin
-							result_diff = result_calc ^ result;
-						end
+						result_diff = result_calc ^ result;
 					end
-					flags_diff = flags_calc ^ flags;
-					if ((result_diff != 0) || (flags_diff != 0)) begin
-						$write("%c[1;31m",8'h1B);
-						$display("TEST FAILED");
-						$display("A                 = 0x%H",data1);
-						$display("B                 = 0x%H",data2);
-						$display("C                 = 0x%H",data3);
-						$display("RESULT DIFFERENCE = 0x%H",result_diff);
-						$display("RESULT REFERENCE  = 0x%H",result);
-						$display("RESULT CALCULATED = 0x%H",result_calc);
-						$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
-						$display("FLAGS REFERENCE   = 0x%H",flags);
-						$display("FLAGS CALCULATED  = 0x%H",flags_calc);
-						$write("%c[0m",8'h1B);
-						$finish;
-					end
-					if (stop) begin
-						$write("%c[1;32m",8'h1B);
-						$display("TEST SUCCEEDED");
-						$write("%c[0m",8'h1B);
-						$finish;
+				end else begin
+					if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
+						result_diff = {1'h0,result_calc[62:51] ^ result[62:51],51'h0};
+					end else begin
+						result_diff = result_calc ^ result;
 					end
 				end
+				flags_diff = flags_calc ^ flags;
+			end else begin
+				result_diff = 0;
+				flags_diff = 0;
 			end
+		end
 
+		always_ff @(posedge clock) begin
+			if (ready_calc) begin
+				if ((result_diff != 0) || (flags_diff != 0)) begin
+					$write("%c[1;31m",8'h1B);
+					$display("TEST FAILED");
+					$display("A                 = 0x%H",data1);
+					$display("B                 = 0x%H",data2);
+					$display("C                 = 0x%H",data3);
+					$display("RESULT DIFFERENCE = 0x%H",result_diff);
+					$display("RESULT REFERENCE  = 0x%H",result);
+					$display("RESULT CALCULATED = 0x%H",result_calc);
+					$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
+					$display("FLAGS REFERENCE   = 0x%H",flags);
+					$display("FLAGS CALCULATED  = 0x%H",flags_calc);
+					$write("%c[0m",8'h1B);
+					$finish;
+				end else if (finish) begin
+					$write("%c[1;32m",8'h1B);
+					$display("TEST SUCCEEDED");
+					$write("%c[0m",8'h1B);
+					$finish;
+				end
+			end
 		end
 
 	endgenerate
