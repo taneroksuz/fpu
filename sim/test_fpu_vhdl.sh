@@ -1,93 +1,86 @@
 #!/bin/bash
 set -e
 
-xsim=${1}
-xvhdl=${2}
-xelab=${3}
-
-if [ -d "sim/work" ]; then
-	rm -rf sim/work
+if [ -d "${BASEDIR}/sim/work" ]; then
+	rm -rf ${BASEDIR}/sim/work
 fi
 
-mkdir sim/work
+mkdir ${BASEDIR}/sim/work
 
-if [ ! -z "$4" ]
+if [ ! -z "${TEST}" ]
 then
-	if [ ! "$4" = 'all' ]
+	if [ ! "${TEST}" = 'all' ]
 	then
-		cp tests/test_cases/$4.dat sim/work/fpu.dat
+		cp ${BASEDIR}/tests/test_cases/${TEST}.dat ${BASEDIR}/sim/work/fpu.dat
 	fi
 fi
 
-cd sim/work
+cd ${BASEDIR}/sim/work
 
 start=`date +%s`
-${xvhdl} ../../vhdl/src/lzc/lzc_wire.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_wire.vhd
 
-${xvhdl} ../../vhdl/src/float/fp_cons.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_wire.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_func.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_cons.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_wire.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_func.vhd
 
-${xvhdl} ../../vhdl/src/lzc/lzc_lib.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_4.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_8.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_16.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_32.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_64.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_128.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_256.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_lib.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_4.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_8.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_16.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_32.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_64.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_128.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_256.vhd
 
-${xvhdl} ../../vhdl/src/float/fp_lib.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_ext.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_cmp.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_max.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_sgnj.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_cvt.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_rnd.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_fma.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_mac.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_fdiv.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_exe.vhd > /dev/null
-${xvhdl} ../../vhdl/src/float/fp_unit.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_lib.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_ext.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_cmp.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_max.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_sgnj.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_cvt.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_rnd.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_fma.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_mac.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_fdiv.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_exe.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_unit.vhd
 
-${xvhdl} -2008 ../../vhdl/tb/test_float.vhd > /dev/null
-${xvhdl} -2008 ../../vhdl/tb/test_float_s.vhd > /dev/null
-${xvhdl} -2008 ../../vhdl/tb/test_float_p.vhd > /dev/null
+${GHDL} -a --std=08 --std=08 ${BASEDIR}/vhdl/tb/test_float.vhd
+${GHDL} -a --std=08 --std=08 ${BASEDIR}/vhdl/tb/test_float_s.vhd
+${GHDL} -a --std=08 --std=08 ${BASEDIR}/vhdl/tb/test_float_p.vhd
 
-if [ "$4" = 'all' ]
+if [ "${TEST}" = 'all' ]
 then
-	for filename in ../../tests/test_cases/*.dat; do
+	for filename in ${BASEDIR}/tests/test_cases/*.dat; do
 		cp $filename fpu.dat
 		echo "${filename%.dat}"
 		if [ `echo $filename | grep -c "div\|sqrt" ` -gt 0 ]
 		then
-			${xelab} test_float_s > /dev/null
-			${xsim} -runall test_float_s
+			${GHDL} -e --std=08 test_float_s
+			${GHDL} -r test_float_s --asserts=disable-at-0
 		elif [ `echo $filename | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
 		then
-			${xelab} test_float_p > /dev/null
-			${xsim} -runall test_float_p
+			${GHDL} -e --std=08 test_float_p
+			${GHDL} -r test_float_p --asserts=disable-at-0
 		else
-			${xelab} test_float > /dev/null
-			${xsim} -runall test_float
+			${GHDL} -e --std=08 test_float
+			${GHDL} -r test_float --asserts=disable-at-0
 		fi
 	done
 else
-	echo "$4"
-	echo "log_wave -recursive *" > wave.tcl
-	echo "run -all" >> wave.tcl
-	echo "exit" >> wave.tcl
-	if [ `echo $4 | grep -c "div\|sqrt" ` -gt 0 ]
+	echo "${TEST}"
+	if [ `echo ${TEST} | grep -c "div\|sqrt" ` -gt 0 ]
 	then
-		${xelab} -debug all test_float_s > /dev/null
-		${xsim} -wdb output.wdb -tclbatch wave.tcl test_float_s
-	elif [ `echo $4 | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
+		${GHDL} -e --std=08 test_float_s
+		${GHDL} -r test_float_s --asserts=disable-at-0 --wave=${TEST}.ghw
+	elif [ `echo ${TEST} | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
 	then
-		${xelab} -debug all test_float_p > /dev/null
-		${xsim} -wdb output.wdb -tclbatch wave.tcl test_float_p
+		${GHDL} -e --std=08 test_float_p
+		${GHDL} -r test_float_p --asserts=disable-at-0 --wave=${TEST}.ghw
 	else
-		${xelab} -debug all test_float > /dev/null
-		${xsim} -wdb output.wdb -tclbatch wave.tcl test_float
+		${GHDL} -e --std=08 test_float
+		${GHDL} -r test_float --asserts=disable-at-0 --wave=${TEST}.ghw
 	fi
 fi
 end=`date +%s`

@@ -1,34 +1,30 @@
 #!/bin/bash
 set -e
 
-xsim=${1}
-xvhdl=${2}
-xelab=${3}
-
-if [ -d "sim/work" ]; then
-	rm -rf sim/work
+if [ -d "${BASEDIR}/sim/work" ]; then
+	rm -rf ${BASEDIR}/sim/work
 fi
 
-mkdir sim/work
+mkdir ${BASEDIR}/sim/work
 
-cd sim/work
+cd ${BASEDIR}/sim/work
 
 start=`date +%s`
-${xvhdl} ../../vhdl/src/lzc/lzc_wire.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_lib.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_wire.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_lib.vhd
 
-${xvhdl} ../../vhdl/src/lzc/lzc_4.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_8.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_16.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_32.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_64.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_128.vhd > /dev/null
-${xvhdl} ../../vhdl/src/lzc/lzc_256.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_4.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_8.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_16.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_32.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_64.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_128.vhd
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_256.vhd
 
-${xvhdl} ../../vhdl/tb/test_lzc.vhd > /dev/null
+${GHDL} -a --std=08 ${BASEDIR}/vhdl/tb/test_lzc.vhd
 
-${xelab} test_lzc > /dev/null
-${xsim} -runall test_lzc
+${GHDL} -e --std=08 test_lzc
+${GHDL} -r test_lzc --asserts=disable-at-0
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.

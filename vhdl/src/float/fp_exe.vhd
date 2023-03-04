@@ -70,12 +70,22 @@ begin
 		variable class3 : std_logic_vector(9 downto 0);
 
 	begin
-		data1 := fp_exe_i.data1;
-		data2 := fp_exe_i.data2;
-		data3 := fp_exe_i.data3;
-		op := fp_exe_i.op;
-		fmt := fp_exe_i.fmt;
-		rm := fp_exe_i.rm;
+
+		if fp_exe_i.enable = '1' then
+			data1 := fp_exe_i.data1;
+			data2 := fp_exe_i.data2;
+			data3 := fp_exe_i.data3;
+			op := fp_exe_i.op;
+			fmt := fp_exe_i.fmt;
+			rm := fp_exe_i.rm;
+		else
+			data1 := (others => '0');
+			data2 := (others => '0');
+			data3 := (others => '0');
+			op := init_fp_operation;
+			fmt := (others => '0');
+			rm := (others => '0');
+		end if;
 
 		result := (others => '0');
 		flags := (others => '0');
