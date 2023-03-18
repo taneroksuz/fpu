@@ -55,8 +55,8 @@ module test_float_s
 	localparam comp = 3;
 	localparam stop = 4;
 
-	logic [2:0] state = idle;
-	logic [2:0] state_reg = idle;
+	logic [2:0] state;
+	logic [2:0] state_reg;
 
 	logic [63:0] result_diff;
 	logic [4:0] flags_diff;

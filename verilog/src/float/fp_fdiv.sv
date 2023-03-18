@@ -28,12 +28,6 @@ module fp_fdiv
 	logic [7:0] reciprocal_root_lut [0:95];
 
 	initial begin
-		r = init_fp_fdiv_reg_functional;
-		rin = init_fp_fdiv_reg_functional;
-
-		r_fix = init_fp_fdiv_reg_fixed;
-		rin_fix = init_fp_fdiv_reg_fixed;
-
 		reciprocal_lut[0] = 8'b00000000; reciprocal_lut[1] = 8'b11111110; reciprocal_lut[2] = 8'b11111100; reciprocal_lut[3] = 8'b11111010; reciprocal_lut[4] = 8'b11111000; reciprocal_lut[5] = 8'b11110110; reciprocal_lut[6] = 8'b11110100; reciprocal_lut[7] = 8'b11110010;
 		reciprocal_lut[8] = 8'b11110000; reciprocal_lut[9] = 8'b11101111; reciprocal_lut[10] = 8'b11101101; reciprocal_lut[11] = 8'b11101011; reciprocal_lut[12] = 8'b11101010; reciprocal_lut[13] = 8'b11101000; reciprocal_lut[14] = 8'b11100110; reciprocal_lut[15] = 8'b11100101;
 		reciprocal_lut[16] = 8'b11100011; reciprocal_lut[17] = 8'b11100001; reciprocal_lut[18] = 8'b11100000; reciprocal_lut[19] = 8'b11011110; reciprocal_lut[20] = 8'b11011101; reciprocal_lut[21] = 8'b11011011; reciprocal_lut[22] = 8'b11011010; reciprocal_lut[23] = 8'b11011001;

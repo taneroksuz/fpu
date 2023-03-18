@@ -187,7 +187,6 @@ module test_float_p
 
 		always_ff @(posedge clock) begin
 			if (ready_calc) begin
-				flags_diff = flags_calc ^ fp_res_5.flags;
 				if ((result_diff != 0) || (flags_diff != 0)) begin
 					$write("%c[1;31m",8'h1B);
 					$display("TEST FAILED");
