@@ -11,7 +11,7 @@ use work.fp_func.all;
 
 entity fp_fdiv is
 	generic(
-		PERFORMANCE : integer := 1
+		PERFORMANCE : integer := 0
 	);
 	port(
 		reset     : in  std_logic;
@@ -443,7 +443,7 @@ begin
 		begin
 			if rising_edge(clock) then
 
-				if reset = '1' then
+				if reset = '0' then
 
 					r <= init_fp_fdiv_functional_reg;
 
@@ -646,7 +646,7 @@ begin
 		begin
 			if rising_edge(clock) then
 
-				if reset = '1' then
+				if reset = '0' then
 
 					r_fix <= init_fp_fdiv_fixed_reg;
 

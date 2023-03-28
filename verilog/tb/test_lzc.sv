@@ -1,8 +1,5 @@
-module test_lzc
-(
-	input reset,
-	input clock
-);
+module test_lzc;
+
 	timeunit 1ns;
 	timeprecision 1ps;
 
@@ -19,6 +16,18 @@ module test_lzc
 	logic [(xlog-1):0] c;
 	logic v;
 
+	logic reset = 0;
+	logic clock = 0;
+
+	initial begin
+		$timeformat(-9,0,"ns",0);
+		#10ns reset = 1;
+	end
+
+	always begin
+		#1ns clock=~clock;
+	end
+
 	initial begin
 		msb = {{1'b1},{xlen-1{1'b0}}};
 		lsb = {{xlen-1{1'b0}},{1'b1}};
@@ -26,7 +35,7 @@ module test_lzc
 	end
 
 	always_ff @(posedge clock) begin
-		if (reset == 1) begin
+		if (reset == 0) begin
 			a <= lsb;
 			counter <= max;
 		end else begin
@@ -34,12 +43,14 @@ module test_lzc
 				$write("%c[1;32m",8'h1B);
 				$display("TEST SUCCEEDED");
 				$write("%c[0m",8'h1B);
+				$display("simulation finished @%0t",$time);
 				$finish;
 			end
 			if (counter != (~c)) begin
 				$write("%c[1;31m",8'h1B);
 				$display("TEST FAILED");
 				$write("%c[0m",8'h1B);
+				$display("simulation finished @%0t",$time);
 				$finish;
 			end
 			a <= a << 1;

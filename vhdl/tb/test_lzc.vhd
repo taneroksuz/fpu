@@ -19,7 +19,7 @@ end entity test_lzc;
 
 architecture behavior of test_lzc is
 
-	signal reset : std_logic := '1';
+	signal reset : std_logic := '0';
 	signal clock : std_logic := '0';
 
 	signal a : std_logic_vector(XLEN - 1 downto 0);
@@ -41,12 +41,12 @@ architecture behavior of test_lzc is
 
 begin
 
-	reset <= '0' after 10 ns;
+	reset <= '1' after 10 ns;
 	clock <= not clock after 1 ns;
 
 	process(reset, clock)
 	begin
-		if reset = '1' then
+		if reset = '0' then
 
 			a       <= lsb;
 			counter <= XLEN - 1;

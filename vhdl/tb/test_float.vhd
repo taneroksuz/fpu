@@ -75,7 +75,7 @@ architecture behavior of test_float is
 		terminate   => '0'
 	);
 
-	signal reset : std_logic := '1';
+	signal reset : std_logic := '0';
 	signal clock : std_logic := '0';
 
 	signal r   : fpu_test_reg_type;
@@ -94,7 +94,7 @@ architecture behavior of test_float is
 
 begin
 
-	reset <= '0' after 10 ns;
+	reset <= '1' after 10 ns;
 	clock <= not clock after 1 ns;
 
 	fp_unit_comp : fp_unit
@@ -114,7 +114,7 @@ begin
 	begin
 		if rising_edge(clock) then
 
-			if reset = '1' then
+			if reset = '0' then
 
 				r <= init_fpu_test_reg;
 

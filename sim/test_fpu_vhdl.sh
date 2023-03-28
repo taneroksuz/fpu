@@ -54,7 +54,8 @@ if [ "${TEST}" = 'all' ]
 then
 	for filename in ${BASEDIR}/tests/test_cases/*.dat; do
 		cp $filename fpu.dat
-		echo "${filename%.dat}"
+		filename=$(basename $filename .dat) 
+		echo $filename
 		if [ `echo $filename | grep -c "div\|sqrt" ` -gt 0 ]
 		then
 			${GHDL} -e --std=08 test_float_s

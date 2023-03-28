@@ -1,6 +1,9 @@
 import fp_wire::*;
 
 module fp_fdiv
+#(
+	parameter PERFORMANCE = 0
+)
 (
 	input reset,
 	input clock,
@@ -11,8 +14,6 @@ module fp_fdiv
 );
 	timeunit 1ns;
 	timeprecision 1ps;
-
-	parameter PERFORMANCE = 1;
 
 	fp_fdiv_reg_functional_type r;
 	fp_fdiv_reg_functional_type rin;
@@ -427,7 +428,7 @@ module fp_fdiv
 			end
 
 			always_ff @(posedge clock) begin
-				if (reset == 1) begin
+				if (reset == 0) begin
 					r <= init_fp_fdiv_reg_functional;
 				end else begin
 					r <= rin;
@@ -609,7 +610,7 @@ module fp_fdiv
 			end
 
 			always_ff @(posedge clock) begin
-				if (reset == 1) begin
+				if (reset == 0) begin
 					r_fix <= init_fp_fdiv_reg_fixed;
 				end else begin
 					r_fix <= rin_fix;

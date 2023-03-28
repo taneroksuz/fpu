@@ -1,10 +1,7 @@
 import fp_wire::*;
 
-module test_float_s
-(
-	input reset,
-	input clock
-);
+module test_float_s;
+
 	timeunit 1ns;
 	timeprecision 1ps;
 
@@ -61,6 +58,23 @@ module test_float_s
 	logic [63:0] result_diff;
 	logic [4:0] flags_diff;
 
+	logic reset = 0;
+	logic clock = 0;
+
+	initial begin
+		$timeformat(-9,0,"ns",0);
+		#10ns reset = 1;
+	end
+
+	always begin
+		#1ns clock=~clock;
+	end
+
+	initial begin
+		$dumpfile("fpu.vcd");
+		$dumpvars(0,test_float_s);
+	end
+
 	initial begin
 		data_file = $fopen("fpu.dat", "r");
 		if (data_file == 0) begin
@@ -72,7 +86,7 @@ module test_float_s
 	generate
 
 		always_ff @(posedge clock) begin
-			if (reset == 1) begin
+			if (reset == 0) begin
 				enable <= 0;
 				finish <= 0;
 				dataread <= 0;
@@ -96,7 +110,7 @@ module test_float_s
 		end
 
 		always_ff @(posedge clock) begin
-			if (reset == 1) begin
+			if (reset == 0) begin
 				state_reg <= idle;
 				fp_res_reg <= init_fp_res;
 			end else begin
@@ -209,11 +223,13 @@ module test_float_s
 					$display("FLAGS REFERENCE   = 0x%H",fp_res.flags);
 					$display("FLAGS CALCULATED  = 0x%H",flags_calc);
 					$write("%c[0m",8'h1B);
+					$display("simulation finished @%0t",$time);
 					$finish;
 				end else if (state == stop) begin
 					$write("%c[1;32m",8'h1B);
 					$display("TEST SUCCEEDED");
 					$write("%c[0m",8'h1B);
+					$display("simulation finished @%0t",$time);
 					$finish;
 				end
 			end
