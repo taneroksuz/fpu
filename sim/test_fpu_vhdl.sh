@@ -74,14 +74,14 @@ else
 	if [ `echo ${TEST} | grep -c "div\|sqrt" ` -gt 0 ]
 	then
 		${GHDL} -e --std=08 test_float_s
-		${GHDL} -r test_float_s --asserts=disable-at-0 --wave=${TEST}.ghw
+		${GHDL} -r test_float_s --asserts=disable-at-0 --wave=fpu.ghw
 	elif [ `echo ${TEST} | grep -c "mulAdd\|mul\|add\|sub" ` -gt 0 ]
 	then
 		${GHDL} -e --std=08 test_float_p
-		${GHDL} -r test_float_p --asserts=disable-at-0 --wave=${TEST}.ghw
+		${GHDL} -r test_float_p --asserts=disable-at-0 --wave=fpu.ghw
 	else
 		${GHDL} -e --std=08 test_float
-		${GHDL} -r test_float --asserts=disable-at-0 --wave=${TEST}.ghw
+		${GHDL} -r test_float --asserts=disable-at-0 --wave=fpu.ghw
 	fi
 fi
 end=`date +%s`
