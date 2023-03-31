@@ -94,8 +94,8 @@ architecture behavior of test_float_s is
 
 begin
 
-	reset <= '1' after 10 ns;
-	clock <= not clock after 1 ns;
+	reset <= '1' after 10 ps;
+	clock <= not clock after 1 ps;
 
 	fp_unit_comp : fp_unit
 		port map(

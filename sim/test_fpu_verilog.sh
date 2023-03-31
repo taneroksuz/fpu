@@ -20,11 +20,11 @@ cd ${BASEDIR}/sim/work
 start=`date +%s`
 if [ "${TEST}" = 'all' ]
 then
-	${VERILATOR} --binary -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s --exe ${BASEDIR}/verilog/tb/test_float_s.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float_s.mk Vtest_float_s
-	${VERILATOR} --binary -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p --exe ${BASEDIR}/verilog/tb/test_float_p.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float_p.mk Vtest_float_p
-	${VERILATOR} --binary -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float --exe ${BASEDIR}/verilog/tb/test_float.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float.mk Vtest_float
 	for filename in ${BASEDIR}/tests/test_cases/*.dat; do
 		cp $filename fpu.dat
@@ -44,11 +44,11 @@ else
 	echo "${TEST}"
 	filename=${3##*/}
 	filename=${filename%.dat}
-	${VERILATOR} --binary -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s --exe ${BASEDIR}/verilog/tb/test_float_s.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float_s.mk Vtest_float_s
-	${VERILATOR} --binary -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p --exe ${BASEDIR}/verilog/tb/test_float_p.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float_p.mk Vtest_float_p
-	${VERILATOR} --binary -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float 2>&1 > /dev/null
+	${VERILATOR} --cc -Wno-UNOPTFLAT --trace -trace-max-array 128 --trace-structs -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float --exe ${BASEDIR}/verilog/tb/test_float.cpp 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vtest_float.mk Vtest_float
 	if [ `echo ${TEST} | grep -c "div\|sqrt" ` -gt 0 ]
 	then
