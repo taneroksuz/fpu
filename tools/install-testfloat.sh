@@ -1,13 +1,14 @@
 #!/bin/bash
+set -e
 
-INST_PATH=/opt/testfloat
+PREFIX=/opt/testfloat
 
-if [ -d "$INST_PATH" ]
+if [ -d "$PREFIX" ]
 then
-  sudo rm -rf $INST_PATH
+  sudo rm -rf $PREFIX
 fi
-sudo mkdir $INST_PATH
-sudo chown -R $USER $INST_PATH/
+sudo mkdir $PREFIX
+sudo chown -R $USER:$USER $PREFIX/
 
 sudo apt-get -y install git build-essential make
 
@@ -32,4 +33,4 @@ cd -
 cd berkeley-testfloat-3/build/Linux-x86_64-GCC
 make -j$(nproc)
 
-mv -t $INST_PATH testfloat testfloat_gen testfloat_ver testsoftfloat timesoftfloat
+mv -t $PREFIX testfloat testfloat_gen testfloat_ver testsoftfloat timesoftfloat

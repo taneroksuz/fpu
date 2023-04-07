@@ -1,13 +1,14 @@
 #!/bin/bash
+set -e
 
-INST_PATH=/opt/ghdl
+PREFIX=/opt/ghdl
 
-if [ -d "$INST_PATH" ]
+if [ -d "$PREFIX" ]
 then
-  sudo rm -rf $INST_PATH
+  sudo rm -rf $PREFIX
 fi
-sudo mkdir $INST_PATH
-sudo chown -R $USER $INST_PATH/
+sudo mkdir $PREFIX
+sudo chown -R $USER:$USER $PREFIX/
 
 sudo apt-get -y install git build-essential llvm-dev make gnat clang
 
@@ -19,7 +20,7 @@ git clone https://github.com/ghdl/ghdl.git
 
 cd ghdl
 
-./configure --with-llvm-config --prefix=$INST_PATH
+./configure --with-llvm-config --prefix=$PREFIX
 
 make -j$(nproc)
 make install

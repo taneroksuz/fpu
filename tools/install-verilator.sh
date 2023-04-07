@@ -1,15 +1,16 @@
 #!/bin/bash
+set -e
 
-INST_PATH=/opt/verilator
+PREFIX=/opt/verilator
 
-if [ -d "$INST_PATH" ]
+if [ -d "$PREFIX" ]
 then
-  sudo rm -rf $INST_PATH
+  sudo rm -rf $PREFIX
 fi
-sudo mkdir $INST_PATH
-sudo chown -R $USER $INST_PATH/
+sudo mkdir $PREFIX
+sudo chown -R $USER:$USER $PREFIX/
 
-sudo apt-get -y install git build-essential make autoconf g++ flex bison libfl-dev
+sudo apt-get -y install git make autoconf g++ flex bison libfl-dev help2man
 
 if [ -d "verilator" ]; then
   rm -rf verilator
@@ -25,7 +26,7 @@ git pull
 git checkout stable
 
 autoconf
-./configure --prefix=$INST_PATH
+./configure --prefix=$PREFIX
 
 make -j$(nproc)
 make install

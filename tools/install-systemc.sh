@@ -1,13 +1,14 @@
 #!/bin/bash
+set -e
 
-INST_PATH=/opt/systemc
+PREFIX=/opt/systemc
 
-if [ -d "$INST_PATH" ]
+if [ -d "$PREFIX" ]
 then
-  sudo rm -rf $INST_PATH
+  sudo rm -rf $PREFIX
 fi
-sudo mkdir $INST_PATH
-sudo chown -R $USER $INST_PATH/
+sudo mkdir $PREFIX
+sudo chown -R $USER:$USER $PREFIX/
 
 sudo apt-get -y install wget build-essential make
 
@@ -20,6 +21,6 @@ tar -xf systemc-2.3.3.tar.gz
 
 cd systemc-2.3.3
 
-./configure --prefix=$INST_PATH
+./configure --prefix=$PREFIX
 make -j$(nproc)
 make install
