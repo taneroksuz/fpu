@@ -183,15 +183,13 @@ package fp_wire;
 		logic inf;
 		logic zero;
 		logic neg;
-		logic sign_a;
-		logic [11:0] exponent_a;
-		logic [52:0] mantissa_a;
-		logic sign_b;
-		logic [11:0] exponent_b;
-		logic [52:0] mantissa_b;
-		logic sign_c;
-		logic [11:0] exponent_c;
-		logic [52:0] mantissa_c;
+		logic sign_mul;
+		logic [13:0] exponent_mul;
+		logic [163:0] mantissa_mul;
+		logic sign_add;
+		logic [13:0] exponent_add;
+		logic [163:0] mantissa_add;
+		logic exponent_neg;
 		logic ready;
 	} fp_fma_reg_type_1;
 
@@ -204,15 +202,13 @@ package fp_wire;
 		inf : 0,
 		zero : 0,
 		neg : 0,
-		sign_a : 0,
-		exponent_a : 0,
-		mantissa_a : 0,
-		sign_b : 0,
-		exponent_b : 0,
-		mantissa_b : 0,
-		sign_c : 0,
-		exponent_c : 0,
-		mantissa_c : 0,
+		sign_mul : 0,
+		exponent_mul : 0,
+		mantissa_mul : 0,
+		sign_add : 0,
+		exponent_add : 0,
+		mantissa_add : 0,
+		exponent_neg : 0,
 		ready : 0
 	};
 
@@ -240,66 +236,6 @@ package fp_wire;
 		logic sign_c;
 		logic [11:0] exponent_c;
 		logic [52:0] mantissa_c;
-		logic ready;
-	} fp_fma_var_type_1;
-
-	typedef struct packed{
-		logic [1:0] fmt;
-		logic [2:0] rm;
-		logic snan;
-		logic qnan;
-		logic dbz;
-		logic inf;
-		logic zero;
-		logic neg;
-		logic sign_mul;
-		logic [13:0] exponent_mul;
-		logic [163:0] mantissa_mul;
-		logic sign_add;
-		logic [13:0] exponent_add;
-		logic [163:0] mantissa_add;
-		logic exponent_neg;
-		logic ready;
-	} fp_fma_reg_type_2;
-
-	parameter fp_fma_reg_type_2 init_fp_fma_reg_2 = '{
-		fmt : 0,
-		rm : 0,
-		snan : 0,
-		qnan : 0,
-		dbz : 0,
-		inf : 0,
-		zero : 0,
-		neg : 0,
-		sign_mul : 0,
-		exponent_mul : 0,
-		mantissa_mul : 0,
-		sign_add : 0,
-		exponent_add : 0,
-		mantissa_add : 0,
-		exponent_neg : 0,
-		ready : 0
-	};
-
-	typedef struct packed{
-		logic [1:0] fmt;
-		logic [2:0] rm;
-		logic snan;
-		logic qnan;
-		logic dbz;
-		logic inf;
-		logic zero;
-		logic neg;
-		logic sign_a;
-		logic [11:0] exponent_a;
-		logic [52:0] mantissa_a;
-		logic sign_b;
-		logic [11:0] exponent_b;
-		logic [52:0] mantissa_b;
-		logic sign_c;
-		logic [11:0] exponent_c;
-		logic [52:0] mantissa_c;
-		logic ready;
 		logic sign_mul;
 		logic [13:0] exponent_mul;
 		logic [163:0] mantissa_mul;
@@ -311,62 +247,8 @@ package fp_wire;
 		logic [13:0] exponent_dif;
 		logic [6:0] counter_dif;
 		logic exponent_neg;
-	} fp_fma_var_type_2;
-
-	typedef struct packed{
-		logic [1:0] fmt;
-		logic [2:0] rm;
-		logic snan;
-		logic qnan;
-		logic dbz;
-		logic inf;
-		logic zero;
-		logic diff;
-		logic neg;
-		logic sign_mac;
-		logic [13:0] exponent_mac;
-		logic [163:0] mantissa_mac;
 		logic ready;
-	}fp_fma_reg_type_3;
-
-	parameter fp_fma_reg_type_3 init_fp_fma_reg_3 = '{
-		fmt : 0,
-		rm : 0,
-		snan : 0,
-		qnan : 0,
-		dbz : 0,
-		inf : 0,
-		zero : 0,
-		diff : 0,
-		neg : 0,
-		sign_mac : 0,
-		exponent_mac : 0,
-		mantissa_mac : 0,
-		ready : 0
-	};
-
-	typedef struct packed{
-		logic [1:0] fmt;
-		logic [2:0] rm;
-		logic snan;
-		logic qnan;
-		logic dbz;
-		logic inf;
-		logic zero;
-		logic diff;
-		logic neg;
-		logic sign_mul;
-		logic [13:0] exponent_mul;
-		logic [163:0] mantissa_mul;
-		logic sign_add;
-		logic [13:0] exponent_add;
-		logic [163:0] mantissa_add;
-		logic exponent_neg;
-		logic ready;
-		logic sign_mac;
-		logic [13:0] exponent_mac;
-		logic [163:0] mantissa_mac;
-	} fp_fma_var_type_3;
+	} fp_fma_var_type_1;
 
 	typedef struct packed{
 		logic sign_rnd;
@@ -382,9 +264,9 @@ package fp_wire;
 		logic zero;
 		logic diff;
 		logic ready;
-	} fp_fma_reg_type_4;
+	} fp_fma_reg_type_2;
 
-	parameter fp_fma_reg_type_4 init_fp_fma_reg_4 = '{
+	parameter fp_fma_reg_type_2 init_fp_fma_reg_2 = '{
 		sign_rnd : 0,
 		exponent_rnd : 0,
 		mantissa_rnd : 0,
@@ -410,10 +292,16 @@ package fp_wire;
 		logic zero;
 		logic diff;
 		logic neg;
+		logic sign_mul;
+		logic [13:0] exponent_mul;
+		logic [163:0] mantissa_mul;
+		logic sign_add;
+		logic [13:0] exponent_add;
+		logic [163:0] mantissa_add;
+		logic exponent_neg;
 		logic sign_mac;
 		logic [13:0] exponent_mac;
 		logic [163:0] mantissa_mac;
-		logic ready;
 		logic [7:0] counter_mac;
 		logic [13:0] counter_sub;
 		logic [10:0] bias;
@@ -421,7 +309,8 @@ package fp_wire;
 		logic [13:0] exponent_rnd;
 		logic [53:0] mantissa_rnd;
 		logic [2:0] grs;
-	} fp_fma_var_type_4;
+		logic ready;
+	} fp_fma_var_type_2;
 
 	typedef struct packed{
 		logic [55:0] a;

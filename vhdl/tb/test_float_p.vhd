@@ -83,8 +83,6 @@ architecture behavior of test_float_p is
 	signal r_1 : fpu_test_reg_type;
 	signal r_2 : fpu_test_reg_type;
 	signal r_3 : fpu_test_reg_type;
-	signal r_4 : fpu_test_reg_type;
-	signal r_5 : fpu_test_reg_type;
 
 	signal fpu_i : fp_unit_in_type;
 	signal fpu_o : fp_unit_out_type;
@@ -127,8 +125,6 @@ begin
 				r_1 <= init_fpu_test_reg;
 				r_2 <= init_fpu_test_reg;
 				r_3 <= init_fpu_test_reg;
-				r_4 <= init_fpu_test_reg;
-				r_5 <= init_fpu_test_reg;
 
 				fpu_i.fp_exe_i.enable <= '0';
 
@@ -171,8 +167,6 @@ begin
 				r_1 <= initial;
 				r_2 <= r_1;
 				r_3 <= r_2;
-				r_4 <= r_3;
-				r_5 <= r_4;
 
 			end if;
 
@@ -186,7 +180,7 @@ begin
 
 			if fpu_o.fp_exe_o.ready = '1' then
 
-				final := r_5;
+				final := r_3;
 
 				final.flags_orig := final.flags;
 				final.result_orig := final.result;

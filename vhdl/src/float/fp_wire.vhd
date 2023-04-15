@@ -230,48 +230,6 @@ package fp_wire is
 	end record;
 
 	type fp_fma_reg_type_1 is record
-		fmt        : std_logic_vector(1 downto 0);
-		rm         : std_logic_vector(2 downto 0);
-		snan       : std_logic;
-		qnan       : std_logic;
-		dbz        : std_logic;
-		inf        : std_logic;
-		zero       : std_logic;
-		neg        : std_logic;
-		sign_a     : std_logic;
-		exponent_a : std_logic_vector(11 downto 0);
-		mantissa_a : std_logic_vector(52 downto 0);
-		sign_b     : std_logic;
-		exponent_b : std_logic_vector(11 downto 0);
-		mantissa_b : std_logic_vector(52 downto 0);
-		sign_c     : std_logic;
-		exponent_c : std_logic_vector(11 downto 0);
-		mantissa_c : std_logic_vector(52 downto 0);
-		ready      : std_logic;
-	end record;
-
-	constant init_fp_fma_reg_1 : fp_fma_reg_type_1 := (
-		fmt        => (others => '0'),
-		rm         => (others => '0'),
-		snan       => '0',
-		qnan       => '0',
-		dbz        => '0',
-		inf        => '0',
-		zero       => '0',
-		neg        => '0',
-		sign_a     => '0',
-		exponent_a => (others => '0'),
-		mantissa_a => (others => '0'),
-		sign_b     => '0',
-		exponent_b => (others => '0'),
-		mantissa_b => (others => '0'),
-		sign_c     => '0',
-		exponent_c => (others => '0'),
-		mantissa_c => (others => '0'),
-		ready      => '0'
-	);
-
-	type fp_fma_reg_type_2 is record
 		fmt          : std_logic_vector(1 downto 0);
 		rm           : std_logic_vector(2 downto 0);
 		snan         : std_logic;
@@ -290,7 +248,7 @@ package fp_wire is
 		ready        : std_logic;
 	end record;
 
-	constant init_fp_fma_reg_2 : fp_fma_reg_type_2 := (
+	constant init_fp_fma_reg_1 : fp_fma_reg_type_1 := (
 		fmt          => (others => '0'),
 		rm           => (others => '0'),
 		snan         => '0',
@@ -309,39 +267,7 @@ package fp_wire is
 		ready        => '0'
 	);
 
-	type fp_fma_reg_type_3 is record
-		fmt          : std_logic_vector(1 downto 0);
-		rm           : std_logic_vector(2 downto 0);
-		snan         : std_logic;
-		qnan         : std_logic;
-		dbz          : std_logic;
-		inf          : std_logic;
-		zero         : std_logic;
-		diff         : std_logic;
-		neg          : std_logic;
-		sign_mac     : std_logic;
-		exponent_mac : signed(13 downto 0);
-		mantissa_mac : std_logic_vector(163 downto 0);
-		ready        : std_logic;
-	end record;
-
-	constant init_fp_fma_reg_3 : fp_fma_reg_type_3 := (
-		fmt          => (others => '0'),
-		rm           => (others => '0'),
-		snan         => '0',
-		qnan         => '0',
-		dbz          => '0',
-		inf          => '0',
-		zero         => '0',
-		diff         => '0',
-		neg          => '0',
-		sign_mac     => '0',
-		exponent_mac => (others => '0'),
-		mantissa_mac => (others => '0'),
-		ready        => '0'
-	);
-
-	type fp_fma_reg_type_4 is record
+	type fp_fma_reg_type_2 is record
 		sign_rnd     : std_logic;
 		exponent_rnd : integer range -8191 to 8191;
 		mantissa_rnd : std_logic_vector(53 downto 0);
@@ -357,7 +283,7 @@ package fp_wire is
 		ready        : std_logic;
 	end record;
 
-	constant init_fp_fma_reg_4 : fp_fma_reg_type_4 := (
+	constant init_fp_fma_reg_2 : fp_fma_reg_type_2 := (
 		sign_rnd     => '0',
 		exponent_rnd => 0,
 		mantissa_rnd => (others => '0'),

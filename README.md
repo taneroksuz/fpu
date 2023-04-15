@@ -22,7 +22,7 @@ This floating point unit uses only one path for both single and double precision
 
 | comp | max | conv | add | sub | mul | fma |
 |:----:|:---:|:----:|:---:|:---:|:---:|:---:|
-| 1    | 1   | 1    | 5   | 5   | 5   | 5   |
+| 1    | 1   | 1    | 3   | 3   | 3   | 3   |
 
 ### Single Precision ###
 

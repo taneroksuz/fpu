@@ -49,13 +49,9 @@ module test_float_p
 	fp_result fp_res_1;
 	fp_result fp_res_2;
 	fp_result fp_res_3;
-	fp_result fp_res_4;
-	fp_result fp_res_5;
 	fp_result fp_res_1_reg;
 	fp_result fp_res_2_reg;
 	fp_result fp_res_3_reg;
-	fp_result fp_res_4_reg;
-	fp_result fp_res_5_reg;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
@@ -96,13 +92,9 @@ module test_float_p
 				fp_res_1_reg <= init_fp_res;
 				fp_res_2_reg <= init_fp_res;
 				fp_res_3_reg <= init_fp_res;
-				fp_res_4_reg <= init_fp_res;
-				fp_res_5_reg <= init_fp_res;
 			end else begin
 				fp_res_2_reg <= fp_res_1;
 				fp_res_3_reg <= fp_res_2;
-				fp_res_4_reg <= fp_res_3;
-				fp_res_5_reg <= fp_res_4;
 			end
 		end
 
@@ -110,8 +102,6 @@ module test_float_p
 			fp_res_1 = fp_res_1_reg;
 			fp_res_2 = fp_res_2_reg;
 			fp_res_3 = fp_res_3_reg;
-			fp_res_4 = fp_res_4_reg;
-			fp_res_5 = fp_res_5_reg;
 			if (enable == 1) begin
 				fp_res_1.data1 = dataread[287:224];
 				fp_res_1.data2 = dataread[223:160];
@@ -166,20 +156,20 @@ module test_float_p
 
 		always_comb begin
 			if (ready_calc) begin
-				if (fp_res_5.fmt == 0) begin
-					if ((fp_res_5.opcode[9] == 0 && fp_res_5.opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
-						result_diff = {32'h0,1'h0,result_calc[30:22] ^ fp_res_5.result[30:22],22'h0};
+				if (fp_res_3.fmt == 0) begin
+					if ((fp_res_3.opcode[9] == 0 && fp_res_3.opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
+						result_diff = {32'h0,1'h0,result_calc[30:22] ^ fp_res_3.result[30:22],22'h0};
 					end else begin
-						result_diff = result_calc ^ fp_res_5.result;
+						result_diff = result_calc ^ fp_res_3.result;
 					end
 				end else begin
-					if ((fp_res_5.opcode[9] == 0 && fp_res_5.opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
-						result_diff = {1'h0,result_calc[62:51] ^ fp_res_5.result[62:51],51'h0};
+					if ((fp_res_3.opcode[9] == 0 && fp_res_3.opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
+						result_diff = {1'h0,result_calc[62:51] ^ fp_res_3.result[62:51],51'h0};
 					end else begin
-						result_diff = result_calc ^ fp_res_5.result;
+						result_diff = result_calc ^ fp_res_3.result;
 					end
 				end
-				flags_diff = flags_calc ^ fp_res_5.flags;
+				flags_diff = flags_calc ^ fp_res_3.flags;
 			end else begin
 				result_diff = 0;
 				flags_diff = 0;
@@ -191,18 +181,18 @@ module test_float_p
 				if ((result_diff != 0) || (flags_diff != 0)) begin
 					$write("%c[1;31m",8'h1B);
 					$display("TEST FAILED");
-					$display("A                 = 0x%H",fp_res_5.data1);
-					$display("B                 = 0x%H",fp_res_5.data2);
-					$display("C                 = 0x%H",fp_res_5.data3);
+					$display("A                 = 0x%H",fp_res_3.data1);
+					$display("B                 = 0x%H",fp_res_3.data2);
+					$display("C                 = 0x%H",fp_res_3.data3);
 					$display("RESULT DIFFERENCE = 0x%H",result_diff);
-					$display("RESULT REFERENCE  = 0x%H",fp_res_5.result);
+					$display("RESULT REFERENCE  = 0x%H",fp_res_3.result);
 					$display("RESULT CALCULATED = 0x%H",result_calc);
 					$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
-					$display("FLAGS REFERENCE   = 0x%H",fp_res_5.flags);
+					$display("FLAGS REFERENCE   = 0x%H",fp_res_3.flags);
 					$display("FLAGS CALCULATED  = 0x%H",flags_calc);
 					$write("%c[0m",8'h1B);
 					$finish;
-				end else if (fp_res_5.finish) begin
+				end else if (fp_res_3.finish) begin
 					$write("%c[1;32m",8'h1B);
 					$display("TEST SUCCEEDED");
 					$write("%c[0m",8'h1B);
