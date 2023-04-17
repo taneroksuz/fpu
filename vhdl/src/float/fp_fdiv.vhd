@@ -34,7 +34,7 @@ architecture behavior of fp_fdiv is
 	type lut_type is array (0 to 127) of signed(7 downto 0);
 	type lut_root_type is array (0 to 95) of signed(7 downto 0);
 
-	signal reciprocal_lut : lut_type := (
+	constant reciprocal_lut : lut_type := (
 		"00000000", "11111110", "11111100", "11111010", "11111000", "11110110", "11110100", "11110010",
 		"11110000", "11101111", "11101101", "11101011", "11101010", "11101000", "11100110", "11100101",
 		"11100011", "11100001", "11100000", "11011110", "11011101", "11011011", "11011010", "11011001",
@@ -52,7 +52,7 @@ architecture behavior of fp_fdiv is
 		"10001000", "10000111", "10000111", "10000110", "10000110", "10000101", "10000101", "10000100",
 		"10000100", "10000011", "10000011", "10000010", "10000010", "10000001", "10000001", "10000000");
 
-	signal reciprocal_root_lut : lut_root_type := (
+	constant reciprocal_root_lut : lut_root_type := (
 		"10110101", "10110010", "10101111", "10101101", "10101010", "10101000", "10100110", "10100011",
 		"10100001", "10011111", "10011110", "10011100", "10011010", "10011000", "10010110", "10010101",
 		"10010011", "10010010", "10010000", "10001111", "10001110", "10001100", "10001011", "10001010",
@@ -70,7 +70,7 @@ begin
 
 	FUNCTIONAL : if PERFORMANCE = 1 generate
 
-		process(r, fp_fdiv_i, fp_mac_o, reciprocal_lut, reciprocal_root_lut)
+		process(r, fp_fdiv_i, fp_mac_o)
 			variable v : fp_fdiv_functional_reg_type;
 
 		begin

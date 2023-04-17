@@ -25,40 +25,39 @@ module fp_fdiv
 
 	fp_fdiv_reg_fixed_type v_fix;
 
-	logic [7:0] reciprocal_lut [0:127];
-	logic [7:0] reciprocal_root_lut [0:95];
+	localparam logic [7:0] reciprocal_lut [0:127] = '{
+		8'b00000000, 8'b11111110, 8'b11111100, 8'b11111010, 8'b11111000, 8'b11110110, 8'b11110100, 8'b11110010,
+		8'b11110000, 8'b11101111, 8'b11101101, 8'b11101011, 8'b11101010, 8'b11101000, 8'b11100110, 8'b11100101,
+		8'b11100011, 8'b11100001, 8'b11100000, 8'b11011110, 8'b11011101, 8'b11011011, 8'b11011010, 8'b11011001,
+		8'b11010111, 8'b11010110, 8'b11010100, 8'b11010011, 8'b11010010, 8'b11010000, 8'b11001111, 8'b11001110,
+		8'b11001100, 8'b11001011, 8'b11001010, 8'b11001001, 8'b11000111, 8'b11000110, 8'b11000101, 8'b11000100,
+		8'b11000011, 8'b11000001, 8'b11000000, 8'b10111111, 8'b10111110, 8'b10111101, 8'b10111100, 8'b10111011,
+		8'b10111010, 8'b10111001, 8'b10111000, 8'b10110111, 8'b10110110, 8'b10110101, 8'b10110100, 8'b10110011,
+		8'b10110010, 8'b10110001, 8'b10110000, 8'b10101111, 8'b10101110, 8'b10101101, 8'b10101100, 8'b10101011,
+		8'b10101010, 8'b10101001, 8'b10101000, 8'b10101000, 8'b10100111, 8'b10100110, 8'b10100101, 8'b10100100,
+		8'b10100011, 8'b10100011, 8'b10100010, 8'b10100001, 8'b10100000, 8'b10011111, 8'b10011111, 8'b10011110,
+		8'b10011101, 8'b10011100, 8'b10011100, 8'b10011011, 8'b10011010, 8'b10011001, 8'b10011001, 8'b10011000,
+		8'b10010111, 8'b10010111, 8'b10010110, 8'b10010101, 8'b10010100, 8'b10010100, 8'b10010011, 8'b10010010,
+		8'b10010010, 8'b10010001, 8'b10010000, 8'b10010000, 8'b10001111, 8'b10001111, 8'b10001110, 8'b10001101,
+		8'b10001101, 8'b10001100, 8'b10001100, 8'b10001011, 8'b10001010, 8'b10001010, 8'b10001001, 8'b10001001,
+		8'b10001000, 8'b10000111, 8'b10000111, 8'b10000110, 8'b10000110, 8'b10000101, 8'b10000101, 8'b10000100,
+		8'b10000100, 8'b10000011, 8'b10000011, 8'b10000010, 8'b10000010, 8'b10000001, 8'b10000001, 8'b10000000
+	};
 
-	initial begin
-		reciprocal_lut[0] = 8'b00000000; reciprocal_lut[1] = 8'b11111110; reciprocal_lut[2] = 8'b11111100; reciprocal_lut[3] = 8'b11111010; reciprocal_lut[4] = 8'b11111000; reciprocal_lut[5] = 8'b11110110; reciprocal_lut[6] = 8'b11110100; reciprocal_lut[7] = 8'b11110010;
-		reciprocal_lut[8] = 8'b11110000; reciprocal_lut[9] = 8'b11101111; reciprocal_lut[10] = 8'b11101101; reciprocal_lut[11] = 8'b11101011; reciprocal_lut[12] = 8'b11101010; reciprocal_lut[13] = 8'b11101000; reciprocal_lut[14] = 8'b11100110; reciprocal_lut[15] = 8'b11100101;
-		reciprocal_lut[16] = 8'b11100011; reciprocal_lut[17] = 8'b11100001; reciprocal_lut[18] = 8'b11100000; reciprocal_lut[19] = 8'b11011110; reciprocal_lut[20] = 8'b11011101; reciprocal_lut[21] = 8'b11011011; reciprocal_lut[22] = 8'b11011010; reciprocal_lut[23] = 8'b11011001;
-		reciprocal_lut[24] = 8'b11010111; reciprocal_lut[25] = 8'b11010110; reciprocal_lut[26] = 8'b11010100; reciprocal_lut[27] = 8'b11010011; reciprocal_lut[28] = 8'b11010010; reciprocal_lut[29] = 8'b11010000; reciprocal_lut[30] = 8'b11001111; reciprocal_lut[31] = 8'b11001110;
-		reciprocal_lut[32] = 8'b11001100; reciprocal_lut[33] = 8'b11001011; reciprocal_lut[34] = 8'b11001010; reciprocal_lut[35] = 8'b11001001; reciprocal_lut[36] = 8'b11000111; reciprocal_lut[37] = 8'b11000110; reciprocal_lut[38] = 8'b11000101; reciprocal_lut[39] = 8'b11000100;
-		reciprocal_lut[40] = 8'b11000011; reciprocal_lut[41] = 8'b11000001; reciprocal_lut[42] = 8'b11000000; reciprocal_lut[43] = 8'b10111111; reciprocal_lut[44] = 8'b10111110; reciprocal_lut[45] = 8'b10111101; reciprocal_lut[46] = 8'b10111100; reciprocal_lut[47] = 8'b10111011;
-		reciprocal_lut[48] = 8'b10111010; reciprocal_lut[49] = 8'b10111001; reciprocal_lut[50] = 8'b10111000; reciprocal_lut[51] = 8'b10110111; reciprocal_lut[52] = 8'b10110110; reciprocal_lut[53] = 8'b10110101; reciprocal_lut[54] = 8'b10110100; reciprocal_lut[55] = 8'b10110011;
-		reciprocal_lut[56] = 8'b10110010; reciprocal_lut[57] = 8'b10110001; reciprocal_lut[58] = 8'b10110000; reciprocal_lut[59] = 8'b10101111; reciprocal_lut[60] = 8'b10101110; reciprocal_lut[61] = 8'b10101101; reciprocal_lut[62] = 8'b10101100; reciprocal_lut[63] = 8'b10101011;
-		reciprocal_lut[64] = 8'b10101010; reciprocal_lut[65] = 8'b10101001; reciprocal_lut[66] = 8'b10101000; reciprocal_lut[67] = 8'b10101000; reciprocal_lut[68] = 8'b10100111; reciprocal_lut[69] = 8'b10100110; reciprocal_lut[70] = 8'b10100101; reciprocal_lut[71] = 8'b10100100;
-		reciprocal_lut[72] = 8'b10100011; reciprocal_lut[73] = 8'b10100011; reciprocal_lut[74] = 8'b10100010; reciprocal_lut[75] = 8'b10100001; reciprocal_lut[76] = 8'b10100000; reciprocal_lut[77] = 8'b10011111; reciprocal_lut[78] = 8'b10011111; reciprocal_lut[79] = 8'b10011110;
-		reciprocal_lut[80] = 8'b10011101; reciprocal_lut[81] = 8'b10011100; reciprocal_lut[82] = 8'b10011100; reciprocal_lut[83] = 8'b10011011; reciprocal_lut[84] = 8'b10011010; reciprocal_lut[85] = 8'b10011001; reciprocal_lut[86] = 8'b10011001; reciprocal_lut[87] = 8'b10011000;
-		reciprocal_lut[88] = 8'b10010111; reciprocal_lut[89] = 8'b10010111; reciprocal_lut[90] = 8'b10010110; reciprocal_lut[91] = 8'b10010101; reciprocal_lut[92] = 8'b10010100; reciprocal_lut[93] = 8'b10010100; reciprocal_lut[94] = 8'b10010011; reciprocal_lut[95] = 8'b10010010;
-		reciprocal_lut[96] = 8'b10010010; reciprocal_lut[97] = 8'b10010001; reciprocal_lut[98] = 8'b10010000; reciprocal_lut[99] = 8'b10010000; reciprocal_lut[100] = 8'b10001111; reciprocal_lut[101] = 8'b10001111; reciprocal_lut[102] = 8'b10001110; reciprocal_lut[103] = 8'b10001101;
-		reciprocal_lut[104] = 8'b10001101; reciprocal_lut[105] = 8'b10001100; reciprocal_lut[106] = 8'b10001100; reciprocal_lut[107] = 8'b10001011; reciprocal_lut[108] = 8'b10001010; reciprocal_lut[109] = 8'b10001010; reciprocal_lut[110] = 8'b10001001; reciprocal_lut[111] = 8'b10001001;
-		reciprocal_lut[112] = 8'b10001000; reciprocal_lut[113] = 8'b10000111; reciprocal_lut[114] = 8'b10000111; reciprocal_lut[115] = 8'b10000110; reciprocal_lut[116] = 8'b10000110; reciprocal_lut[117] = 8'b10000101; reciprocal_lut[118] = 8'b10000101; reciprocal_lut[119] = 8'b10000100;
-		reciprocal_lut[120] = 8'b10000100; reciprocal_lut[121] = 8'b10000011; reciprocal_lut[122] = 8'b10000011; reciprocal_lut[123] = 8'b10000010; reciprocal_lut[124] = 8'b10000010; reciprocal_lut[125] = 8'b10000001; reciprocal_lut[126] = 8'b10000001; reciprocal_lut[127] = 8'b10000000;
-
-		reciprocal_root_lut[0] = 8'b10110101; reciprocal_root_lut[1] = 8'b10110010; reciprocal_root_lut[2] = 8'b10101111; reciprocal_root_lut[3] = 8'b10101101; reciprocal_root_lut[4] = 8'b10101010; reciprocal_root_lut[5] = 8'b10101000; reciprocal_root_lut[6] = 8'b10100110; reciprocal_root_lut[7] = 8'b10100011;
-		reciprocal_root_lut[8] = 8'b10100001; reciprocal_root_lut[9] = 8'b10011111; reciprocal_root_lut[10] = 8'b10011110; reciprocal_root_lut[11] = 8'b10011100; reciprocal_root_lut[12] = 8'b10011010; reciprocal_root_lut[13] = 8'b10011000; reciprocal_root_lut[14] = 8'b10010110; reciprocal_root_lut[15] = 8'b10010101;
-		reciprocal_root_lut[16] = 8'b10010011; reciprocal_root_lut[17] = 8'b10010010; reciprocal_root_lut[18] = 8'b10010000; reciprocal_root_lut[19] = 8'b10001111; reciprocal_root_lut[20] = 8'b10001110; reciprocal_root_lut[21] = 8'b10001100; reciprocal_root_lut[22] = 8'b10001011; reciprocal_root_lut[23] = 8'b10001010;
-		reciprocal_root_lut[24] = 8'b10001000; reciprocal_root_lut[25] = 8'b10000111; reciprocal_root_lut[26] = 8'b10000110; reciprocal_root_lut[27] = 8'b10000101; reciprocal_root_lut[28] = 8'b10000100; reciprocal_root_lut[29] = 8'b10000011; reciprocal_root_lut[30] = 8'b10000010; reciprocal_root_lut[31] = 8'b10000001;
-		reciprocal_root_lut[32] = 8'b10000000; reciprocal_root_lut[33] = 8'b01111111; reciprocal_root_lut[34] = 8'b01111110; reciprocal_root_lut[35] = 8'b01111101; reciprocal_root_lut[36] = 8'b01111100; reciprocal_root_lut[37] = 8'b01111011; reciprocal_root_lut[38] = 8'b01111010; reciprocal_root_lut[39] = 8'b01111001;
-		reciprocal_root_lut[40] = 8'b01111000; reciprocal_root_lut[41] = 8'b01110111; reciprocal_root_lut[42] = 8'b01110111; reciprocal_root_lut[43] = 8'b01110110; reciprocal_root_lut[44] = 8'b01110101; reciprocal_root_lut[45] = 8'b01110100; reciprocal_root_lut[46] = 8'b01110011; reciprocal_root_lut[47] = 8'b01110011;
-		reciprocal_root_lut[48] = 8'b01110010; reciprocal_root_lut[49] = 8'b01110001; reciprocal_root_lut[50] = 8'b01110001; reciprocal_root_lut[51] = 8'b01110000; reciprocal_root_lut[52] = 8'b01101111; reciprocal_root_lut[53] = 8'b01101111; reciprocal_root_lut[54] = 8'b01101110; reciprocal_root_lut[55] = 8'b01101101;
-		reciprocal_root_lut[56] = 8'b01101101; reciprocal_root_lut[57] = 8'b01101100; reciprocal_root_lut[58] = 8'b01101011; reciprocal_root_lut[59] = 8'b01101011; reciprocal_root_lut[60] = 8'b01101010; reciprocal_root_lut[61] = 8'b01101010; reciprocal_root_lut[62] = 8'b01101001; reciprocal_root_lut[63] = 8'b01101001;
-		reciprocal_root_lut[64] = 8'b01101000; reciprocal_root_lut[65] = 8'b01100111; reciprocal_root_lut[66] = 8'b01100111; reciprocal_root_lut[67] = 8'b01100110; reciprocal_root_lut[68] = 8'b01100110; reciprocal_root_lut[69] = 8'b01100101; reciprocal_root_lut[70] = 8'b01100101; reciprocal_root_lut[71] = 8'b01100100;
-		reciprocal_root_lut[72] = 8'b01100100; reciprocal_root_lut[73] = 8'b01100011; reciprocal_root_lut[74] = 8'b01100011; reciprocal_root_lut[75] = 8'b01100010; reciprocal_root_lut[76] = 8'b01100010; reciprocal_root_lut[77] = 8'b01100010; reciprocal_root_lut[78] = 8'b01100001; reciprocal_root_lut[79] = 8'b01100001;
-		reciprocal_root_lut[80] = 8'b01100000; reciprocal_root_lut[81] = 8'b01100000; reciprocal_root_lut[82] = 8'b01011111; reciprocal_root_lut[83] = 8'b01011111; reciprocal_root_lut[84] = 8'b01011111; reciprocal_root_lut[85] = 8'b01011110; reciprocal_root_lut[86] = 8'b01011110; reciprocal_root_lut[87] = 8'b01011101;
-		reciprocal_root_lut[88] = 8'b01011101; reciprocal_root_lut[89] = 8'b01011101; reciprocal_root_lut[90] = 8'b01011100; reciprocal_root_lut[91] = 8'b01011100; reciprocal_root_lut[92] = 8'b01011011; reciprocal_root_lut[93] = 8'b01011011; reciprocal_root_lut[94] = 8'b01011011; reciprocal_root_lut[95] = 8'b01011010;
-	end
+	localparam logic [7:0] reciprocal_root_lut [0:95] = '{
+		8'b10110101, 8'b10110010, 8'b10101111, 8'b10101101, 8'b10101010, 8'b10101000, 8'b10100110, 8'b10100011,
+		8'b10100001, 8'b10011111, 8'b10011110, 8'b10011100, 8'b10011010, 8'b10011000, 8'b10010110, 8'b10010101,
+		8'b10010011, 8'b10010010, 8'b10010000, 8'b10001111, 8'b10001110, 8'b10001100, 8'b10001011, 8'b10001010,
+		8'b10001000, 8'b10000111, 8'b10000110, 8'b10000101, 8'b10000100, 8'b10000011, 8'b10000010, 8'b10000001,
+		8'b10000000, 8'b01111111, 8'b01111110, 8'b01111101, 8'b01111100, 8'b01111011, 8'b01111010, 8'b01111001,
+		8'b01111000, 8'b01110111, 8'b01110111, 8'b01110110, 8'b01110101, 8'b01110100, 8'b01110011, 8'b01110011,
+		8'b01110010, 8'b01110001, 8'b01110001, 8'b01110000, 8'b01101111, 8'b01101111, 8'b01101110, 8'b01101101,
+		8'b01101101, 8'b01101100, 8'b01101011, 8'b01101011, 8'b01101010, 8'b01101010, 8'b01101001, 8'b01101001,
+		8'b01101000, 8'b01100111, 8'b01100111, 8'b01100110, 8'b01100110, 8'b01100101, 8'b01100101, 8'b01100100,
+		8'b01100100, 8'b01100011, 8'b01100011, 8'b01100010, 8'b01100010, 8'b01100010, 8'b01100001, 8'b01100001,
+		8'b01100000, 8'b01100000, 8'b01011111, 8'b01011111, 8'b01011111, 8'b01011110, 8'b01011110, 8'b01011101,
+		8'b01011101, 8'b01011101, 8'b01011100, 8'b01011100, 8'b01011011, 8'b01011011, 8'b01011011, 8'b01011010
+	};
 
 	generate
 
