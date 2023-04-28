@@ -20,7 +20,7 @@ export ROUND ?=rne# rne, rtz, rdn, rup, rmm
 generate:
 	tests/generate_test_cases.sh
 
-simulation:
+simulate:
 	@if [ ${LANGUAGE} = "verilog" ] && [ ${DESIGN} = "fpu" ]; \
 	then \
 		sim/test_fpu_verilog.sh; \
@@ -35,4 +35,4 @@ simulation:
 		sim/test_lzc_vhdl.sh; \
 	fi
 
-all: generate simulation
+all: generate simulate

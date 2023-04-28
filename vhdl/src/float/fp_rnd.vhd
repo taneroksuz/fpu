@@ -143,12 +143,7 @@ begin
 				when "010" => flags(1) := '1';
 				when "011" => flags(1) := '1';
 				when "100" => flags(1) := '1';
-				when "101" => 
-					if rm = "010" or rm = "011" then
-						flags(1) := '0';
-					else
-						flags(1) := '1';
-					end if;
+				when "101" => flags(1) := '0' when rm = "010" or rm = "011" else '1';
 				when "110" => flags(1) := '0';
 				when "111" => flags(1) := '0';
 				when others => null;
