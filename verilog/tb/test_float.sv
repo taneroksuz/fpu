@@ -163,14 +163,14 @@ module test_float
 			v.result_calc = fp_unit_o.fp_exe_o.result;
 			v.flags_calc = fp_unit_o.fp_exe_o.flags;
 
-			if (v.fmt == 0) begin
-				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
+			if (r.fmt == 0) begin
+				if ((r.op.fcvt_f2i == 0 && r.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
 					v.result_diff = {32'h0,1'h0,v.result_orig[30:22] ^ v.result_calc[30:22],22'h0};
 				end else begin
 					v.result_diff = v.result_orig ^ v.result_orig;
 				end
 			end else begin
-				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
+				if ((r.op.fcvt_f2i == 0 && r.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
 					v.result_diff = {1'h0,v.result_orig[62:51] ^ v.result_calc[62:51],51'h0};
 				end else begin
 					v.result_diff = v.result_orig ^ v.result_orig;
@@ -275,14 +275,14 @@ module test_float
 			v.result_calc = fp_unit_o.fp_exe_o.result;
 			v.flags_calc = fp_unit_o.fp_exe_o.flags;
 
-			if (v.fmt == 0) begin
-				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
+			if (r.fmt == 0) begin
+				if ((r.op.fcvt_f2i == 0 && r.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
 					v.result_diff = {32'h0,1'h0,v.result_orig[30:22] ^ v.result_calc[30:22],22'h0};
 				end else begin
 					v.result_diff = v.result_orig ^ v.result_orig;
 				end
 			end else begin
-				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
+				if ((r.op.fcvt_f2i == 0 && r.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
 					v.result_diff = {1'h0,v.result_orig[62:51] ^ v.result_calc[62:51],51'h0};
 				end else begin
 					v.result_diff = v.result_orig ^ v.result_orig;
