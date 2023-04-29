@@ -55,7 +55,7 @@ make generate
 To simulate the design together with generated test cases you could run following command:
 
 ```console
-make simulation
+make simulate
 ```
 
 This command require two options **LANGUAGE** and **DESIGN**. The possible settings of these options can be found in the makefile.
@@ -63,7 +63,7 @@ This command require two options **LANGUAGE** and **DESIGN**. The possible setti
 An example execution of this command looks like as follows:
 
 ```console
-make simulation LANGUAGE=verilog DESIGN=fpu
+make simulate LANGUAGE=verilog DESIGN=fpu
 ```
 
 ## SINGLE PRECISION ##
