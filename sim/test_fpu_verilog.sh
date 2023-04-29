@@ -13,11 +13,11 @@ cp ${BASEDIR}/tests/test_cases/*.hex ${BASEDIR}/sim/work
 
 start=`date +%s`
 
-${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s --exe ${BASEDIR}/verilog/tb/test_float_s.cpp 2>&1 > /dev/null
+${VERILATOR} --cc --timing -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_s --exe ${BASEDIR}/verilog/tb/test_float_s.cpp 2>&1 > /dev/null
 make -s -j -C obj_dir/ -f Vtest_float_s.mk Vtest_float_s
-${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p --exe ${BASEDIR}/verilog/tb/test_float_p.cpp 2>&1 > /dev/null
+${VERILATOR} --cc --timing -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float_p --exe ${BASEDIR}/verilog/tb/test_float_p.cpp 2>&1 > /dev/null
 make -s -j -C obj_dir/ -f Vtest_float_p.mk Vtest_float_p
-${VERILATOR} --cc -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float --exe ${BASEDIR}/verilog/tb/test_float.cpp 2>&1 > /dev/null
+${VERILATOR} --cc --timing -Wno-UNOPTFLAT -f ${BASEDIR}/sim/files_fpu_verilog.f --top-module test_float --exe ${BASEDIR}/verilog/tb/test_float.cpp 2>&1 > /dev/null
 make -s -j -C obj_dir/ -f Vtest_float.mk Vtest_float
 obj_dir/Vtest_float_s
 obj_dir/Vtest_float_p

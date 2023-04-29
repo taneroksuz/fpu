@@ -12,155 +12,323 @@ module test_float
 	integer data_file;
 	integer scan_file;
 
-	logic [287:0] dataread;
+	logic [63:0] dataread [0:3];
 
-	logic [63:0] result_calc;
-	logic [4:0] flags_calc;
-	logic ready_calc;
-	logic enable;
-	logic finish;
+	typedef struct packed{
+		logic [63:0] data1;
+		logic [63:0] data2;
+		logic [63:0] data3;
+		logic [63:0] result;
+		logic [4:0] flags;
+		logic [1:0] fmt;
+		logic [2:0] rm;
+		fp_operation_type op;
+		logic [0:0] enable;
+		logic [63:0] result_orig;
+		logic [63:0] result_calc;
+		logic [63:0] result_diff;
+		logic [4:0] flags_orig;
+		logic [4:0] flags_calc;
+		logic [4:0] flags_diff;
+		logic [0:0] terminate;
+		logic [0:0] load;
+		integer i;
+		integer j;
+	} fp_result;
 
-	logic [63:0] data1;
-	logic [63:0] data2;
-	logic [63:0] data3;
-	logic [63:0] result;
-	logic [4:0] flags;
-	logic [1:0] fmt;
-	logic [2:0] rm;
-	logic [1:0] op;
-	logic [9:0] opcode;
+	fp_result init_fp_res = '{
+		data1 : 0,
+		data2 : 0,
+		data3 : 0,
+		result : 0,
+		flags : 0,
+		fmt : 0,
+		rm : 0,
+		op : init_fp_operation,
+		enable : 0,
+		result_orig : 0,
+		result_calc : 0,
+		result_diff : 0,
+		flags_orig : 0,
+		flags_calc : 0,
+		flags_diff : 0,
+		terminate : 0,
+		load : 0,
+		i : 0,
+		j : 0
+	};
+
+	fp_result v;
+	fp_result r,rin;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
 
-	logic [63:0] result_diff;
-	logic [4:0] flags_diff;
+	string operation [0:23] = '{"f32_le","f32_lt","f32_eq","f64_le","f64_lt","f64_eq",
+														"f32_to_f64","f64_to_f32",
+														"i32_to_f32","ui32_to_f32","i64_to_f32","ui64_to_f32",
+														"i32_to_f64","ui32_to_f64","i64_to_f64","ui64_to_f64",
+														"f32_to_i32","f32_to_ui32","f32_to_i64","f32_to_ui64",
+														"f64_to_i32","f64_to_ui32","f64_to_i64","f64_to_ui64"};
+	string mode [0:4] = '{"rne","rtz","rdn","rup","rmm"};
+	logic [0:0] round [0:23] = '{0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+	logic [0:0] cmp [0:23] = '{1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	logic [0:0] f2f [0:23] = '{0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	logic [0:0] i2f [0:23] = '{0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0};
+	logic [0:0] f2i [0:23] = '{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1};
+	logic [1:0] fmt [0:23] = '{0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1};
+	logic [2:0] rm [0:23] = '{0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	logic [1:0] op [0:23] = '{0,0,0,0,0,0,0,1,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3};
+	logic [2:0] rnd [0:4] = '{0,1,2,3,4};
 
-	initial begin
-		data_file = $fopen("fpu.dat", "r");
-		if (data_file == 0) begin
-			$display("fpu.dat is not available!");
-			$finish;
+	string filename;
+
+	always_comb begin
+
+		@(posedge clock);
+
+		v = r;
+
+		if (round[v.i] == 0) begin
+
+			if (v.load == 0) begin
+				filename = {operation[v.i],".hex"};
+				data_file = $fopen(filename, "r");
+				if (data_file == 0) begin
+					$display({filename," is not available!"});
+					$finish;
+				end
+				v.load = 1;
+			end
+
+			if ($feof(data_file)) begin
+				v.enable = 1;
+				v.terminate = 1;
+				dataread = '{default:0};
+			end else begin
+				v.enable = 1;
+				v.terminate = 0;
+				scan_file = $fscanf(data_file,"%h %h %h %h\n", dataread[0], dataread[1], dataread[2], dataread[3]);
+			end
+
+			if (v.terminate == 1) begin
+				$write("%c[1;34m",8'h1B);
+				$display(operation[v.i]);
+				$write("%c[0m",8'h1B);
+				$write("%c[1;32m",8'h1B);
+				$display("TEST SUCCEEDED");
+				$write("%c[0m",8'h1B);
+				v.i = v.i + 1;
+				v.load = 0;
+				$fclose(data_file);
+			end
+
+			v.data1 = dataread[0];
+			v.data2 = dataread[1];
+			v.data3 = 0;
+			v.result = dataread[2];
+			v.flags = dataread[3][4:0];
+			v.fmt = fmt[v.i];
+			v.rm = rm[v.i];
+			v.op.fmadd = 0;
+			v.op.fadd = 0;
+			v.op.fsub = 0;
+			v.op.fmul = 0;
+			v.op.fdiv = 0;
+			v.op.fsqrt = 0;
+			v.op.fmv_i2f = 0;
+			v.op.fmv_f2i = 0;
+			v.op.fcmp = cmp[v.i];
+			v.op.fcvt_f2f = f2f[v.i];
+			v.op.fcvt_i2f = i2f[v.i];
+			v.op.fcvt_f2i = f2i[v.i];
+			v.op.fcvt_op = op[v.i];
+
+			if (reset == 0) begin
+				v.op = init_fp_operation;
+				v.enable = 0;
+			end
+
+			fp_unit_i.fp_exe_i.data1 = v.data1;
+			fp_unit_i.fp_exe_i.data2 = v.data2;
+			fp_unit_i.fp_exe_i.data3 = v.data3;
+			fp_unit_i.fp_exe_i.fmt = v.fmt;
+			fp_unit_i.fp_exe_i.rm = v.rm;
+			fp_unit_i.fp_exe_i.op = v.op;
+			fp_unit_i.fp_exe_i.enable = v.enable;
+
+			v.result_orig = r.result;
+			v.flags_orig = r.flags;
+
+			v.result_calc = fp_unit_o.fp_exe_o.result;
+			v.flags_calc = fp_unit_o.fp_exe_o.flags;
+
+			if (v.fmt == 0) begin
+				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
+					v.result_diff = {32'h0,1'h0,v.result_orig[30:22] ^ v.result_calc[30:22],22'h0};
+				end else begin
+					v.result_diff = v.result_orig ^ v.result_orig;
+				end
+			end else begin
+				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
+					v.result_diff = {1'h0,v.result_orig[62:51] ^ v.result_calc[62:51],51'h0};
+				end else begin
+					v.result_diff = v.result_orig ^ v.result_orig;
+				end
+			end
+			v.flags_diff = v.flags_orig ^ v.flags_calc;
+
+			if ((v.result_diff != 0) || (v.flags_diff != 0)) begin
+				$write("%c[1;34m",8'h1B);
+				$display(operation[v.i]);
+				$write("%c[0m",8'h1B);
+				$write("%c[1;31m",8'h1B);
+				$display("TEST FAILED");
+				$display("A                 = 0x%H",r.data1);
+				$display("B                 = 0x%H",r.data2);
+				$display("C                 = 0x%H",r.data3);
+				$display("RESULT DIFFERENCE = 0x%H",v.result_diff);
+				$display("RESULT REFERENCE  = 0x%H",v.result_orig);
+				$display("RESULT CALCULATED = 0x%H",v.result_calc);
+				$display("FLAGS DIFFERENCE  = 0x%H",v.flags_diff);
+				$display("FLAGS REFERENCE   = 0x%H",v.flags_orig);
+				$display("FLAGS CALCULATED  = 0x%H",v.flags_calc);
+				$write("%c[0m",8'h1B);
+				$finish;
+			end
+
+		end else begin
+
+			if (v.load == 0) begin
+				filename = {operation[v.i],"_",mode[v.j],".hex"};
+				data_file = $fopen(filename, "r");
+				if (data_file == 0) begin
+					$display({filename," is not available!"});
+					$finish;
+				end
+				v.load = 1;
+			end
+
+			if ($feof(data_file)) begin
+				v.enable = 1;
+				v.terminate = 1;
+				dataread = '{default:0};
+			end else begin
+				v.enable = 1;
+				v.terminate = 0;
+				scan_file = $fscanf(data_file,"%h %h %h\n", dataread[0], dataread[1], dataread[2]);
+			end
+
+			if (v.terminate == 1) begin
+				$write("%c[1;34m",8'h1B);
+				$display({operation[v.i]," ",mode[v.j]});
+				$write("%c[0m",8'h1B);
+				$write("%c[1;32m",8'h1B);
+				$display("TEST SUCCEEDED");
+				$write("%c[0m",8'h1B);
+				$fclose(data_file);
+				if (v.j == 4 && v.i == 23) begin
+					$finish;
+				end
+				v.i = v.j == 4 ? v.i + 1 : v.i;
+				v.j = v.j == 4 ? 0 : v.j + 1;
+				v.load = 0;
+			end
+
+			v.data1 = dataread[0];
+			v.data2 = 0;
+			v.data3 = 0;
+			v.result = dataread[1];
+			v.flags = dataread[2][4:0];
+			v.fmt = fmt[v.i];
+			v.rm = rnd[v.j];
+			v.op.fmadd = 0;
+			v.op.fadd = 0;
+			v.op.fsub = 0;
+			v.op.fmul = 0;
+			v.op.fdiv = 0;
+			v.op.fsqrt = 0;
+			v.op.fmv_i2f = 0;
+			v.op.fmv_f2i = 0;
+			v.op.fcmp = cmp[v.i];
+			v.op.fcvt_f2f = f2f[v.i];
+			v.op.fcvt_i2f = i2f[v.i];
+			v.op.fcvt_f2i = f2i[v.i];
+			v.op.fcvt_op = op[v.i];
+
+			if (reset == 0) begin
+				v.op = init_fp_operation;
+				v.enable = 0;
+			end
+
+			fp_unit_i.fp_exe_i.data1 = v.data1;
+			fp_unit_i.fp_exe_i.data2 = v.data2;
+			fp_unit_i.fp_exe_i.data3 = v.data3;
+			fp_unit_i.fp_exe_i.fmt = v.fmt;
+			fp_unit_i.fp_exe_i.rm = v.rm;
+			fp_unit_i.fp_exe_i.op = v.op;
+			fp_unit_i.fp_exe_i.enable = v.enable;
+
+			v.result_orig = r.result;
+			v.flags_orig = r.flags;
+
+			v.result_calc = fp_unit_o.fp_exe_o.result;
+			v.flags_calc = fp_unit_o.fp_exe_o.flags;
+
+			if (v.fmt == 0) begin
+				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
+					v.result_diff = {32'h0,1'h0,v.result_orig[30:22] ^ v.result_calc[30:22],22'h0};
+				end else begin
+					v.result_diff = v.result_orig ^ v.result_orig;
+				end
+			end else begin
+				if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
+					v.result_diff = {1'h0,v.result_orig[62:51] ^ v.result_calc[62:51],51'h0};
+				end else begin
+					v.result_diff = v.result_orig ^ v.result_orig;
+				end
+			end
+			v.flags_diff = v.flags_orig ^ v.flags_calc;
+
+			if ((v.result_diff != 0) || (v.flags_diff != 0)) begin
+				$write("%c[1;34m",8'h1B);
+				$display({operation[v.i]," ",mode[v.j]});
+				$write("%c[0m",8'h1B);
+				$write("%c[1;31m",8'h1B);
+				$display("TEST FAILED");
+				$display("A                 = 0x%H",r.data1);
+				$display("B                 = 0x%H",r.data2);
+				$display("C                 = 0x%H",r.data3);
+				$display("RESULT DIFFERENCE = 0x%H",v.result_diff);
+				$display("RESULT REFERENCE  = 0x%H",v.result_orig);
+				$display("RESULT CALCULATED = 0x%H",v.result_calc);
+				$display("FLAGS DIFFERENCE  = 0x%H",v.flags_diff);
+				$display("FLAGS REFERENCE   = 0x%H",v.flags_orig);
+				$display("FLAGS CALCULATED  = 0x%H",v.flags_calc);
+				$write("%c[0m",8'h1B);
+				$finish;
+			end
+
+		end
+
+		rin = v;
+
+	end
+
+	always_ff @(posedge clock) begin
+		if (reset == 0) begin
+			r <= init_fp_res;
+		end else begin
+			r <= rin;
 		end
 	end
 
-	generate
-
-		always_ff @(posedge clock) begin
-			if (reset == 0) begin
-				enable <= 0;
-				finish <= 0;
-				dataread <= 0;
-			end else begin
-				if ($feof(data_file)) begin
-					enable <= 1;
-					finish <= 1;
-					dataread <= 0;
-				end else begin
-					enable <= 1;
-					finish <= 0;
-					scan_file <= $fscanf(data_file,"%h\n", dataread);
-				end
-			end
-		end
-
-		always_comb begin
-			data1 = dataread[287:224];
-			data2 = dataread[223:160];
-			data3 = dataread[159:96];
-			result = dataread[95:32];
-			flags = dataread[28:24];
-			fmt = dataread[21:20];
-			rm = dataread[18:16];
-			op = dataread[13:12];
-			opcode = dataread[9:0];
-		end
-
-		assign fp_unit_i.fp_exe_i.data1 = data1;
-		assign fp_unit_i.fp_exe_i.data2 = data2;
-		assign fp_unit_i.fp_exe_i.data3 = data3;
-		assign fp_unit_i.fp_exe_i.fmt = fmt;
-		assign fp_unit_i.fp_exe_i.rm = rm;
-		assign fp_unit_i.fp_exe_i.op.fmadd = opcode[0];
-		assign fp_unit_i.fp_exe_i.op.fmsub = 0;
-		assign fp_unit_i.fp_exe_i.op.fnmadd = 0;
-		assign fp_unit_i.fp_exe_i.op.fnmsub = 0;
-		assign fp_unit_i.fp_exe_i.op.fadd = opcode[1];
-		assign fp_unit_i.fp_exe_i.op.fsub = opcode[2];
-		assign fp_unit_i.fp_exe_i.op.fmul = opcode[3];
-		assign fp_unit_i.fp_exe_i.op.fdiv = opcode[4];
-		assign fp_unit_i.fp_exe_i.op.fsqrt = opcode[5];
-		assign fp_unit_i.fp_exe_i.op.fsgnj = 0;
-		assign fp_unit_i.fp_exe_i.op.fcmp = opcode[6];
-		assign fp_unit_i.fp_exe_i.op.fmax = 0;
-		assign fp_unit_i.fp_exe_i.op.fclass = 0;
-		assign fp_unit_i.fp_exe_i.op.fmv_i2f = 0;
-		assign fp_unit_i.fp_exe_i.op.fmv_f2i = 0;
-		assign fp_unit_i.fp_exe_i.op.fcvt_f2f = opcode[7];
-		assign fp_unit_i.fp_exe_i.op.fcvt_i2f = opcode[8];
-		assign fp_unit_i.fp_exe_i.op.fcvt_f2i = opcode[9];
-		assign fp_unit_i.fp_exe_i.op.fcvt_op = op;
-		assign fp_unit_i.fp_exe_i.enable = enable;
-
-		fp_unit fp_unit_comp
-		(
-			.reset ( reset ),
-			.clock ( clock ),
-			.fp_unit_i ( fp_unit_i ),
-			.fp_unit_o ( fp_unit_o )
-		);
-
-		assign result_calc = fp_unit_o.fp_exe_o.result;
-		assign flags_calc = fp_unit_o.fp_exe_o.flags;
-		assign ready_calc = fp_unit_o.fp_exe_o.ready;
-
-		always_comb begin
-			if (ready_calc) begin
-				if (fmt == 0) begin
-					if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[31:0] == 32'h7FC00000) begin
-						result_diff = {32'h0,1'h0,result_calc[30:22] ^ result[30:22],22'h0};
-					end else begin
-						result_diff = result_calc ^ result;
-					end
-				end else begin
-					if ((opcode[9] == 0 && opcode[6] == 0) && result_calc[63:0] == 64'h7FF8000000000000) begin
-						result_diff = {1'h0,result_calc[62:51] ^ result[62:51],51'h0};
-					end else begin
-						result_diff = result_calc ^ result;
-					end
-				end
-				flags_diff = flags_calc ^ flags;
-			end else begin
-				result_diff = 0;
-				flags_diff = 0;
-			end
-		end
-
-		always_ff @(posedge clock) begin
-			if (ready_calc) begin
-				if ((result_diff != 0) || (flags_diff != 0)) begin
-					$write("%c[1;31m",8'h1B);
-					$display("TEST FAILED");
-					$display("A                 = 0x%H",data1);
-					$display("B                 = 0x%H",data2);
-					$display("C                 = 0x%H",data3);
-					$display("RESULT DIFFERENCE = 0x%H",result_diff);
-					$display("RESULT REFERENCE  = 0x%H",result);
-					$display("RESULT CALCULATED = 0x%H",result_calc);
-					$display("FLAGS DIFFERENCE  = 0x%H",flags_diff);
-					$display("FLAGS REFERENCE   = 0x%H",flags);
-					$display("FLAGS CALCULATED  = 0x%H",flags_calc);
-					$write("%c[0m",8'h1B);
-					$finish;
-				end else if (finish) begin
-					$write("%c[1;32m",8'h1B);
-					$display("TEST SUCCEEDED");
-					$write("%c[0m",8'h1B);
-					$finish;
-				end
-			end
-		end
-
-	endgenerate
+	fp_unit fp_unit_comp
+	(
+		.reset ( reset ),
+		.clock ( clock ),
+		.fp_unit_i ( fp_unit_i ),
+		.fp_unit_o ( fp_unit_o )
+	);
 
 endmodule
