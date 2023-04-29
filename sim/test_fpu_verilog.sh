@@ -9,7 +9,7 @@ mkdir ${BASEDIR}/sim/work
 
 cd ${BASEDIR}/sim/work
 
-cp ${BASEDIR}/tests/test_cases/*.hex ${BASEDIR}/sim/work
+ln -s ${BASEDIR}/tests/test_cases/*.hex ${BASEDIR}/sim/work/.
 
 start=`date +%s`
 
