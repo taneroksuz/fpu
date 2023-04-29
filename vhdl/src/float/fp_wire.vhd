@@ -59,106 +59,6 @@ package fp_wire is
 		fcvt_op  => (others => '0')
 	);
 
-	type fp_reg_read_in_type is record
-		rden1  : std_logic;
-		raddr1 : std_logic_vector(4 downto 0);
-		rden2  : std_logic;
-		raddr2 : std_logic_vector(4 downto 0);
-		rden3  : std_logic;
-		raddr3 : std_logic_vector(4 downto 0);
-	end record;
-
-	type fp_reg_write_in_type is record
-		wren  : std_logic;
-		waddr : std_logic_vector(4 downto 0);
-		wdata : std_logic_vector(63 downto 0);
-	end record;
-
-	type fp_reg_out_type is record
-		data1 : std_logic_vector(63 downto 0);
-		data2 : std_logic_vector(63 downto 0);
-		data3 : std_logic_vector(63 downto 0);
-	end record;
-
-	type fp_csr_read_in_type is record
-		rden  : std_logic;
-		raddr : std_logic_vector(11 downto 0);
-	end record;
-
-	type fp_csr_write_in_type is record
-		wren  : std_logic;
-		waddr : std_logic_vector(11 downto 0);
-		wdata : std_logic_vector(63 downto 0);
-	end record;
-
-	type fp_csr_out_type is record
-		data : std_logic_vector(63 downto 0);
-	end record;
-
-	type fp_dec_in_type is record
-		instr : std_logic_vector(31 downto 0);
-	end record;
-
-	type fp_dec_out_type is record
-		imm       : std_logic_vector(63 downto 0);
-		int_rden1 : std_logic;
-		int_wren  : std_logic;
-		fpu_rden1 : std_logic;
-		fpu_rden2 : std_logic;
-		fpu_rden3 : std_logic;
-		fpu_wren  : std_logic;
-		fpu_load  : std_logic;
-		fpu_store : std_logic;
-		fpu       : std_logic;
-		fpu_op    : fp_operation_type;
-		valid     : std_logic;
-	end record;
-
-	type fp_dec_reg_type is record
-		instr     : std_logic_vector(31 downto 0);
-		imm       : std_logic_vector(63 downto 0);
-		imm_i     : std_logic_vector(63 downto 0);
-		imm_s     : std_logic_vector(63 downto 0);
-		opcode    : std_logic_vector(6 downto 0);
-		funct7    : std_logic_vector(6 downto 0);
-		rm        : std_logic_vector(2 downto 0);
-		int_rden1 : std_logic;
-		int_wren  : std_logic;
-		fpu_rden1 : std_logic;
-		fpu_rden2 : std_logic;
-		fpu_rden3 : std_logic;
-		fpu_wren  : std_logic;
-		fpu_load  : std_logic;
-		fpu_store : std_logic;
-		fpu       : std_logic;
-		fpu_op    : fp_operation_type;
-		valid     : std_logic;
-	end record;
-
-	type fp_for_in_type is record
-		reg_en1   : std_logic;
-		reg_addr1 : std_logic_vector(4 downto 0);
-		reg_data1 : std_logic_vector(63 downto 0);
-		reg_en2   : std_logic;
-		reg_addr2 : std_logic_vector(4 downto 0);
-		reg_data2 : std_logic_vector(63 downto 0);
-		reg_en3   : std_logic;
-		reg_addr3 : std_logic_vector(4 downto 0);
-		reg_data3 : std_logic_vector(63 downto 0);
-		exe_en    : std_logic;
-		exe_addr  : std_logic_vector(4 downto 0);
-		exe_data  : std_logic_vector(63 downto 0);
-		mem_en    : std_logic;
-		mem_addr  : std_logic_vector(4 downto 0);
-		mem_data  : std_logic_vector(63 downto 0);
-	end record;
-
-	type fp_for_out_type is record
-		data1 : std_logic_vector(63 downto 0);
-		data2 : std_logic_vector(63 downto 0);
-		data3 : std_logic_vector(63 downto 0);
-	end record;
-
 	type fp_exe_in_type is record
 		data1  : std_logic_vector(63 downto 0);
 		data2  : std_logic_vector(63 downto 0);
@@ -586,20 +486,10 @@ package fp_wire is
 	end record;
 
 	type fp_unit_in_type is record
-		fp_dec_i  : fp_dec_in_type;
-		fp_reg_ri : fp_reg_read_in_type;
-		fp_reg_wi : fp_reg_write_in_type;
-		fp_for_i  : fp_for_in_type;
-		fp_csr_ri : fp_csr_read_in_type;
-		fp_csr_wi : fp_csr_write_in_type;
 		fp_exe_i  : fp_exe_in_type;
 	end record;
 
 	type fp_unit_out_type is record
-		fp_dec_o  : fp_dec_out_type;
-		fp_reg_o  : fp_reg_out_type;
-		fp_for_o  : fp_for_out_type;
-		fp_csr_o  : fp_csr_out_type;
 		fp_exe_o  : fp_exe_out_type;
 	end record;
 

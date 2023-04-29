@@ -11,30 +11,6 @@ use work.fp_wire.all;
 
 package fp_lib is
 
-	component fp_dec
-		port(
-			fp_dec_i : in  fp_dec_in_type;
-			fp_dec_o : out fp_dec_out_type
-		);
-	end component;
-
-	component fp_reg
-		port(
-			reset     : in  std_logic;
-			clock     : in  std_logic;
-			fp_reg_ri : in  fp_reg_read_in_type;
-			fp_reg_wi : in  fp_reg_write_in_type;
-			fp_reg_o  : out fp_reg_out_type
-		);
-	end component;
-
-	component fp_for
-		port(
-			fp_for_i : in  fp_for_in_type;
-			fp_for_o : out fp_for_out_type
-		);
-	end component;
-
 	component fp_ext
 		port(
 			fp_ext_i : in  fp_ext_in_type;
