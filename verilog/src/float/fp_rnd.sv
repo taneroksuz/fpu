@@ -139,7 +139,7 @@ module fp_rnd
 			if (expo == 1) begin
 				if (fmt == 0 && |mant[22:0] == 0) begin
 					flags[1] = rm == 2 || rm == 3 ? ((grs == 1) | (grs == 2) | (grs == 3) | (grs == 4)) : ((grs == 4) | (grs == 5));
-				end if (fmt == 1 && |mant[51:0] == 0) begin
+				end else if (fmt == 1 && |mant[51:0] == 0) begin
 					flags[1] = rm == 2 || rm == 3 ? ((grs == 1) | (grs == 2) | (grs == 3) | (grs == 4)) : ((grs == 4) | (grs == 5));
 				end
 			end

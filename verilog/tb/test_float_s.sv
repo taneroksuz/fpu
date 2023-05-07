@@ -2,8 +2,8 @@ import fp_wire::*;
 
 module test_float_s
 (
-  input  logic reset,
-  input  logic clock
+	input  logic reset,
+	input  logic clock
 );
 
 	timeunit 1ns;
@@ -205,25 +205,19 @@ module test_float_s
 				v.flags_calc = fp_unit_o.fp_exe_o.flags;
 				v.ready_calc = fp_unit_o.fp_exe_o.ready;
 
-				if (v.ready_calc == 1) begin
-					if (v.fmt == 0) begin
-						if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[31:0] == 32'h7FC00000) begin
-							v.result_diff = {32'h0,1'h0,v.result_orig[30:22] ^ v.result_calc[30:22],22'h0};
-						end else begin
-							v.result_diff = v.result_orig ^ v.result_orig;
-						end
-					end else begin
-						if ((v.op.fcvt_f2i == 0 && v.op.fcmp == 0) && v.result_calc[63:0] == 64'h7FF800000000000) begin
-							v.result_diff = {1'h0,v.result_orig[62:51] ^ v.result_calc[62:51],51'h0};
-						end else begin
-							v.result_diff = v.result_orig ^ v.result_orig;
-						end
+				v.result_diff = v.result_orig ^ v.result_calc;
+				v.flags_diff = v.flags_orig ^ v.flags_calc;
+
+				if ((v.op.fcvt_f2i & v.op.fcmp) == 0) begin
+					if (v.fmt == 0 && v.result_calc == 64'h000000007FC00000) begin
+						v.result_diff[21:0] = 0;
+						v.result_diff[63:31] = 0;
+					end else if (v.fmt == 1 && v.result_calc == 64'h7FF8000000000000) begin
+						v.result_diff[50:0] = 0;
+						v.result_diff[63] = 0;
 					end
-					v.flags_diff = v.flags_orig ^ v.flags_calc;
-				end else begin
-					v.result_diff = 0;
-					v.flags_diff = 0;
 				end
+
 				v.op = init_fp_operation;
 				v.enable = 0;
 			end

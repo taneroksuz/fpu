@@ -137,7 +137,6 @@ package fp_wire is
 		dbz          : std_logic;
 		inf          : std_logic;
 		zero         : std_logic;
-		neg          : std_logic;
 		sign_mul     : std_logic;
 		exponent_mul : signed(13 downto 0);
 		mantissa_mul : std_logic_vector(163 downto 0);
@@ -156,7 +155,6 @@ package fp_wire is
 		dbz          => '0',
 		inf          => '0',
 		zero         => '0',
-		neg          => '0',
 		sign_mul     => '0',
 		exponent_mul => (others => '0'),
 		mantissa_mul => (others => '0'),

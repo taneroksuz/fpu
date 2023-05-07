@@ -10,7 +10,7 @@ fi
 sudo mkdir $PREFIX
 sudo chown -R $USER:$USER $PREFIX/
 
-sudo apt-get -y install git build-essential llvm-dev make gnat clang
+sudo apt-get -y install git build-essential llvm-dev make gnat clang zlib1g-dev
 
 if [ -d "ghdl" ]; then
   rm -rf ghdl

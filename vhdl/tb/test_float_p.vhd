@@ -284,21 +284,17 @@ begin
 				final.flags_calc := fpu_o.fp_exe_o.flags;
 				final.ready_calc := fpu_o.fp_exe_o.ready;
 
-				if (final.ready_calc = '1') then
-					if (final.fmt = "00") then
-						if (final.op.fcvt_f2i = '0' and final.op.fcmp = '0') and (final.result_calc = x"000000007FC00000") then
-							final.result_diff := x"00000000" & "0" & (final.result_orig(30 downto 22) xor final.result_calc(30 downto 22)) & "00" & x"00000";
-						else
-							final.result_diff := final.result_orig xor final.result_calc;
-						end if;
-					else
-						if (final.op.fcvt_f2i = '0' and final.op.fcmp = '0') and (final.result_calc = x"7FF8000000000000") then
-							final.result_diff := "0" & (final.result_orig(62 downto 51) xor final.result_calc(62 downto 51)) & "000" & x"000000000000";
-						else
-							final.result_diff := final.result_orig xor final.result_calc;
-						end if;
+				final.result_diff := final.result_orig xor final.result_calc;
+				final.flags_diff := final.flags_orig xor final.flags_calc;
+
+				if ((final.op.fcvt_f2i and final.op.fcmp) = '0') then
+					if (final.fmt = "00" and final.result_calc = x"000000007FC00000") then
+						final.result_diff(21 downto 0) := (others => '0');
+						final.result_diff(63 downto 31) := (others => '0');
+					elsif (final.fmt = "01" and final.result_calc = x"7FF8000000000000") then
+						final.result_diff(50 downto 0) := (others => '0');
+						final.result_diff(63) := '0';
 					end if;
-					final.flags_diff := final.flags_orig xor final.flags_calc;
 				end if;
 
 			end if;

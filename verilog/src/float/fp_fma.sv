@@ -47,7 +47,6 @@ module fp_fma
 		v_1.dbz = 0;
 		v_1.inf = 0;
 		v_1.zero = 0;
-		v_1.neg = fp_fma_i.op.fnmsub | fp_fma_i.op.fnmadd;
 		v_1.ready = fp_fma_i.op.fmadd | fp_fma_i.op.fmsub | fp_fma_i.op.fnmsub | fp_fma_i.op.fnmadd | fp_fma_i.op.fadd | fp_fma_i.op.fsub | fp_fma_i.op.fmul;
 
 		if (fp_fma_i.op.fadd | fp_fma_i.op.fsub) begin
@@ -55,10 +54,6 @@ module fp_fma
 			v_1.class_c = v_1.class_b;
 			v_1.b = 65'h07FF0000000000000;
 			v_1.class_b = 10'h040;
-		end
-
-		if (fp_fma_i.op.fmsub | fp_fma_i.op.fnmadd | fp_fma_i.op.fsub) begin
-			v_1.c[64] = ~v_1.c[64];
 		end
 
 		if (fp_fma_i.op.fmul) begin
@@ -78,20 +73,20 @@ module fp_fma
 		v_1.exponent_c = v_1.c[63:52];
 		v_1.mantissa_c = {|v_1.exponent_c,v_1.c[51:0]};
 
+		v_1.sign_add = v_1.sign_c ^ (fp_fma_i.op.fmsub | fp_fma_i.op.fnmadd | fp_fma_i.op.fsub);
+		v_1.sign_mul = (v_1.sign_a ^ v_1.sign_b) ^ (fp_fma_i.op.fnmsub | fp_fma_i.op.fnmadd);
+
 		if (v_1.class_a[8] | v_1.class_b[8] | v_1.class_c[8]) begin
 			v_1.snan = 1;
 		end else if (((v_1.class_a[3] | v_1.class_a[4]) & (v_1.class_b[0] | v_1.class_b[7])) | ((v_1.class_b[3] | v_1.class_b[4]) & (v_1.class_a[0] | v_1.class_a[7]))) begin
 			v_1.snan = 1;
 		end else if (v_1.class_a[9] | v_1.class_b[9] | v_1.class_c[9]) begin
 			v_1.qnan = 1;
-		end else if (((v_1.class_a[0] | v_1.class_a[7]) | (v_1.class_b[0] | v_1.class_b[7])) & ((v_1.class_c[0] | v_1.class_c[7]) & ((v_1.a[64] ^ v_1.b[64]) != v_1.c[64]))) begin
+		end else if (((v_1.class_a[0] | v_1.class_a[7]) | (v_1.class_b[0] | v_1.class_b[7])) & ((v_1.class_c[0] | v_1.class_c[7]) & (v_1.sign_add != v_1.sign_mul))) begin
 			v_1.snan = 1;
 		end else if ((v_1.class_a[0] | v_1.class_a[7]) | (v_1.class_b[0] | v_1.class_b[7]) | (v_1.class_c[0] | v_1.class_c[7])) begin
 			v_1.inf = 1;
 		end
-
-		v_1.sign_add = v_1.sign_c;
-		v_1.sign_mul = (v_1.sign_a ^ v_1.sign_b) ^ v_1.neg;
 
 		v_1.exponent_add = $signed({2'h0,v_1.exponent_c});
 		v_1.exponent_mul = $signed({2'h0,v_1.exponent_a}) + $signed({2'h0,v_1.exponent_b}) - 14'd2047;
@@ -148,7 +143,6 @@ module fp_fma
 		rin_1.dbz = v_1.dbz;
 		rin_1.inf = v_1.inf;
 		rin_1.zero = v_1.zero;
-		rin_1.neg = v_1.neg;
 		rin_1.sign_mul = v_1.sign_mul;
 		rin_1.exponent_mul = v_1.exponent_mul;
 		rin_1.mantissa_mul = v_1.mantissa_mul;
@@ -169,7 +163,6 @@ module fp_fma
 		v_2.dbz          = r_1.dbz;
 		v_2.inf          = r_1.inf;
 		v_2.zero         = r_1.zero;
-		v_2.neg          = r_1.neg;
 		v_2.sign_mul     = r_1.sign_mul;
 		v_2.exponent_mul = r_1.exponent_mul;
 		v_2.mantissa_mul = r_1.mantissa_mul;

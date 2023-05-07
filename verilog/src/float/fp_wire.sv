@@ -182,7 +182,6 @@ package fp_wire;
 		logic dbz;
 		logic inf;
 		logic zero;
-		logic neg;
 		logic sign_mul;
 		logic [13:0] exponent_mul;
 		logic [163:0] mantissa_mul;
@@ -201,7 +200,6 @@ package fp_wire;
 		dbz : 0,
 		inf : 0,
 		zero : 0,
-		neg : 0,
 		sign_mul : 0,
 		exponent_mul : 0,
 		mantissa_mul : 0,
@@ -226,7 +224,6 @@ package fp_wire;
 		logic dbz;
 		logic inf;
 		logic zero;
-		logic neg;
 		logic sign_a;
 		logic [11:0] exponent_a;
 		logic [52:0] mantissa_a;
@@ -291,7 +288,6 @@ package fp_wire;
 		logic inf;
 		logic zero;
 		logic diff;
-		logic neg;
 		logic sign_mul;
 		logic [13:0] exponent_mul;
 		logic [163:0] mantissa_mul;

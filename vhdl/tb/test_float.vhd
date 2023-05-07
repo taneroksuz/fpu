@@ -275,20 +275,18 @@ begin
 					v.result_calc := fpu_o.fp_exe_o.result;
 					v.flags_calc := fpu_o.fp_exe_o.flags;
 
-					if (r.fmt = "00") then
-						if (r.op.fcvt_f2i = '0' and r.op.fcmp = '0') and (v.result_calc = x"000000007FC00000") then
-							v.result_diff := x"00000000" & "0" & (v.result_orig(30 downto 22) xor v.result_calc(30 downto 22)) & "00" & x"00000";
-						else
-							v.result_diff := v.result_orig xor v.result_calc;
-						end if;
-					else
-						if (r.op.fcvt_f2i = '0' and r.op.fcmp = '0') and (v.result_calc = x"7FF8000000000000") then
-							v.result_diff := "0" & (v.result_orig(62 downto 51) xor v.result_calc(62 downto 51)) & "000" & x"000000000000";
-						else
-							v.result_diff := v.result_orig xor v.result_calc;
+					v.result_diff := v.result_orig xor v.result_calc;
+					v.flags_diff := v.flags_orig xor v.flags_calc;
+
+					if ((r.op.fcvt_f2i and r.op.fcmp) = '0') then
+						if (r.fmt = "00" and v.result_calc = x"000000007FC00000") then
+							v.result_diff(21 downto 0) := (others => '0');
+							v.result_diff(63 downto 31) := (others => '0');
+						elsif (r.fmt = "01" and v.result_calc = x"7FF8000000000000") then
+							v.result_diff(50 downto 0) := (others => '0');
+							v.result_diff(63) := '0';
 						end if;
 					end if;
-					v.flags_diff := v.flags_orig xor v.flags_calc;
 
 					if (or v.result_diff = '1') or (or v.flags_diff = '1') then
 						print(character'val(27) & "[1;34m" & operation(v.i) & character'val(27) & "[0m");
@@ -450,20 +448,18 @@ begin
 					v.result_calc := fpu_o.fp_exe_o.result;
 					v.flags_calc := fpu_o.fp_exe_o.flags;
 
-					if (r.fmt = "00") then
-						if (r.op.fcvt_f2i = '0' and r.op.fcmp = '0') and (v.result_calc = x"000000007FC00000") then
-							v.result_diff := x"00000000" & "0" & (v.result_orig(30 downto 22) xor v.result_calc(30 downto 22)) & "00" & x"00000";
-						else
-							v.result_diff := v.result_orig xor v.result_calc;
-						end if;
-					else
-						if (r.op.fcvt_f2i = '0' and r.op.fcmp = '0') and (v.result_calc = x"7FF8000000000000") then
-							v.result_diff := "0" & (v.result_orig(62 downto 51) xor v.result_calc(62 downto 51)) & "000" & x"000000000000";
-						else
-							v.result_diff := v.result_orig xor v.result_calc;
+					v.result_diff := v.result_orig xor v.result_calc;
+					v.flags_diff := v.flags_orig xor v.flags_calc;
+
+					if ((r.op.fcvt_f2i and r.op.fcmp) = '0') then
+						if (r.fmt = "00" and v.result_calc = x"000000007FC00000") then
+							v.result_diff(21 downto 0) := (others => '0');
+							v.result_diff(63 downto 31) := (others => '0');
+						elsif (r.fmt = "01" and v.result_calc = x"7FF8000000000000") then
+							v.result_diff(50 downto 0) := (others => '0');
+							v.result_diff(63) := '0';
 						end if;
 					end if;
-					v.flags_diff := v.flags_orig xor v.flags_calc;
 
 					if (or v.result_diff = '1') or (or v.flags_diff = '1') then
 						print(character'val(27) & "[1;34m" & operation(v.i) & '_' & mode(v.j) & character'val(27) & "[0m");

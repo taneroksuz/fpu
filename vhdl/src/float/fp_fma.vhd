@@ -44,7 +44,6 @@ begin
 		variable dbz          : std_logic;
 		variable inf          : std_logic;
 		variable zero         : std_logic;
-		variable neg          : std_logic;
 		variable sign_a       : std_logic;
 		variable exponent_a   : std_logic_vector(11 downto 0);
 		variable mantissa_a   : std_logic_vector(52 downto 0);
@@ -81,7 +80,6 @@ begin
 		dbz := '0';
 		inf := '0';
 		zero := '0';
-		neg := fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd;
 		ready := fp_fma_i.op.fmadd or fp_fma_i.op.fmsub or fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fadd or fp_fma_i.op.fsub or fp_fma_i.op.fmul;
 
 		if (fp_fma_i.op.fadd or fp_fma_i.op.fsub) = '1' then
@@ -89,10 +87,6 @@ begin
 			class_c := class_b;
 			b := (62 downto 52 => '1', others => '0'); -- +1.0
 			class_b := (6 => '1', others => '0');
-		end if;
-
-		if (fp_fma_i.op.fmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fsub) = '1' then
-			c(64) := not c(64);
 		end if;
 
 		if fp_fma_i.op.fmul = '1' then
@@ -112,20 +106,20 @@ begin
 		exponent_c := c(63 downto 52);
 		mantissa_c := or_reduce(exponent_c) & c(51 downto 0);
 
+		sign_add := sign_c xor (fp_fma_i.op.fmsub or fp_fma_i.op.fnmadd or fp_fma_i.op.fsub);
+		sign_mul := (sign_a xor sign_b) xor (fp_fma_i.op.fnmsub or fp_fma_i.op.fnmadd);
+
 		if (class_a(8) or class_b(8) or class_c(8)) = '1' then
 			snan := '1';
 		elsif (((class_a(3) or class_a(4)) and (class_b(0) or class_b(7))) or ((class_b(3) or class_b(4)) and (class_a(0) or class_a(7)))) = '1' then
 			snan := '1';
 		elsif (class_a(9) or class_b(9) or class_c(9)) = '1' then
 			qnan := '1';
-		elsif (((class_a(0) or class_a(7)) or (class_b(0) or class_b(7))) and ((class_c(0) or class_c(7)) and to_std_logic((a(64) xor b(64)) /= c(64)))) = '1' then
+		elsif (((class_a(0) or class_a(7)) or (class_b(0) or class_b(7))) and ((class_c(0) or class_c(7)) and to_std_logic(sign_add /= sign_mul))) = '1' then
 			snan := '1';
 		elsif ((class_a(0) or class_a(7)) or (class_b(0) or class_b(7)) or (class_c(0) or class_c(7))) = '1' then
 			inf := '1';
 		end if;
-
-		sign_add := sign_c;
-		sign_mul := (sign_a xor sign_b) xor neg;
 
 		exponent_add := signed("00" & exponent_c);
 		exponent_mul := signed("00" & exponent_a) + signed("00" & exponent_b) - 2047;
@@ -178,7 +172,6 @@ begin
 		rin_1.dbz <= dbz;
 		rin_1.inf <= inf;
 		rin_1.zero <= zero;
-		rin_1.neg <= neg;
 		rin_1.sign_mul <= sign_mul;
 		rin_1.exponent_mul <= exponent_mul;
 		rin_1.mantissa_mul <= mantissa_mul;
@@ -199,7 +192,6 @@ begin
 		variable inf          : std_logic;
 		variable zero         : std_logic;
 		variable diff         : std_logic;
-		variable neg          : std_logic;
 		variable sign_mul     : std_logic;
 		variable not_mul      : integer range 0 to 1;
 		variable exponent_mul : signed(13 downto 0);
@@ -230,7 +222,6 @@ begin
 		dbz := r_1.dbz;
 		inf := r_1.inf;
 		zero := r_1.zero;
-		neg := r_1.neg;
 		sign_mul := r_1.sign_mul;
 		exponent_mul := r_1.exponent_mul;
 		mantissa_mul := r_1.mantissa_mul;

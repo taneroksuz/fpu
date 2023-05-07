@@ -2,8 +2,8 @@ import fp_wire::*;
 
 module test_float_p
 (
-  input  logic reset,
-  input  logic clock
+	input  logic reset,
+	input  logic clock
 );
 
 	timeunit 1ns;
@@ -95,7 +95,7 @@ module test_float_p
 		end
 
 		if ($feof(data_file)) begin
-			v_initial.enable = 1;
+			v_initial.enable = 0;
 			v_initial.terminate = 1;
 			dataread = '{default:0};
 		end else begin
@@ -176,26 +176,19 @@ module test_float_p
 			v_final.result_calc = fp_unit_o.fp_exe_o.result;
 			v_final.flags_calc = fp_unit_o.fp_exe_o.flags;
 			v_final.ready_calc = fp_unit_o.fp_exe_o.ready;
-		end
 
-		if (v_final.ready_calc == 1) begin
-			if (v_final.fmt == 0) begin
-				if ((v_final.op.fcvt_f2i == 0 && v_final.op.fcmp == 0) && v_final.result_calc[31:0] == 32'h7FC00000) begin
-					v_final.result_diff = {32'h0,1'h0,v_final.result_orig[30:22] ^ v_final.result_calc[30:22],22'h0};
-				end else begin
-					v_final.result_diff = v_final.result_orig ^ v_final.result_orig;
-				end
-			end else begin
-				if ((v_final.op.fcvt_f2i == 0 && v_final.op.fcmp == 0) && v_final.result_calc[63:0] == 64'h7FF800000000000) begin
-					v_final.result_diff = {1'h0,v_final.result_orig[62:51] ^ v_final.result_calc[62:51],51'h0};
-				end else begin
-					v_final.result_diff = v_final.result_orig ^ v_final.result_orig;
+			v_final.result_diff = v_final.result_orig ^ v_final.result_calc;
+			v_final.flags_diff = v_final.flags_orig ^ v_final.flags_calc;
+
+			if ((v_final.op.fcvt_f2i & v_final.op.fcmp) == 0) begin
+				if (v_final.fmt == 0 && v_final.result_calc == 64'h000000007FC00000) begin
+					v_final.result_diff[21:0] = 0;
+					v_final.result_diff[63:31] = 0;
+				end else if (v_final.fmt == 1 && v_final.result_calc == 64'h7FF8000000000000) begin
+					v_final.result_diff[50:0] = 0;
+					v_final.result_diff[63] = 0;
 				end
 			end
-			v_final.flags_diff = v_final.flags_orig ^ v_final.flags_calc;
-		end else begin
-			v_final.result_diff = 0;
-			v_final.flags_diff = 0;
 		end
 
 		if (v_final.ready_calc == 1) begin
