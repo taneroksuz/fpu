@@ -7,7 +7,6 @@ use std.textio.all;
 use ieee.std_logic_textio.all;
 
 use work.lzc_wire.all;
-use work.fp_cons.all;
 use work.fp_wire.all;
 use work.all;
 

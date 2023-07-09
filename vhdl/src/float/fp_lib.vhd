@@ -6,7 +6,6 @@ use ieee.numeric_std.all;
 
 use work.lzc_wire.all;
 use work.lzc_lib.all;
-use work.fp_cons.all;
 use work.fp_wire.all;
 
 package fp_lib is

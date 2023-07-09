@@ -7,7 +7,6 @@
 ../../verilog/src/lzc/lzc_128.sv
 ../../verilog/src/lzc/lzc_256.sv
 ../../verilog/src/float/fp_wire.sv
-../../verilog/src/float/fp_cons.sv
 ../../verilog/src/float/fp_ext.sv
 ../../verilog/src/float/fp_cmp.sv
 ../../verilog/src/float/fp_max.sv

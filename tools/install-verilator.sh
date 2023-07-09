@@ -10,7 +10,9 @@ fi
 sudo mkdir $PREFIX
 sudo chown -R $USER:$USER $PREFIX/
 
-sudo apt-get -y install git make autoconf g++ flex bison libfl-dev help2man
+sudo apt-get -y install git help2man perl python3 make autoconf g++ flex bison ccache \
+                        libgoogle-perftools-dev numactl perl-doc libfl2 libfl-dev \
+                        zlib1g zlib1g-dev
 
 if [ -d "verilator" ]; then
   rm -rf verilator

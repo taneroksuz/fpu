@@ -14,7 +14,6 @@ ln -s ${BASEDIR}/tests/test_cases/*.hex ${BASEDIR}/sim/work/.
 start=`date +%s`
 ${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/lzc/lzc_wire.vhd
 
-${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_cons.vhd
 ${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_wire.vhd
 ${GHDL} -a --std=08 ${BASEDIR}/vhdl/src/float/fp_func.vhd
 

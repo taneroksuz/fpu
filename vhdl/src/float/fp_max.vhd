@@ -5,7 +5,6 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 use work.lzc_wire.all;
-use work.fp_cons.all;
 use work.fp_wire.all;
 
 entity fp_max is
