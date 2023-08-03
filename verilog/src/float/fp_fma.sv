@@ -22,16 +22,6 @@ module fp_fma
 	fp_fma_var_type_1 v_1;
 	fp_fma_var_type_2 v_2;
 
-	initial begin
-
-		r_1 = init_fp_fma_reg_1;
-		r_2 = init_fp_fma_reg_2;
-
-		rin_1 = init_fp_fma_reg_1;
-		rin_2 = init_fp_fma_reg_2;
-
-	end
-
 	always_comb begin
 
 		v_1.a = fp_fma_i.data1;

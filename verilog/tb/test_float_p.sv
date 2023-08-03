@@ -90,11 +90,12 @@ module test_float_p
 			if (data_file == 0) begin
 				$display({filename," is not available!"});
 				$finish;
+			end else begin
+				v_initial.load = 1;
 			end
-			v_initial.load = 1;
 		end
 
-		if ($feof(data_file)) begin
+		if (v_initial.load == 1 && $feof(data_file)) begin
 			v_initial.enable = 0;
 			v_initial.terminate = 1;
 			dataread = '{default:0};

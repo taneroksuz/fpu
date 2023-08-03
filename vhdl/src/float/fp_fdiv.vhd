@@ -432,6 +432,7 @@ begin
 			fp_fdiv_o.fp_rnd.dbz <= v.dbz;
 			fp_fdiv_o.fp_rnd.inf <= v.inf;
 			fp_fdiv_o.fp_rnd.zero <= v.zero;
+			fp_fdiv_o.fp_rnd.diff <= '0';
 			fp_fdiv_o.ready <= v.ready;
 
 			rin <= v;
@@ -635,6 +636,7 @@ begin
 			fp_fdiv_o.fp_rnd.dbz <= v.dbz;
 			fp_fdiv_o.fp_rnd.inf <= v.inf;
 			fp_fdiv_o.fp_rnd.zero <= v.zero;
+			fp_fdiv_o.fp_rnd.diff <= '0';
 			fp_fdiv_o.ready <= v.ready;
 
 			rin_fix <= v;

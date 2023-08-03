@@ -420,6 +420,7 @@ module fp_fdiv
 				fp_fdiv_o.fp_rnd.dbz = v.dbz;
 				fp_fdiv_o.fp_rnd.inf = v.inf;
 				fp_fdiv_o.fp_rnd.zero = v.zero;
+				fp_fdiv_o.fp_rnd.diff = 1'h0;
 				fp_fdiv_o.ready = v.ready;
 
 				rin = v;
@@ -437,6 +438,11 @@ module fp_fdiv
 		end
 
 		if (PERFORMANCE == 0) begin
+
+			assign fp_mac_i.a = 0;
+			assign fp_mac_i.b = 0;
+			assign fp_mac_i.c = 0;
+			assign fp_mac_i.op = 0;
 
 			always_comb begin
 
@@ -602,6 +608,7 @@ module fp_fdiv
 				fp_fdiv_o.fp_rnd.dbz = v_fix.dbz;
 				fp_fdiv_o.fp_rnd.inf = v_fix.inf;
 				fp_fdiv_o.fp_rnd.zero = v_fix.zero;
+				fp_fdiv_o.fp_rnd.diff = 1'h0;
 				fp_fdiv_o.ready = v_fix.ready;
 
 				rin_fix = v_fix;

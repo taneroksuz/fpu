@@ -97,11 +97,12 @@ module test_float
 				if (data_file == 0) begin
 					$display({filename," is not available!"});
 					$finish;
+				end else begin
+					v.load = 1;
 				end
-				v.load = 1;
 			end
 
-			if ($feof(data_file)) begin
+			if (v.load == 1 && $feof(data_file)) begin
 				v.enable = 0;
 				v.terminate = 1;
 				dataread = '{default:0};

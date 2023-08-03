@@ -101,6 +101,7 @@ begin
 		fp_cvt_f2f_o.fp_rnd.dbz <= dbz;
 		fp_cvt_f2f_o.fp_rnd.inf <= inf;
 		fp_cvt_f2f_o.fp_rnd.zero <= zero;
+		fp_cvt_f2f_o.fp_rnd.diff <= '0';
 
 	end process;
 
@@ -376,6 +377,7 @@ begin
 		fp_cvt_i2f_o.fp_rnd.dbz <= dbz;
 		fp_cvt_i2f_o.fp_rnd.inf <= inf;
 		fp_cvt_i2f_o.fp_rnd.zero <= zero;
+		fp_cvt_i2f_o.fp_rnd.diff <= '0';
 
 	end process;
 
