@@ -1,22 +1,32 @@
 #!/bin/bash
 set -e
 
-if [ "${LANGUAGE}" == "verilog" ]
+if [ "${VERILOG}" == "1" ]
 then
-  if [ "${DESIGN}" == "fpu" ]
+
+  if [ "${FPU}" == "1" ]
   then
     . ${BASEDIR}/sim/test_fpu_verilog.sh
-  elif [ "${DESIGN}" == "lzc" ]
+  fi
+
+  if [ "${LZC}" == "1" ]
   then
     . ${BASEDIR}/sim/test_lzc_verilog.sh
   fi
-elif [ "${LANGUAGE}" == "vhdl" ]
+
+fi
+
+if [ "${VHDL}" == "1" ]
 then
-  if [ "${DESIGN}" == "fpu" ]
+
+  if [ "${FPU}" == "1" ]
   then
     . ${BASEDIR}/sim/test_fpu_vhdl.sh
-  elif [ "${DESIGN}" == "lzc" ]
+  fi
+
+  if [ "${LZC}" == "1" ]
   then
     . ${BASEDIR}/sim/test_lzc_vhdl.sh
   fi
+
 fi

@@ -58,12 +58,15 @@ To simulate the design together with generated test cases you could run followin
 make simulate
 ```
 
-This command require two options **LANGUAGE** and **DESIGN**. The possible settings of these options can be found in the makefile.
+This command requires two options for hardware description languages **VERILOG** and **VHDL**. Furthermore, there are two options for design units **FPU** and **LZC**. The possible settings of these options can be found in the makefile.
 
-An example execution of this command looks like as follows:
+Some example executions of this command look like as follows:
 
 ```console
-make simulate LANGUAGE=verilog DESIGN=fpu
+make simulate VERILOG=1 FPU=1
+make simulate VERILOG=1 LZC=1
+make simulate VHDL=1 FPU=1
+make simulate VHDL=1 LZC=1
 ```
 
 ## SINGLE PRECISION ##
