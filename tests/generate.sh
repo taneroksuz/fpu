@@ -6,8 +6,6 @@ fi
 
 mkdir ${BASEDIR}/tests/test_cases
 
-chmod +x ${TESTFLOAT}
-
 OPERATION="f32_mulAdd f32_add f32_sub f32_mul f32_div f32_sqrt \
            f64_mulAdd f64_add f64_sub f64_mul f64_div f64_sqrt \
            f32_to_f64 f64_to_f32 \

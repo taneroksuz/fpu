@@ -1,15 +1,6 @@
 #!/bin/bash
 set -e
 
-PREFIX=/opt/ghdl
-
-if [ -d "$PREFIX" ]
-then
-  sudo rm -rf $PREFIX
-fi
-sudo mkdir $PREFIX
-sudo chown -R $USER:$USER $PREFIX/
-
 sudo apt-get -y install git build-essential llvm-dev make gnat clang zlib1g-dev
 
 if [ -d "ghdl" ]; then
@@ -20,7 +11,7 @@ git clone https://github.com/ghdl/ghdl.git
 
 cd ghdl
 
-./configure --with-llvm-config --prefix=$PREFIX
+./configure --with-llvm-config --prefix=/usr/local
 
 make -j$(nproc)
-make install
+sudo make install

@@ -58,17 +58,15 @@ To simulate the design together with generated test cases you could run followin
 make simulate
 ```
 
-This command requires two options for hardware description languages **VERILOG** and **VHDL**. Furthermore, there are two options for design units **FPU** and **LZC**. The possible settings of these options can be found in the makefile.
+This command requires two options for hardware description languages **VERILOG** and **VHDL**. The possible settings of these options can be found in the makefile.
 
 Some example executions of this command look like as follows:
 
 ```console
-make simulate VERILOG=1 FPU=1
-make simulate VERILOG=1 LZC=1
-make simulate VHDL=1 FPU=1
-make simulate VHDL=1 LZC=1
+make simulate VERILOG=1
+make simulate VHDL=1
 ```
 
 ## SINGLE PRECISION ##
 
-[Link for floating point unit with only single precision format.](https://github.com/taneroksuz/riscv-sfpu.git)
+[Link for floating point unit with only single precision format.](https://github.com/taneroksuz/fpu-sp.git)
