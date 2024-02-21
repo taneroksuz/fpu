@@ -16,4 +16,7 @@ generate:
 simulate:
 	sim/run.sh
 
+parser:
+	check/run.sh
+
 all: generate simulate
