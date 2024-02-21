@@ -1,8 +1,8 @@
 module lzc_128
 (
-	input 	[127:0] a,
-	output 	[6:0] 	c,
-	output 			v
+	input [127:0] a,
+	output [6:0] c,
+	output v
 );
 	timeunit 1ns;
 	timeprecision 1ps;
