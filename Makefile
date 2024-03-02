@@ -3,7 +3,7 @@ default: all
 export GHDL ?= ghdl
 export VERILATOR ?= verilator
 export TESTFLOAT ?= testfloat_gen
-export SLANG ?= slang
+export VERIBLE ?= verible
 export PYTHON ?= python3
 export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -16,7 +16,7 @@ generate:
 simulate:
 	sim/run.sh
 
-parser:
+parse:
 	check/run.sh
 
 all: generate simulate

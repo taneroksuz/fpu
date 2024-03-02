@@ -61,8 +61,8 @@ module test_float_p
 	};
 
 	fp_result v_initial,v_final;
-	fp_result r_1,r_2,r_3;
-	fp_result rin_1,rin_2,rin_3;
+	fp_result r_1,r_2;
+	fp_result rin_1,rin_2;
 
 	fp_unit_in_type fp_unit_i;
 	fp_unit_out_type fp_unit_o;
@@ -169,7 +169,7 @@ module test_float_p
 		fp_unit_i.fp_exe_i.enable = v_initial.enable;
 
 		if (fp_unit_o.fp_exe_o.ready == 1) begin
-			v_final = r_3;
+			v_final = r_2;
 
 			v_final.result_orig = v_final.result;
 			v_final.flags_orig = v_final.flags;
@@ -215,19 +215,15 @@ module test_float_p
 
 		rin_1 = v_initial;
 		rin_2 = r_1;
-		rin_3 = r_2;
-
 	end
 
 	always_ff @(posedge clock) begin
 		if (reset == 0) begin
 			r_1 <= init_fp_res;
 			r_2 <= init_fp_res;
-			r_3 <= init_fp_res;
 		end else begin
 			r_1 <= rin_1;
 			r_2 <= rin_2;
-			r_3 <= rin_3;
 		end
 	end
 

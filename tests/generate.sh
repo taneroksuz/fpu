@@ -20,12 +20,10 @@ declare -A MODE=(["rne"]="-rnear_even" ["rtz"]="-rminMag" ["rdn"]="-rmin" ["rup"
 
 for OP in $OPERATION; do
   for ROUND in $ROUNDING; do
-    ${TESTFLOAT} ${OP} ${MODE[${ROUND}]} -exact > ${BASEDIR}/tests/test_cases/${OP}_${ROUND}.hex &
+    ${TESTFLOAT} ${OP} ${MODE[${ROUND}]} -exact > ${BASEDIR}/tests/test_cases/${OP}_${ROUND}.hex
   done
 done
 
 for COMP in $COMPARISON; do
-  ${TESTFLOAT} ${COMP} -exact > ${BASEDIR}/tests/test_cases/${COMP}.hex &
+  ${TESTFLOAT} ${COMP} -exact > ${BASEDIR}/tests/test_cases/${COMP}.hex
 done
-
-wait
