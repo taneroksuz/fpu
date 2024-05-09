@@ -54,15 +54,15 @@ This floating point unit uses only one path for both single and double precision
 
 | op | type |
 |:---|:-----|
-| fmadd | $$ (rs1×rs2)+rs3 $$ |
-| fmsub | $$ (rs1×rs2)-rs3 $$ |
-| fnmsub | $$ -(rs1×rs2)+rs3 $$ |
-| fnmadd | $$ -(rs1×rs2)-rs3 $$ |
-| fadd | $$ rs1+rs2 $$ |
-| fsub | $$ rs1-rs2 $$ |
-| fmul | $$ rs1*rs2 $$ |
-| fdiv | $$ rs1/rs2 $$ |
-| fsqrt | $$ \sqrt{rs1} $$ |
+| fmadd | $(rs1×rs2)+rs3$ |
+| fmsub | $(rs1×rs2)-rs3$ |
+| fnmsub | $-(rs1×rs2)+rs3$ |
+| fnmadd | $-(rs1×rs2)-rs3$ |
+| fadd | $rs1+rs2$ |
+| fsub | $rs1-rs2$ |
+| fmul | $rs1*rs2$ |
+| fdiv | $rs1/rs2$ |
+| fsqrt | $\sqrt{rs1}$ |
 
 | op | rm | type |
 |:---|:---|:-----|
