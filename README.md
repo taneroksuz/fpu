@@ -83,25 +83,25 @@ This floating point unit uses only one path for both single and double precision
 
 | op | op.fcvt_op | fmt | type |
 |:---|:-----------|:----|:-----|
-| fcvt_i2f | "00" | "00" | CONVERSION FROM FLOAT TO INT32  |
-| fcvt_i2f | "01" | "00" | CONVERSION FROM FLOAT TO UINT32  |
-| fcvt_i2f | "10" | "00" | CONVERSION FROM FLOAT TO INT64   |
-| fcvt_i2f | "11" | "00" | CONVERSION FROM FLOAT TO UINT64  |
-| fcvt_i2f | "00" | "01" | CONVERSION FROM DOUBLE TO INT32  |
-| fcvt_i2f | "01" | "01" | CONVERSION FROM DOUBLE TO UINT32 |
-| fcvt_i2f | "10" | "01" | CONVERSION FROM DOUBLE TO INT64  |
-| fcvt_i2f | "11" | "01" | CONVERSION FROM DOUBLE TO UINT64 |
+| fcvt_f2i | "00" | "00" | CONVERSION FROM FLOAT TO INT32  |
+| fcvt_f2i | "01" | "00" | CONVERSION FROM FLOAT TO UINT32  |
+| fcvt_f2i | "10" | "00" | CONVERSION FROM FLOAT TO INT64   |
+| fcvt_f2i | "11" | "00" | CONVERSION FROM FLOAT TO UINT64  |
+| fcvt_f2i | "00" | "01" | CONVERSION FROM DOUBLE TO INT32  |
+| fcvt_f2i | "01" | "01" | CONVERSION FROM DOUBLE TO UINT32 |
+| fcvt_f2i | "10" | "01" | CONVERSION FROM DOUBLE TO INT64  |
+| fcvt_f2i | "11" | "01" | CONVERSION FROM DOUBLE TO UINT64 |
 
 | op | op.fcvt_op | fmt | type |
 |:---|:-----------|:----|:-----|
-| fcvt_f2i | "00" | "00" | CONVERSION FROM INT32 TO FLOAT   |
-| fcvt_f2i | "01" | "00" | CONVERSION FROM UINT32 TO FLOAT  |
-| fcvt_f2i | "10" | "00" | CONVERSION FROM INT64 TO FLOAT   |
-| fcvt_f2i | "11" | "00" | CONVERSION FROM UINT64 TO FLOAT  |
-| fcvt_f2i | "00" | "01" | CONVERSION FROM INT32 TO DOUBLE  |
-| fcvt_f2i | "01" | "01" | CONVERSION FROM UINT32 TO DOUBLE |
-| fcvt_f2i | "10" | "01" | CONVERSION FROM INT64 TO DOUBLE  |
-| fcvt_f2i | "11" | "01" | CONVERSION FROM UINT64 TO DOUBLE |
+| fcvt_i2f | "00" | "00" | CONVERSION FROM INT32 TO FLOAT   |
+| fcvt_i2f | "01" | "00" | CONVERSION FROM UINT32 TO FLOAT  |
+| fcvt_i2f | "10" | "00" | CONVERSION FROM INT64 TO FLOAT   |
+| fcvt_i2f | "11" | "00" | CONVERSION FROM UINT64 TO FLOAT  |
+| fcvt_i2f | "00" | "01" | CONVERSION FROM INT32 TO DOUBLE  |
+| fcvt_i2f | "01" | "01" | CONVERSION FROM UINT32 TO DOUBLE |
+| fcvt_i2f | "10" | "01" | CONVERSION FROM INT64 TO DOUBLE  |
+| fcvt_i2f | "11" | "01" | CONVERSION FROM UINT64 TO DOUBLE |
 
 | op | op.fcvt_op | fmt | type |
 |:---|:-----------|:----|:-----|
