@@ -38,31 +38,23 @@ This floating point unit uses only one path for both single and double precision
 | 0         | 58       | 57          |
 | 1         | 14       | 17          |
 
-## SIGNALS
+## UNIT
 
-### INPUT
+![fp_unit](image/fpu.png)
 
-- fp_unit_i.fp_exe_i.data1 => rs1
-- fp_unit_i.fp_exe_i.data2 => rs2
-- fp_unit_i.fp_exe_i.data3 => rs3
-- fp_unit_i.fp_exe_i.op => operation type
-- fp_unit_i.fp_exe_i.fmt => precision type
-- fp_unit_i.fp_exe_i.rm => rounding mode
-- fp_unit_i.fp_exe_i.enable => activate unit
-
-#### TYPE
+### SIGNALS
 
 | op | type |
 |:---|:-----|
-| fmadd | $(rs1×rs2)+rs3$ |
-| fmsub | $(rs1×rs2)-rs3$ |
-| fnmsub | $-(rs1×rs2)+rs3$ |
-| fnmadd | $-(rs1×rs2)-rs3$ |
-| fadd | $rs1+rs2$ |
-| fsub | $rs1-rs2$ |
-| fmul | $rs1*rs2$ |
-| fdiv | $rs1/rs2$ |
-| fsqrt | $\sqrt{rs1}$ |
+| fmadd | $(data1*data2)+data3$ |
+| fmsub | $(data1*data2)-data3$ |
+| fnmsub | $-(data1*data2)+data3$ |
+| fnmadd | $-(data1*data2)-data3$ |
+| fadd | $data1+data2$ |
+| fsub | $data1-data2$ |
+| fmul | $data1*data2$ |
+| fdiv | $data1/data2$ |
+| fsqrt | $\sqrt{data1}$ |
 
 | op | rm | type |
 |:---|:---|:-----|
@@ -120,14 +112,6 @@ This floating point unit uses only one path for both single and double precision
 | "010" | RDN |
 | "011" | RUP |
 | "100" | RMM |
-
-### OUTPUT
-
-- fp_unit_o.fp_exe_o.result => calculation result
-- fp_unit_o.fp_exe_o.flags => exception flags
-- fp_unit_o.fp_exe_o.ready => ready status
-
-#### TYPE
 
 | flags | type |
 |:------|:-----|
