@@ -450,24 +450,44 @@ begin
 				if oor_32s = '1' then
 					result := X"00000000" & X"7FFFFFFF";
 					flags := "10000";
+					if sign_cvt = '1' then
+						if (snan or qnan) = '0' then
+							result := X"00000000" & X"80000000";
+						end if;
+					end if;
 				end if;
 			elsif op = "01" then
 				result := X"00000000" & mantissa_uint(31 downto 0);
 				if oor_32u = '1' then
-					result := X"00000000" & X"80000000";
+					result := X"00000000" & X"FFFFFFFF";
 					flags := "10000";
+					if sign_cvt = '1' then
+						if (snan or qnan) = '0' then
+							result := X"00000000" & X"00000000";
+						end if;
+					end if;
 				end if;
 			elsif op = "10" then
 				result := mantissa_uint(63 downto 0);
 				if oor_64s = '1' then
 					result := X"7FFFFFFFFFFFFFFF";
 					flags := "10000";
+					if sign_cvt = '1' then
+						if (snan or qnan) = '0' then
+							result := X"8000000000000000";
+						end if;
+					end if;
 				end if;
 			elsif op = "11" then
 				result := mantissa_uint(63 downto 0);
 				if oor_64u = '1' then
-					result := X"8000000000000000";
+					result := X"FFFFFFFFFFFFFFFF";
 					flags := "10000";
+					if sign_cvt = '1' then
+						if (snan or qnan) = '0' then
+							result := X"0000000000000000";
+						end if;
+					end if;
 				end if;
 			end if;
 

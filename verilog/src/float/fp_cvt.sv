@@ -333,24 +333,44 @@ module fp_cvt #(
           if (v_f2i.oor_32s) begin
             v_f2i.result = 64'h000000007FFFFFFF;
             v_f2i.flags  = 5'b10000;
+            if (v_f2i.sign_cvt) begin
+              if (~(v_f2i.snan | v_f2i.qnan)) begin
+                v_f2i.result = 64'h0000000080000000;
+              end
+            end
           end
         end else if (v_f2i.op == 1) begin
           v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
           if (v_f2i.oor_32u) begin
-            v_f2i.result = 64'h0000000080000000;
+            v_f2i.result = 64'h00000000FFFFFFFF;
             v_f2i.flags  = 5'b10000;
+            if (v_f2i.sign_cvt) begin
+              if (~(v_f2i.snan | v_f2i.qnan)) begin
+                v_f2i.result = 64'h0000000000000000;
+              end
+            end
           end
         end else if (v_f2i.op == 2) begin
           v_f2i.result = v_f2i.mantissa_uint[63:0];
           if (v_f2i.oor_64s) begin
             v_f2i.result = 64'h7FFFFFFFFFFFFFFF;
             v_f2i.flags  = 5'b10000;
+            if (v_f2i.sign_cvt) begin
+              if (~(v_f2i.snan | v_f2i.qnan)) begin
+                v_f2i.result = 64'h8000000000000000;
+              end
+            end
           end
         end else if (v_f2i.op == 3) begin
           v_f2i.result = v_f2i.mantissa_uint[63:0];
           if (v_f2i.oor_64u) begin
-            v_f2i.result = 64'h8000000000000000;
+            v_f2i.result = 64'hFFFFFFFFFFFFFFFF;
             v_f2i.flags  = 5'b10000;
+            if (v_f2i.sign_cvt) begin
+              if (~(v_f2i.snan | v_f2i.qnan)) begin
+                v_f2i.result = 64'h0000000000000000;
+              end
+            end
           end
         end
 
