@@ -9,6 +9,9 @@ use work.fp_wire.all;
 use work.fp_func.all;
 
 entity fp_cvt is
+	generic(
+		RISCV : integer := 0
+	);
 	port(
 		fp_cvt_f2f_i : in  fp_cvt_f2f_in_type;
 		fp_cvt_f2f_o : out fp_cvt_f2f_out_type;
@@ -105,186 +108,375 @@ begin
 
 	end process;
 
-	process(fp_cvt_f2i_i)
-		variable data  : std_logic_vector(64 downto 0);
-		variable op    : std_logic_vector(1 downto 0);
-		variable rm    : std_logic_vector(2 downto 0);
-		variable class : std_logic_vector(9 downto 0);
+	CVT_IEEE : if RISCV = 0 generate
 
-		variable result : std_logic_vector(63 downto 0);
-		variable flags  : std_logic_vector(4 downto 0);
+		process(fp_cvt_f2i_i)
+			variable data  : std_logic_vector(64 downto 0);
+			variable op    : std_logic_vector(1 downto 0);
+			variable rm    : std_logic_vector(2 downto 0);
+			variable class : std_logic_vector(9 downto 0);
 
-		variable snan : std_logic;
-		variable qnan : std_logic;
-		variable inf  : std_logic;
-		variable zero : std_logic;
+			variable result : std_logic_vector(63 downto 0);
+			variable flags  : std_logic_vector(4 downto 0);
 
-		variable sign_cvt      : std_logic;
-		variable exponent_cvt  : integer range -4095 to 4095;
-		variable mantissa_cvt  : std_logic_vector(119 downto 0);
-		variable exponent_bias : natural range 0 to 127;
+			variable snan : std_logic;
+			variable qnan : std_logic;
+			variable inf  : std_logic;
+			variable zero : std_logic;
 
-		variable mantissa_uint : std_logic_vector(64 downto 0);
+			variable sign_cvt      : std_logic;
+			variable exponent_cvt  : integer range -4095 to 4095;
+			variable mantissa_cvt  : std_logic_vector(119 downto 0);
+			variable exponent_bias : natural range 0 to 127;
 
-		variable grs : std_logic_vector(2 downto 0);
-		variable odd : std_logic;
+			variable mantissa_uint : std_logic_vector(64 downto 0);
 
-		variable rnded : natural range 0 to 1;
+			variable grs : std_logic_vector(2 downto 0);
+			variable odd : std_logic;
 
-		variable oor : std_logic;
+			variable rnded : natural range 0 to 1;
 
-		variable or_1 : std_logic;
-		variable or_2 : std_logic;
-		variable or_3 : std_logic;
-		variable or_4 : std_logic;
-		variable or_5 : std_logic;
+			variable oor : std_logic;
 
-		variable oor_64u : std_logic;
-		variable oor_64s : std_logic;
-		variable oor_32u : std_logic;
-		variable oor_32s : std_logic;
+			variable or_1 : std_logic;
+			variable or_2 : std_logic;
+			variable or_3 : std_logic;
+			variable or_4 : std_logic;
+			variable or_5 : std_logic;
 
-	begin
-		data := fp_cvt_f2i_i.data;
-		op := fp_cvt_f2i_i.op.fcvt_op;
-		rm := fp_cvt_f2i_i.rm;
-		class := fp_cvt_f2i_i.class;
+			variable oor_64u : std_logic;
+			variable oor_64s : std_logic;
+			variable oor_32u : std_logic;
+			variable oor_32s : std_logic;
 
-		flags := (others => '0');
-		result := (others => '0');
+		begin
+			data := fp_cvt_f2i_i.data;
+			op := fp_cvt_f2i_i.op.fcvt_op;
+			rm := fp_cvt_f2i_i.rm;
+			class := fp_cvt_f2i_i.class;
 
-		snan := class(8);
-		qnan := class(9);
-		inf := class(0) or class(7);
-		zero := '0';
+			flags := (others => '0');
+			result := (others => '0');
 
-		if op = "00" then
-			exponent_bias := 34;
-		elsif op = "01" then
-			exponent_bias := 35;
-		elsif op = "10" then
-			exponent_bias := 66;
-		else
-			exponent_bias := 67;
-		end if;
+			snan := class(8);
+			qnan := class(9);
+			inf := class(0) or class(7);
+			zero := '0';
 
-		sign_cvt := data(64);
-		exponent_cvt := to_integer(unsigned(data(63 downto 52))) - 2044;
-		mantissa_cvt := X"00000000000000001" & data(51 downto 0);
-
-		if (class(3) or class(4)) = '1' then
-			mantissa_cvt(52) := '0';
-		end if;
-
-		oor := '0';
-
-		if exponent_cvt > exponent_bias then
-			oor := '1';
-		elsif exponent_cvt > 0 then
-			mantissa_cvt := std_logic_vector(shift_left(unsigned(mantissa_cvt), exponent_cvt));
-		end if;
-
-		mantissa_uint := mantissa_cvt(119 downto 55);
-
-		grs := mantissa_cvt(54 downto 53) & or_reduce(mantissa_cvt(52 downto 0));
-		odd := mantissa_uint(0) or or_reduce(grs(1 downto 0));
-
-		flags(0) := or_reduce(grs);
-
-		rnded := 0;
-
-		case rm is
-			when "000" =>               --rne--
-				if (grs(2) and odd) = '1' then
-					rnded := 1;
-				end if;
-			when "001" =>               --rtz--
-				null;
-			when "010" =>               --rdn--
-				if (sign_cvt and flags(0)) = '1' then
-					rnded := 1;
-				end if;
-			when "011" =>               --rup--
-				if (not sign_cvt and flags(0)) = '1' then
-					rnded := 1;
-				end if;
-			when "100" =>               --rmm--
-				if (grs(2) and flags(0)) = '1' then
-					rnded := 1;
-				end if;
-			when others =>
-				null;
-		end case;
-
-		mantissa_uint := std_logic_vector(unsigned(mantissa_uint) + rnded);
-
-		or_1 := mantissa_uint(64);
-		or_2 := mantissa_uint(63);
-		or_3 := or_reduce(mantissa_uint(62 downto 32));
-		or_4 := mantissa_uint(31);
-		or_5 := or_reduce(mantissa_uint(30 downto 0));
-
-		zero := or_1 or or_2 or or_3 or or_4 or or_5;
-
-		oor_64u := or_1;
-		oor_64s := or_1;
-		oor_32u := or_1 or or_2 or or_3;
-		oor_32s := or_1 or or_2 or or_3;
-
-		if sign_cvt = '1' then
 			if op = "00" then
-				oor_32s := oor_32s or (or_4 and or_5);
+				exponent_bias := 34;
 			elsif op = "01" then
-				oor := oor or zero;
+				exponent_bias := 35;
 			elsif op = "10" then
-				oor_64s := oor_64s or (or_2 and (or_3 or or_4 or or_5));
+				exponent_bias := 66;
+			else
+				exponent_bias := 67;
+			end if;
+
+			sign_cvt := data(64);
+			exponent_cvt := to_integer(unsigned(data(63 downto 52))) - 2044;
+			mantissa_cvt := X"00000000000000001" & data(51 downto 0);
+
+			if (class(3) or class(4)) = '1' then
+				mantissa_cvt(52) := '0';
+			end if;
+
+			oor := '0';
+
+			if exponent_cvt > exponent_bias then
+				oor := '1';
+			elsif exponent_cvt > 0 then
+				mantissa_cvt := std_logic_vector(shift_left(unsigned(mantissa_cvt), exponent_cvt));
+			end if;
+
+			mantissa_uint := mantissa_cvt(119 downto 55);
+
+			grs := mantissa_cvt(54 downto 53) & or_reduce(mantissa_cvt(52 downto 0));
+			odd := mantissa_uint(0) or or_reduce(grs(1 downto 0));
+
+			flags(0) := or_reduce(grs);
+
+			rnded := 0;
+
+			case rm is
+				when "000" =>               --rne--
+					if (grs(2) and odd) = '1' then
+						rnded := 1;
+					end if;
+				when "001" =>               --rtz--
+					null;
+				when "010" =>               --rdn--
+					if (sign_cvt and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when "011" =>               --rup--
+					if (not sign_cvt and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when "100" =>               --rmm--
+					if (grs(2) and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when others =>
+					null;
+			end case;
+
+			mantissa_uint := std_logic_vector(unsigned(mantissa_uint) + rnded);
+
+			or_1 := mantissa_uint(64);
+			or_2 := mantissa_uint(63);
+			or_3 := or_reduce(mantissa_uint(62 downto 32));
+			or_4 := mantissa_uint(31);
+			or_5 := or_reduce(mantissa_uint(30 downto 0));
+
+			zero := or_1 or or_2 or or_3 or or_4 or or_5;
+
+			oor_64u := or_1;
+			oor_64s := or_1;
+			oor_32u := or_1 or or_2 or or_3;
+			oor_32s := or_1 or or_2 or or_3;
+
+			if sign_cvt = '1' then
+				if op = "00" then
+					oor_32s := oor_32s or (or_4 and or_5);
+				elsif op = "01" then
+					oor := oor or zero;
+				elsif op = "10" then
+					oor_64s := oor_64s or (or_2 and (or_3 or or_4 or or_5));
+				elsif op = "11" then
+					oor := oor or zero;
+				end if;
+			else
+				oor_64s := oor_64s or or_2;
+				oor_32s := oor_32s or or_4;
+			end if;
+
+			oor_64u := to_std_logic(op = "11") and (oor_64u or oor or inf or snan or qnan);
+			oor_64s := to_std_logic(op = "10") and (oor_64s or oor or inf or snan or qnan);
+			oor_32u := to_std_logic(op = "01") and (oor_32u or oor or inf or snan or qnan);
+			oor_32s := to_std_logic(op = "00") and (oor_32s or oor or inf or snan or qnan);
+
+			if sign_cvt = '1' then
+				mantissa_uint := std_logic_vector(-signed(mantissa_uint));
+			end if;
+
+			if op = "00" then
+				result := X"00000000" & mantissa_uint(31 downto 0);
+				if oor_32s = '1' then
+					result := X"00000000" & X"80000000";
+					flags := "10000";
+				end if;
+			elsif op = "01" then
+				result := X"00000000" & mantissa_uint(31 downto 0);
+				if oor_32u = '1' then
+					result := X"00000000" & X"FFFFFFFF";
+					flags := "10000";
+				end if;
+			elsif op = "10" then
+				result := mantissa_uint(63 downto 0);
+				if oor_64s = '1' then
+					result := X"8000000000000000";
+					flags := "10000";
+				end if;
 			elsif op = "11" then
-				oor := oor or zero;
+				result := mantissa_uint(63 downto 0);
+				if oor_64u = '1' then
+					result := X"FFFFFFFFFFFFFFFF";
+					flags := "10000";
+				end if;
 			end if;
-		else
-			oor_64s := oor_64s or or_2;
-			oor_32s := oor_32s or or_4;
-		end if;
 
-		oor_64u := to_std_logic(op = "11") and (oor_64u or oor or inf or snan or qnan);
-		oor_64s := to_std_logic(op = "10") and (oor_64s or oor or inf or snan or qnan);
-		oor_32u := to_std_logic(op = "01") and (oor_32u or oor or inf or snan or qnan);
-		oor_32s := to_std_logic(op = "00") and (oor_32s or oor or inf or snan or qnan);
+			fp_cvt_f2i_o.result <= result;
+			fp_cvt_f2i_o.flags <= flags;
 
-		if sign_cvt = '1' then
-			mantissa_uint := std_logic_vector(-signed(mantissa_uint));
-		end if;
+		end process;
 
-		if op = "00" then
-			result := X"00000000" & mantissa_uint(31 downto 0);
-			if oor_32s = '1' then
-				result := X"00000000" & X"80000000";
-				flags := "10000";
+	end generate CVT_IEEE;
+
+	CVT_RISCV : if RISCV = 1 generate
+
+		process(fp_cvt_f2i_i)
+			variable data  : std_logic_vector(64 downto 0);
+			variable op    : std_logic_vector(1 downto 0);
+			variable rm    : std_logic_vector(2 downto 0);
+			variable class : std_logic_vector(9 downto 0);
+
+			variable result : std_logic_vector(63 downto 0);
+			variable flags  : std_logic_vector(4 downto 0);
+
+			variable snan : std_logic;
+			variable qnan : std_logic;
+			variable inf  : std_logic;
+			variable zero : std_logic;
+
+			variable sign_cvt      : std_logic;
+			variable exponent_cvt  : integer range -4095 to 4095;
+			variable mantissa_cvt  : std_logic_vector(119 downto 0);
+			variable exponent_bias : natural range 0 to 127;
+
+			variable mantissa_uint : std_logic_vector(64 downto 0);
+
+			variable grs : std_logic_vector(2 downto 0);
+			variable odd : std_logic;
+
+			variable rnded : natural range 0 to 1;
+
+			variable oor : std_logic;
+
+			variable or_1 : std_logic;
+			variable or_2 : std_logic;
+			variable or_3 : std_logic;
+			variable or_4 : std_logic;
+			variable or_5 : std_logic;
+
+			variable oor_64u : std_logic;
+			variable oor_64s : std_logic;
+			variable oor_32u : std_logic;
+			variable oor_32s : std_logic;
+
+		begin
+			data := fp_cvt_f2i_i.data;
+			op := fp_cvt_f2i_i.op.fcvt_op;
+			rm := fp_cvt_f2i_i.rm;
+			class := fp_cvt_f2i_i.class;
+
+			flags := (others => '0');
+			result := (others => '0');
+
+			snan := class(8);
+			qnan := class(9);
+			inf := class(0) or class(7);
+			zero := '0';
+
+			if op = "00" then
+				exponent_bias := 34;
+			elsif op = "01" then
+				exponent_bias := 35;
+			elsif op = "10" then
+				exponent_bias := 66;
+			else
+				exponent_bias := 67;
 			end if;
-		elsif op = "01" then
-			result := X"00000000" & mantissa_uint(31 downto 0);
-			if oor_32u = '1' then
-				result := X"00000000" & X"FFFFFFFF";
-				flags := "10000";
-			end if;
-		elsif op = "10" then
-			result := mantissa_uint(63 downto 0);
-			if oor_64s = '1' then
-				result := X"8000000000000000";
-				flags := "10000";
-			end if;
-		elsif op = "11" then
-			result := mantissa_uint(63 downto 0);
-			if oor_64u = '1' then
-				result := X"FFFFFFFFFFFFFFFF";
-				flags := "10000";
-			end if;
-		end if;
 
-		fp_cvt_f2i_o.result <= result;
-		fp_cvt_f2i_o.flags <= flags;
+			sign_cvt := data(64);
+			exponent_cvt := to_integer(unsigned(data(63 downto 52))) - 2044;
+			mantissa_cvt := X"00000000000000001" & data(51 downto 0);
 
-	end process;
+			if (class(3) or class(4)) = '1' then
+				mantissa_cvt(52) := '0';
+			end if;
+
+			oor := '0';
+
+			if exponent_cvt > exponent_bias then
+				oor := '1';
+			elsif exponent_cvt > 0 then
+				mantissa_cvt := std_logic_vector(shift_left(unsigned(mantissa_cvt), exponent_cvt));
+			end if;
+
+			mantissa_uint := mantissa_cvt(119 downto 55);
+
+			grs := mantissa_cvt(54 downto 53) & or_reduce(mantissa_cvt(52 downto 0));
+			odd := mantissa_uint(0) or or_reduce(grs(1 downto 0));
+
+			flags(0) := or_reduce(grs);
+
+			rnded := 0;
+
+			case rm is
+				when "000" =>               --rne--
+					if (grs(2) and odd) = '1' then
+						rnded := 1;
+					end if;
+				when "001" =>               --rtz--
+					null;
+				when "010" =>               --rdn--
+					if (sign_cvt and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when "011" =>               --rup--
+					if (not sign_cvt and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when "100" =>               --rmm--
+					if (grs(2) and flags(0)) = '1' then
+						rnded := 1;
+					end if;
+				when others =>
+					null;
+			end case;
+
+			mantissa_uint := std_logic_vector(unsigned(mantissa_uint) + rnded);
+
+			or_1 := mantissa_uint(64);
+			or_2 := mantissa_uint(63);
+			or_3 := or_reduce(mantissa_uint(62 downto 32));
+			or_4 := mantissa_uint(31);
+			or_5 := or_reduce(mantissa_uint(30 downto 0));
+
+			zero := or_1 or or_2 or or_3 or or_4 or or_5;
+
+			oor_64u := or_1;
+			oor_64s := or_1;
+			oor_32u := or_1 or or_2 or or_3;
+			oor_32s := or_1 or or_2 or or_3;
+
+			if sign_cvt = '1' then
+				if op = "00" then
+					oor_32s := oor_32s or (or_4 and or_5);
+				elsif op = "01" then
+					oor := oor or zero;
+				elsif op = "10" then
+					oor_64s := oor_64s or (or_2 and (or_3 or or_4 or or_5));
+				elsif op = "11" then
+					oor := oor or zero;
+				end if;
+			else
+				oor_64s := oor_64s or or_2;
+				oor_32s := oor_32s or or_4;
+			end if;
+
+			oor_64u := to_std_logic(op = "11") and (oor_64u or oor or inf or snan or qnan);
+			oor_64s := to_std_logic(op = "10") and (oor_64s or oor or inf or snan or qnan);
+			oor_32u := to_std_logic(op = "01") and (oor_32u or oor or inf or snan or qnan);
+			oor_32s := to_std_logic(op = "00") and (oor_32s or oor or inf or snan or qnan);
+
+			if sign_cvt = '1' then
+				mantissa_uint := std_logic_vector(-signed(mantissa_uint));
+			end if;
+
+			if op = "00" then
+				result := X"00000000" & mantissa_uint(31 downto 0);
+				if oor_32s = '1' then
+					result := X"00000000" & X"7FFFFFFF";
+					flags := "10000";
+				end if;
+			elsif op = "01" then
+				result := X"00000000" & mantissa_uint(31 downto 0);
+				if oor_32u = '1' then
+					result := X"00000000" & X"80000000";
+					flags := "10000";
+				end if;
+			elsif op = "10" then
+				result := mantissa_uint(63 downto 0);
+				if oor_64s = '1' then
+					result := X"7FFFFFFFFFFFFFFF";
+					flags := "10000";
+				end if;
+			elsif op = "11" then
+				result := mantissa_uint(63 downto 0);
+				if oor_64u = '1' then
+					result := X"8000000000000000";
+					flags := "10000";
+				end if;
+			end if;
+
+			fp_cvt_f2i_o.result <= result;
+			fp_cvt_f2i_o.flags <= flags;
+
+		end process;
+
+	end generate CVT_RISCV;
 
 	process(fp_cvt_i2f_i, lzc_o)
 		variable data : std_logic_vector(63 downto 0);

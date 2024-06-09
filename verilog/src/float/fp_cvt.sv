@@ -1,7 +1,9 @@
 import lzc_wire::*;
 import fp_wire::*;
 
-module fp_cvt (
+module fp_cvt #(
+    parameter RISCV = 0
+) (
     input fp_cvt_f2f_in_type fp_cvt_f2f_i,
     output fp_cvt_f2f_out_type fp_cvt_f2f_o,
     input fp_cvt_f2i_in_type fp_cvt_f2i_i,
@@ -75,142 +77,291 @@ module fp_cvt (
 
   end
 
-  always_comb begin
+  generate
 
-    v_f2i.data = fp_cvt_f2i_i.data;
-    v_f2i.op = fp_cvt_f2i_i.op.fcvt_op;
-    v_f2i.rm = fp_cvt_f2i_i.rm;
-    v_f2i.classification = fp_cvt_f2i_i.classification;
+    if (RISCV == 0) begin
 
-    v_f2i.flags = 0;
-    v_f2i.result = 0;
+      always_comb begin
 
-    v_f2i.snan = v_f2i.classification[8];
-    v_f2i.qnan = v_f2i.classification[9];
-    v_f2i.infs = v_f2i.classification[0] | v_f2i.classification[7];
-    v_f2i.zero = 0;
+        v_f2i.data = fp_cvt_f2i_i.data;
+        v_f2i.op = fp_cvt_f2i_i.op.fcvt_op;
+        v_f2i.rm = fp_cvt_f2i_i.rm;
+        v_f2i.classification = fp_cvt_f2i_i.classification;
 
-    if (v_f2i.op == 0) begin
-      v_f2i.exponent_bias = 34;
-    end else if (v_f2i.op == 1) begin
-      v_f2i.exponent_bias = 35;
-    end else if (v_f2i.op == 2) begin
-      v_f2i.exponent_bias = 66;
-    end else begin
-      v_f2i.exponent_bias = 67;
+        v_f2i.flags = 0;
+        v_f2i.result = 0;
+
+        v_f2i.snan = v_f2i.classification[8];
+        v_f2i.qnan = v_f2i.classification[9];
+        v_f2i.infs = v_f2i.classification[0] | v_f2i.classification[7];
+        v_f2i.zero = 0;
+
+        if (v_f2i.op == 0) begin
+          v_f2i.exponent_bias = 34;
+        end else if (v_f2i.op == 1) begin
+          v_f2i.exponent_bias = 35;
+        end else if (v_f2i.op == 2) begin
+          v_f2i.exponent_bias = 66;
+        end else begin
+          v_f2i.exponent_bias = 67;
+        end
+
+        v_f2i.sign_cvt = v_f2i.data[64];
+        v_f2i.exponent_cvt = v_f2i.data[63:52] - 13'd2044;
+        v_f2i.mantissa_cvt = {68'h1, v_f2i.data[51:0]};
+
+        if ((v_f2i.classification[3] | v_f2i.classification[4]) == 1) begin
+          v_f2i.mantissa_cvt[52] = 0;
+        end
+
+        v_f2i.oor = 0;
+
+        if ($signed(v_f2i.exponent_cvt) > $signed({5'h0, v_f2i.exponent_bias})) begin
+          v_f2i.oor = 1;
+        end else if ($signed(v_f2i.exponent_cvt) > 0) begin
+          v_f2i.mantissa_cvt = v_f2i.mantissa_cvt << v_f2i.exponent_cvt;
+        end
+
+        v_f2i.mantissa_uint = v_f2i.mantissa_cvt[119:55];
+
+        v_f2i.grs = {v_f2i.mantissa_cvt[54:53], |v_f2i.mantissa_cvt[52:0]};
+        v_f2i.odd = v_f2i.mantissa_uint[0] | |v_f2i.grs[1:0];
+
+        v_f2i.flags[0] = |v_f2i.grs;
+
+        v_f2i.rnded = 0;
+        if (v_f2i.rm == 0) begin  //rne
+          if (v_f2i.grs[2] & v_f2i.odd) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 2) begin  //rdn
+          if (v_f2i.sign_cvt & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 3) begin  //rup
+          if (~v_f2i.sign_cvt & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 4) begin  //rmm
+          if (v_f2i.grs[2] & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end
+
+        v_f2i.mantissa_uint = v_f2i.mantissa_uint + {64'h0, v_f2i.rnded};
+
+        v_f2i.or_1 = v_f2i.mantissa_uint[64];
+        v_f2i.or_2 = v_f2i.mantissa_uint[63];
+        v_f2i.or_3 = |v_f2i.mantissa_uint[62:32];
+        v_f2i.or_4 = v_f2i.mantissa_uint[31];
+        v_f2i.or_5 = |v_f2i.mantissa_uint[30:0];
+
+        v_f2i.zero = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5;
+
+        v_f2i.oor_64u = v_f2i.or_1;
+        v_f2i.oor_64s = v_f2i.or_1;
+        v_f2i.oor_32u = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
+        v_f2i.oor_32s = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
+
+        if (v_f2i.sign_cvt) begin
+          if (v_f2i.op == 0) begin
+            v_f2i.oor_32s = v_f2i.oor_32s | (v_f2i.or_4 & v_f2i.or_5);
+          end else if (v_f2i.op == 1) begin
+            v_f2i.oor = v_f2i.oor | v_f2i.zero;
+          end else if (v_f2i.op == 2) begin
+            v_f2i.oor_64s = v_f2i.oor_64s | (v_f2i.or_2 & (v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5));
+          end else if (v_f2i.op == 3) begin
+            v_f2i.oor = v_f2i.oor | v_f2i.zero;
+          end
+        end else begin
+          v_f2i.oor_64s = v_f2i.oor_64s | v_f2i.or_2;
+          v_f2i.oor_32s = v_f2i.oor_32s | v_f2i.or_4;
+        end
+
+        v_f2i.oor_64u = (v_f2i.op == 3) & (v_f2i.oor_64u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_64s = (v_f2i.op == 2) & (v_f2i.oor_64s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_32u = (v_f2i.op == 1) & (v_f2i.oor_32u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_32s = (v_f2i.op == 0) & (v_f2i.oor_32s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+
+        if (v_f2i.sign_cvt) begin
+          v_f2i.mantissa_uint = -v_f2i.mantissa_uint;
+        end
+
+        if (v_f2i.op == 0) begin
+          v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
+          if (v_f2i.oor_32s) begin
+            v_f2i.result = 64'h0000000080000000;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 1) begin
+          v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
+          if (v_f2i.oor_32u) begin
+            v_f2i.result = 64'h00000000FFFFFFFF;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 2) begin
+          v_f2i.result = v_f2i.mantissa_uint[63:0];
+          if (v_f2i.oor_64s) begin
+            v_f2i.result = 64'h8000000000000000;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 3) begin
+          v_f2i.result = v_f2i.mantissa_uint[63:0];
+          if (v_f2i.oor_64u) begin
+            v_f2i.result = 64'hFFFFFFFFFFFFFFFF;
+            v_f2i.flags  = 5'b10000;
+          end
+        end
+
+        fp_cvt_f2i_o.result = v_f2i.result;
+        fp_cvt_f2i_o.flags  = v_f2i.flags;
+
+      end
+
     end
 
-    v_f2i.sign_cvt = v_f2i.data[64];
-    v_f2i.exponent_cvt = v_f2i.data[63:52] - 13'd2044;
-    v_f2i.mantissa_cvt = {68'h1, v_f2i.data[51:0]};
+    if (RISCV == 1) begin
 
-    if ((v_f2i.classification[3] | v_f2i.classification[4]) == 1) begin
-      v_f2i.mantissa_cvt[52] = 0;
+      always_comb begin
+
+        v_f2i.data = fp_cvt_f2i_i.data;
+        v_f2i.op = fp_cvt_f2i_i.op.fcvt_op;
+        v_f2i.rm = fp_cvt_f2i_i.rm;
+        v_f2i.classification = fp_cvt_f2i_i.classification;
+
+        v_f2i.flags = 0;
+        v_f2i.result = 0;
+
+        v_f2i.snan = v_f2i.classification[8];
+        v_f2i.qnan = v_f2i.classification[9];
+        v_f2i.infs = v_f2i.classification[0] | v_f2i.classification[7];
+        v_f2i.zero = 0;
+
+        if (v_f2i.op == 0) begin
+          v_f2i.exponent_bias = 34;
+        end else if (v_f2i.op == 1) begin
+          v_f2i.exponent_bias = 35;
+        end else if (v_f2i.op == 2) begin
+          v_f2i.exponent_bias = 66;
+        end else begin
+          v_f2i.exponent_bias = 67;
+        end
+
+        v_f2i.sign_cvt = v_f2i.data[64];
+        v_f2i.exponent_cvt = v_f2i.data[63:52] - 13'd2044;
+        v_f2i.mantissa_cvt = {68'h1, v_f2i.data[51:0]};
+
+        if ((v_f2i.classification[3] | v_f2i.classification[4]) == 1) begin
+          v_f2i.mantissa_cvt[52] = 0;
+        end
+
+        v_f2i.oor = 0;
+
+        if ($signed(v_f2i.exponent_cvt) > $signed({5'h0, v_f2i.exponent_bias})) begin
+          v_f2i.oor = 1;
+        end else if ($signed(v_f2i.exponent_cvt) > 0) begin
+          v_f2i.mantissa_cvt = v_f2i.mantissa_cvt << v_f2i.exponent_cvt;
+        end
+
+        v_f2i.mantissa_uint = v_f2i.mantissa_cvt[119:55];
+
+        v_f2i.grs = {v_f2i.mantissa_cvt[54:53], |v_f2i.mantissa_cvt[52:0]};
+        v_f2i.odd = v_f2i.mantissa_uint[0] | |v_f2i.grs[1:0];
+
+        v_f2i.flags[0] = |v_f2i.grs;
+
+        v_f2i.rnded = 0;
+        if (v_f2i.rm == 0) begin  //rne
+          if (v_f2i.grs[2] & v_f2i.odd) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 2) begin  //rdn
+          if (v_f2i.sign_cvt & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 3) begin  //rup
+          if (~v_f2i.sign_cvt & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end else if (v_f2i.rm == 4) begin  //rmm
+          if (v_f2i.grs[2] & v_f2i.flags[0]) begin
+            v_f2i.rnded = 1;
+          end
+        end
+
+        v_f2i.mantissa_uint = v_f2i.mantissa_uint + {64'h0, v_f2i.rnded};
+
+        v_f2i.or_1 = v_f2i.mantissa_uint[64];
+        v_f2i.or_2 = v_f2i.mantissa_uint[63];
+        v_f2i.or_3 = |v_f2i.mantissa_uint[62:32];
+        v_f2i.or_4 = v_f2i.mantissa_uint[31];
+        v_f2i.or_5 = |v_f2i.mantissa_uint[30:0];
+
+        v_f2i.zero = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5;
+
+        v_f2i.oor_64u = v_f2i.or_1;
+        v_f2i.oor_64s = v_f2i.or_1;
+        v_f2i.oor_32u = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
+        v_f2i.oor_32s = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
+
+        if (v_f2i.sign_cvt) begin
+          if (v_f2i.op == 0) begin
+            v_f2i.oor_32s = v_f2i.oor_32s | (v_f2i.or_4 & v_f2i.or_5);
+          end else if (v_f2i.op == 1) begin
+            v_f2i.oor = v_f2i.oor | v_f2i.zero;
+          end else if (v_f2i.op == 2) begin
+            v_f2i.oor_64s = v_f2i.oor_64s | (v_f2i.or_2 & (v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5));
+          end else if (v_f2i.op == 3) begin
+            v_f2i.oor = v_f2i.oor | v_f2i.zero;
+          end
+        end else begin
+          v_f2i.oor_64s = v_f2i.oor_64s | v_f2i.or_2;
+          v_f2i.oor_32s = v_f2i.oor_32s | v_f2i.or_4;
+        end
+
+        v_f2i.oor_64u = (v_f2i.op == 3) & (v_f2i.oor_64u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_64s = (v_f2i.op == 2) & (v_f2i.oor_64s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_32u = (v_f2i.op == 1) & (v_f2i.oor_32u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+        v_f2i.oor_32s = (v_f2i.op == 0) & (v_f2i.oor_32s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
+
+        if (v_f2i.sign_cvt) begin
+          v_f2i.mantissa_uint = -v_f2i.mantissa_uint;
+        end
+
+        if (v_f2i.op == 0) begin
+          v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
+          if (v_f2i.oor_32s) begin
+            v_f2i.result = 64'h000000007FFFFFFF;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 1) begin
+          v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
+          if (v_f2i.oor_32u) begin
+            v_f2i.result = 64'h0000000080000000;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 2) begin
+          v_f2i.result = v_f2i.mantissa_uint[63:0];
+          if (v_f2i.oor_64s) begin
+            v_f2i.result = 64'h7FFFFFFFFFFFFFFF;
+            v_f2i.flags  = 5'b10000;
+          end
+        end else if (v_f2i.op == 3) begin
+          v_f2i.result = v_f2i.mantissa_uint[63:0];
+          if (v_f2i.oor_64u) begin
+            v_f2i.result = 64'h8000000000000000;
+            v_f2i.flags  = 5'b10000;
+          end
+        end
+
+        fp_cvt_f2i_o.result = v_f2i.result;
+        fp_cvt_f2i_o.flags  = v_f2i.flags;
+
+      end
+
     end
 
-    v_f2i.oor = 0;
-
-    if ($signed(v_f2i.exponent_cvt) > $signed({5'h0, v_f2i.exponent_bias})) begin
-      v_f2i.oor = 1;
-    end else if ($signed(v_f2i.exponent_cvt) > 0) begin
-      v_f2i.mantissa_cvt = v_f2i.mantissa_cvt << v_f2i.exponent_cvt;
-    end
-
-    v_f2i.mantissa_uint = v_f2i.mantissa_cvt[119:55];
-
-    v_f2i.grs = {v_f2i.mantissa_cvt[54:53], |v_f2i.mantissa_cvt[52:0]};
-    v_f2i.odd = v_f2i.mantissa_uint[0] | |v_f2i.grs[1:0];
-
-    v_f2i.flags[0] = |v_f2i.grs;
-
-    v_f2i.rnded = 0;
-    if (v_f2i.rm == 0) begin  //rne
-      if (v_f2i.grs[2] & v_f2i.odd) begin
-        v_f2i.rnded = 1;
-      end
-    end else if (v_f2i.rm == 2) begin  //rdn
-      if (v_f2i.sign_cvt & v_f2i.flags[0]) begin
-        v_f2i.rnded = 1;
-      end
-    end else if (v_f2i.rm == 3) begin  //rup
-      if (~v_f2i.sign_cvt & v_f2i.flags[0]) begin
-        v_f2i.rnded = 1;
-      end
-    end else if (v_f2i.rm == 4) begin  //rmm
-      if (v_f2i.grs[2] & v_f2i.flags[0]) begin
-        v_f2i.rnded = 1;
-      end
-    end
-
-    v_f2i.mantissa_uint = v_f2i.mantissa_uint + {64'h0, v_f2i.rnded};
-
-    v_f2i.or_1 = v_f2i.mantissa_uint[64];
-    v_f2i.or_2 = v_f2i.mantissa_uint[63];
-    v_f2i.or_3 = |v_f2i.mantissa_uint[62:32];
-    v_f2i.or_4 = v_f2i.mantissa_uint[31];
-    v_f2i.or_5 = |v_f2i.mantissa_uint[30:0];
-
-    v_f2i.zero = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5;
-
-    v_f2i.oor_64u = v_f2i.or_1;
-    v_f2i.oor_64s = v_f2i.or_1;
-    v_f2i.oor_32u = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
-    v_f2i.oor_32s = v_f2i.or_1 | v_f2i.or_2 | v_f2i.or_3;
-
-    if (v_f2i.sign_cvt) begin
-      if (v_f2i.op == 0) begin
-        v_f2i.oor_32s = v_f2i.oor_32s | (v_f2i.or_4 & v_f2i.or_5);
-      end else if (v_f2i.op == 1) begin
-        v_f2i.oor = v_f2i.oor | v_f2i.zero;
-      end else if (v_f2i.op == 2) begin
-        v_f2i.oor_64s = v_f2i.oor_64s | (v_f2i.or_2 & (v_f2i.or_3 | v_f2i.or_4 | v_f2i.or_5));
-      end else if (v_f2i.op == 3) begin
-        v_f2i.oor = v_f2i.oor | v_f2i.zero;
-      end
-    end else begin
-      v_f2i.oor_64s = v_f2i.oor_64s | v_f2i.or_2;
-      v_f2i.oor_32s = v_f2i.oor_32s | v_f2i.or_4;
-    end
-
-    v_f2i.oor_64u = (v_f2i.op == 3) & (v_f2i.oor_64u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
-    v_f2i.oor_64s = (v_f2i.op == 2) & (v_f2i.oor_64s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
-    v_f2i.oor_32u = (v_f2i.op == 1) & (v_f2i.oor_32u | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
-    v_f2i.oor_32s = (v_f2i.op == 0) & (v_f2i.oor_32s | v_f2i.oor | v_f2i.infs | v_f2i.snan | v_f2i.qnan);
-
-    if (v_f2i.sign_cvt) begin
-      v_f2i.mantissa_uint = -v_f2i.mantissa_uint;
-    end
-
-    if (v_f2i.op == 0) begin
-      v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
-      if (v_f2i.oor_32s) begin
-        v_f2i.result = 64'h0000000080000000;
-        v_f2i.flags  = 5'b10000;
-      end
-    end else if (v_f2i.op == 1) begin
-      v_f2i.result = {32'h0, v_f2i.mantissa_uint[31:0]};
-      if (v_f2i.oor_32u) begin
-        v_f2i.result = 64'h00000000FFFFFFFF;
-        v_f2i.flags  = 5'b10000;
-      end
-    end else if (v_f2i.op == 2) begin
-      v_f2i.result = v_f2i.mantissa_uint[63:0];
-      if (v_f2i.oor_64s) begin
-        v_f2i.result = 64'h8000000000000000;
-        v_f2i.flags  = 5'b10000;
-      end
-    end else if (v_f2i.op == 3) begin
-      v_f2i.result = v_f2i.mantissa_uint[63:0];
-      if (v_f2i.oor_64u) begin
-        v_f2i.result = 64'hFFFFFFFFFFFFFFFF;
-        v_f2i.flags  = 5'b10000;
-      end
-    end
-
-    fp_cvt_f2i_o.result = v_f2i.result;
-    fp_cvt_f2i_o.flags  = v_f2i.flags;
-
-  end
+  endgenerate
 
   always_comb begin
 
