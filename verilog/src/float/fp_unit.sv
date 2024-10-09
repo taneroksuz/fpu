@@ -5,7 +5,8 @@ module fp_unit (
     input reset,
     input clock,
     input fp_unit_in_type fp_unit_i,
-    output fp_unit_out_type fp_unit_o
+    output fp_unit_out_type fp_unit_o,
+    input clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -134,7 +135,8 @@ module fp_unit (
       .fp_fma_i(fp_fma_i),
       .fp_fma_o(fp_fma_o),
       .lzc_o(lzc_256_o),
-      .lzc_i(lzc_256_i)
+      .lzc_i(lzc_256_i),
+      .clear(clear)
   );
 
   fp_mac fp_mac_comp (
@@ -150,7 +152,8 @@ module fp_unit (
       .fp_fdiv_i(fp_fdiv_i),
       .fp_fdiv_o(fp_fdiv_o),
       .fp_mac_o(fp_mac_o),
-      .fp_mac_i(fp_mac_i)
+      .fp_mac_i(fp_mac_i),
+      .clear(clear)
   );
 
   fp_rnd fp_rnd_comp (
@@ -184,7 +187,8 @@ module fp_unit (
       .fp_fdiv_o(fp_fdiv_o),
       .fp_fdiv_i(fp_fdiv_i),
       .fp_rnd_o(fp_rnd_o),
-      .fp_rnd_i(fp_rnd_i)
+      .fp_rnd_i(fp_rnd_i),
+      .clear(clear)
   );
 
 endmodule

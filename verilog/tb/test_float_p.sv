@@ -232,7 +232,8 @@ module test_float_p
 		.reset ( reset ),
 		.clock ( clock ),
 		.fp_unit_i ( fp_unit_i ),
-		.fp_unit_o ( fp_unit_o )
+		.fp_unit_o ( fp_unit_o ),
+		.clear ( 0 )
 	);
 
 endmodule

@@ -18,7 +18,8 @@ entity fp_fdiv is
 		fp_fdiv_i : in  fp_fdiv_in_type;
 		fp_fdiv_o : out fp_fdiv_out_type;
 		fp_mac_i  : out fp_mac_in_type;
-		fp_mac_o  : in  fp_mac_out_type
+		fp_mac_o  : in  fp_mac_out_type;
+		clear     : in  std_logic
 	);
 end fp_fdiv;
 
@@ -420,6 +421,10 @@ begin
 
 			end case;
 
+			if clear = '1' then
+				v.ready := '0';
+			end if;
+
 			fp_fdiv_o.fp_rnd.sig <= v.sign_rnd;
 			fp_fdiv_o.fp_rnd.expo <= v.exponent_rnd;
 			fp_fdiv_o.fp_rnd.mant <= v.mantissa_rnd;
@@ -623,6 +628,10 @@ begin
 				when others =>
 
 			end case;
+
+			if clear = '1' then
+				v.ready := '0';
+			end if;
 
 			fp_fdiv_o.fp_rnd.sig <= v.sign_rnd;
 			fp_fdiv_o.fp_rnd.expo <= v.exponent_rnd;

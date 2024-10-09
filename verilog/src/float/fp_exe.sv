@@ -26,7 +26,8 @@ module fp_exe (
     input fp_fdiv_out_type fp_fdiv_o,
     output fp_fdiv_in_type fp_fdiv_i,
     input fp_rnd_out_type fp_rnd_o,
-    output fp_rnd_in_type fp_rnd_i
+    output fp_rnd_in_type fp_rnd_i,
+    input clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -205,6 +206,12 @@ module fp_exe (
     end else if (op.fcvt_f2i) begin
       result = fp_cvt_f2i_o.result;
       flags  = fp_cvt_f2i_o.flags;
+    end
+
+    if (clear == 1) begin
+      result = 0;
+      flags = 0;
+      ready = 0;
     end
 
     fp_exe_o.result = result;

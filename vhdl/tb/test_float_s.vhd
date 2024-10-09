@@ -24,7 +24,8 @@ architecture behavior of test_float_s is
 			reset     : in  std_logic;
 			clock     : in  std_logic;
 			fp_unit_i : in  fp_unit_in_type;
-			fp_unit_o : out fp_unit_out_type
+			fp_unit_o : out fp_unit_out_type;
+			clear     : in  std_logic
 		);
 	end component;
 
@@ -145,7 +146,8 @@ begin
 			reset     => reset,
 			clock     => clock,
 			fp_unit_i => fpu_i,
-			fp_unit_o => fpu_o
+			fp_unit_o => fpu_o,
+			clear     => '0'
 		);
 
 	process(r,fpu_o)

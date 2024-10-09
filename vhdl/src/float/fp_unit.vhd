@@ -14,7 +14,8 @@ entity fp_unit is
 		reset     : in  std_logic;
 		clock     : in  std_logic;
 		fp_unit_i : in  fp_unit_in_type;
-		fp_unit_o : out fp_unit_out_type
+		fp_unit_o : out fp_unit_out_type;
+		clear     : in  std_logic
 	);
 end fp_unit;
 
@@ -163,7 +164,8 @@ begin
 			fp_fma_i => fp_fma_i,
 			fp_fma_o => fp_fma_o,
 			lzc_o    => lzc_256_o,
-			lzc_i    => lzc_256_i
+			lzc_i    => lzc_256_i,
+			clear    => clear
 		);
 
 	fp_mac_comp : fp_mac
@@ -179,7 +181,8 @@ begin
 			fp_fdiv_i => fp_fdiv_i,
 			fp_fdiv_o => fp_fdiv_o,
 			fp_mac_i  => fp_mac_i,
-			fp_mac_o  => fp_mac_o
+			fp_mac_o  => fp_mac_o,
+			clear     => clear
 		);
 
 	fp_exe_comp : fp_exe
@@ -211,7 +214,8 @@ begin
 			fp_fdiv_o    => fp_fdiv_o,
 			fp_fdiv_i    => fp_fdiv_i,
 			fp_rnd_o     => fp_rnd_o,
-			fp_rnd_i     => fp_rnd_i
+			fp_rnd_i     => fp_rnd_i,
+			clear        => clear
 		);
 
 end architecture;

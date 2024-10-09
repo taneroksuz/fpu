@@ -36,7 +36,8 @@ entity fp_exe is
 		fp_fdiv_o    : in  fp_fdiv_out_type;
 		fp_fdiv_i    : out fp_fdiv_in_type;
 		fp_rnd_o     : in  fp_rnd_out_type;
-		fp_rnd_i     : out fp_rnd_in_type
+		fp_rnd_i     : out fp_rnd_in_type;
+		clear        : in  std_logic
 	);
 end fp_exe;
 
@@ -231,6 +232,12 @@ begin
 		elsif op.fcvt_f2i = '1' then
 			result := fp_cvt_f2i_o.result;
 			flags := fp_cvt_f2i_o.flags;
+		end if;
+
+		if clear = '1' then
+			result := (others => '0');
+			flags := (others => '0');
+			ready := '0';
 		end if;
 
 		fp_exe_o.result <= result;
