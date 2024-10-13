@@ -40,7 +40,7 @@ This floating point unit uses only one path for both single and double precision
 
 ## UNIT
 
-![fp_unit](image/fpu.png)
+![fp_unit](image/fpu.svg)
 
 ### SIGNALS
 
