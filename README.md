@@ -64,9 +64,9 @@ This floating point unit uses only one path for both single and double precision
 
 | op | rm | type |
 |:---|:---|:-----|
-| fcmp | "000" | EQ |
+| fcmp | "000" | LE |
 | fcmp | "001" | LT |
-| fcmp | "010" | LE |
+| fcmp | "010" | EQ |
 
 | op | rm | type |
 |:---|:---|:-----|
