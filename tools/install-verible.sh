@@ -1,37 +1,14 @@
 #!/bin/bash
 set -e
 
-VERIBLE_VERSION="${VERIBLE_VERSION:-v0.0-4053-g89d4d98a}"
-INSTALL_DIR="${1:-/usr/local/bin}"
+sudo apt-get update
 
-ARCH=$(uname -m)
-case "$ARCH" in
-  x86_64)  ARCH_SUFFIX="x86_64" ;;
-  aarch64) ARCH_SUFFIX="aarch64" ;;
-  *)
-    echo "ERROR: Unsupported architecture: $ARCH"
-    exit 1
-    ;;
-esac
+sudo apt-get install -y curl tar
 
-echo "Installing Verible ${VERIBLE_VERSION} (${ARCH_SUFFIX}) ..."
+URL=$(curl -s https://api.github.com/repos/chipsalliance/verible/releases/latest | grep browser_download_url | grep linux-static-x86_64.tar.gz | cut -d '"' -f 4)
+curl -L -o $BASEDIR/tools/verible.tar.gz "$URL"
 
-TARBALL="verible-${VERIBLE_VERSION}-linux-static-${ARCH_SUFFIX}.tar.gz"
-URL="https://github.com/chipsalliance/verible/releases/download/${VERIBLE_VERSION}/${TARBALL}"
+mkdir -p $BASEDIR/tools/verible/
+tar -xzf $BASEDIR/tools/verible.tar.gz -C $BASEDIR/tools/verible --strip-components=1
 
-TMP_DIR=$(mktemp -d)
-trap "rm -rf $TMP_DIR" EXIT
-
-curl -fL --progress-bar "$URL" -o "$TMP_DIR/$TARBALL"
-tar -xzf "$TMP_DIR/$TARBALL" -C "$TMP_DIR"
-
-BIN_DIR=$(find "$TMP_DIR" -mindepth 2 -maxdepth 2 -name bin -type d | head -1)
-if [ -z "$BIN_DIR" ]; then
-  echo "ERROR: Could not locate bin/ directory in tarball"
-  exit 1
-fi
-
-sudo install -m 755 "$BIN_DIR"/verible-* "$INSTALL_DIR"
-
-echo "Done. Installed binaries to $INSTALL_DIR:"
-ls "$INSTALL_DIR"/verible-*
+sudo cp -r $BASEDIR/tools/verible/bin/* /usr/local/bin/

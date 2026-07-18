@@ -37,6 +37,29 @@ then
 
   start=`date +%s`
 
+  ${VSG} -f ${BASEDIR}/vhdl/src/float/fp_unit.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_wire.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_lib.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_4.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_8.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_16.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_32.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_64.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_128.vhd \
+            ${BASEDIR}/vhdl/src/lzc/lzc_256.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_wire.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_lib.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_ext.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_cmp.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_max.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_sgnj.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_cvt.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_fma.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_mac.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_fdiv.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_rnd.vhd \
+            ${BASEDIR}/vhdl/src/float/fp_exe.vhd --fix
+
   end=`date +%s`
   echo Execution time was `expr $end - $start` seconds.
 

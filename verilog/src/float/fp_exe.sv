@@ -210,8 +210,8 @@ module fp_exe (
 
     if (clear == 1) begin
       result = 0;
-      flags = 0;
-      ready = 0;
+      flags  = 0;
+      ready  = 0;
     end
 
     fp_exe_o.result = result;
